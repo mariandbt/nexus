@@ -4,8 +4,10 @@
 
 /process/em/verbose 0
 
-/Geometry/Fiber_more/length 1. cm
-/Geometry/Fiber_more/radius 1. mm
+/Geometry/Fiber_cylinder/length 1. cm
+/Geometry/Fiber_cylinder/radius .5 mm
+#/Geometry/Fiber_cylinder/radius 1. mm
+/Geometry/Fiber_cylinder/n_fibers 6
 
 /Generator/SingleParticle/particle opticalphoton
 /Generator/SingleParticle/region WHOLE_VOL
@@ -23,4 +25,4 @@
 /PhysicsList/Nexus/drift                true
 /PhysicsList/Nexus/electroluminescence  true
 
-/nexus/persistency/outputFile Fiber_more.next
+/nexus/persistency/outputFile Fiber_cylinder.next

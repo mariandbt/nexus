@@ -5,7 +5,7 @@
 /PhysicsList/RegisterPhysics NexusPhysics
 /PhysicsList/RegisterPhysics G4StepLimiterPhysics
 
-/nexus/RegisterGeometry Fiber_more
+/nexus/RegisterGeometry Fiber_cylinder
 
 /nexus/RegisterGenerator SingleParticleGenerator
 
@@ -16,4 +16,4 @@
 /nexus/RegisterTrackingAction OpticalTrackingAction
 /nexus/RegisterSteppingAction SaveAllSteppingAction
 
-/nexus/RegisterMacro macros/Fiber_more.config.mac
+/nexus/RegisterMacro macros/Fiber_cylinder.config.mac
