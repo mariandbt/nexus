@@ -4,10 +4,10 @@
 
 /process/em/verbose 0
 
-/Geometry/Fiber_cylinder/length 1. cm
-/Geometry/Fiber_cylinder/radius .5 mm
-#/Geometry/Fiber_cylinder/radius 1. mm
-/Geometry/Fiber_cylinder/n_fibers 6
+/Geometry/Fiber_cylinder/length 3. cm
+#/Geometry/Fiber_cylinder/radius .5 mm
+/Geometry/Fiber_cylinder/radius 1. mm
+/Geometry/Fiber_cylinder/radius_cyl 1. cm
 
 /Generator/SingleParticle/particle opticalphoton
 /Generator/SingleParticle/region WHOLE_VOL
