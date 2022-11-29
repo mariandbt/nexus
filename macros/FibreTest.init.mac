@@ -1,0 +1,19 @@
+/PhysicsList/RegisterPhysics G4EmStandardPhysics_option4
+/PhysicsList/RegisterPhysics G4DecayPhysics
+/PhysicsList/RegisterPhysics G4OpticalPhysics
+/PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics
+/PhysicsList/RegisterPhysics NexusPhysics
+/PhysicsList/RegisterPhysics G4StepLimiterPhysics
+
+/nexus/RegisterGeometry FibreTest
+
+/nexus/RegisterGenerator SingleParticleGenerator
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+/nexus/RegisterSteppingAction SaveAllSteppingAction
+
+/nexus/RegisterMacro macros/FibreTest.config.mac
