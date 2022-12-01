@@ -25,7 +25,7 @@ namespace nexus
         G4double radius_;     //radius of the cylindrical optical fibre
         G4double length_;     //length of the cylindrical optical fibre
         G4double radius_cyl_; //radius of the cylinder
-        CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder, so it is used for the tests but for the simulation we want to create the phton outside the fiber
+        CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
         G4GenericMessenger*   msg_;
     };
 } // namespace nexus

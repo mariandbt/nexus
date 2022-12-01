@@ -101,7 +101,7 @@ void Fiber_cylinder::Construct(){
 
 G4ThreeVector Fiber_cylinder::GenerateVertex(const G4String& region) const {
     return cyl_vertex_gen_->GenerateVertex(region);
-    
+
     // // G4ThreeVector vertex(1.,1.,1.);
     // G4ThreeVector vertex(0., 0., 0.);
     // return vertex;
