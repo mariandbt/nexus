@@ -30,6 +30,7 @@ using namespace CLHEP;
 
 REGISTER_CLASS(Fib_SiPM_cyl,GeometryBase)
 
+<<<<<<< HEAD
 Fib_SiPM_cyl::Fib_SiPM_cyl():
     GeometryBase(),
     radius_(1.*mm),
@@ -39,6 +40,10 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
     cyl_vertex_gen_(0)
   {
     msg_=new G4GenericMessenger(this,"/Geometry/Fib_SiPM_cyl/","Control commands of geometry Fiber cylinder with SiPMs.");
+=======
+Fib_SiPM_cyl::Fib_SiPM_cyl():GeometryBase(), radius_(1.*mm), length_(1.*cm),  radius_cyl_(1. *cm), cyl_vertex_gen_(0){
+    msg_=new G4GenericMessenger(this,"/Geometry/Fib_SiPM_cyl/","Control commands of geometry OpticalFibre");
+>>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
 
     G4GenericMessenger::Command& radius_cmd =
             msg_->DeclareProperty("radius",radius_,"Radius of the cylindrical optical fibre");
@@ -59,12 +64,17 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
     radius_cyl_cmd.SetRange("radius_cyl>0.");
 
     cyl_vertex_gen_ = new CylinderPointSampler(0.5*radius_cyl_, 0.5*length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
+<<<<<<< HEAD
 
     sipm_ = new SiPM11_eff();
 
 }
 Fib_SiPM_cyl::~Fib_SiPM_cyl() {
     delete sipm_;
+=======
+}
+Fib_SiPM_cyl::~Fib_SiPM_cyl() {
+>>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
     delete cyl_vertex_gen_;
     delete msg_;
 }
@@ -94,7 +104,11 @@ void Fib_SiPM_cyl::Construct(){
     G4double z = 0.;
 
     // SiPM
+<<<<<<< HEAD
     // SiPM11_eff* sipm_;
+=======
+    SiPM11_eff* sipm_;
+>>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
     G4LogicalVolume* sipm_logic;
 
     // loop
@@ -114,7 +128,11 @@ void Fib_SiPM_cyl::Construct(){
                               fiber_logic->GetName(),lab_logic,true,0,true);
 
       // SiPM
+<<<<<<< HEAD
       // sipm_ = new SiPM11_eff();
+=======
+      sipm_ = new SiPM11_eff();
+>>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
       sipm_->Construct();
       sipm_logic = sipm_->GetLogicalVolume();
 
@@ -122,7 +140,10 @@ void Fib_SiPM_cyl::Construct(){
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
       G4double rot_angle_ = pi;
+<<<<<<< HEAD
       //G4double rot_angle_ = 0.;
+=======
+>>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
       sipm_rot_->rotateY(rot_angle_);
       new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
                         sipm_logic->GetName(),lab_logic,true,0,true);
@@ -140,5 +161,8 @@ G4ThreeVector Fib_SiPM_cyl::GenerateVertex(const G4String& region) const {
     // G4ThreeVector vertex(0., 0., 0.);
     // return vertex;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
 }
