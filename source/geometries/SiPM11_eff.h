@@ -37,11 +37,7 @@ namespace nexus {
     G4ThreeVector dimensions_; ///< external dimensions of the SiPM11_eff
 
     // Visibility of the tracking plane
-<<<<<<< HEAD
     G4bool sipm_visibility_;
-=======
-    G4bool visibility_;
->>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
 
      // Messenger for the definition of control commands
     G4GenericMessenger* msg_;
