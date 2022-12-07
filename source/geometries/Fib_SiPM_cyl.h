@@ -16,7 +16,6 @@ namespace nexus
     class CylinderPointSampler;
     class Fib_SiPM_cyl: public GeometryBase
     {
-<<<<<<< HEAD
         private:
         G4double radius_;     //radius of the cylindrical optical fibre
         G4double length_;     //length of the cylindrical optical fibre
@@ -26,23 +25,11 @@ namespace nexus
         CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
         G4GenericMessenger*   msg_;
 
-=======
->>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
         public:
         Fib_SiPM_cyl();
         ~Fib_SiPM_cyl();
         void Construct();
         G4ThreeVector GenerateVertex(const G4String& region) const;
-<<<<<<< HEAD
-=======
-
-        private:
-        G4double radius_;     //radius of the cylindrical optical fibre
-        G4double length_;     //length of the cylindrical optical fibre
-        G4double radius_cyl_; //radius of the cylinder
-        CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
-        G4GenericMessenger*   msg_;
->>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
     };
 } // namespace nexus
 #endif

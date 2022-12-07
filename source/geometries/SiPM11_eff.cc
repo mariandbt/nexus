@@ -192,12 +192,8 @@ namespace nexus {
     }
 
     // Visibilities
-<<<<<<< HEAD
     if (sipm_visibility_) {
-=======
-    if (visibility_) {
->>>>>>> acb6890d48de8879c8fbd08613a2ccfb3523d16e
-       G4VisAttributes sipm_col = nexus::DirtyWhite();
+      G4VisAttributes sipm_col = nexus::DirtyWhite();
       sipm_logic->SetVisAttributes(sipm_col);
       G4VisAttributes blue_col = nexus::Blue();
       blue_col.SetForceSolid(true);
