@@ -36,14 +36,16 @@ namespace nexus {
 
   {
     /// Messenger
-    msg_ = new G4GenericMessenger(this, "/Geometry/Fib_SiPM_cyl/", "Control commands of geometry Fiber cylinder with SiPMs.");
-    msg_->DeclareProperty("sipm_visibility_", sipm_visibility_, "SiPM11_eff Visibility");
+    msg_ = new G4GenericMessenger(this, "/Geometry/Fib_SiPM_cyl/",
+          "Control commands of geometry Fiber cylinder with SiPMs.");
+    msg_->DeclareProperty("sipm_visibility", sipm_visibility_, "SiPM11_eff Visibility");
   }
 
 
 
   SiPM11_eff::~SiPM11_eff()
   {
+    delete msg_;
   }
 
 
