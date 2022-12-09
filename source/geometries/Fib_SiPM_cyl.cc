@@ -38,7 +38,8 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
     // sipm_visibility_(1),
     cyl_vertex_gen_(0)
   {
-    msg_=new G4GenericMessenger(this,"/Geometry/Fib_SiPM_cyl/","Control commands of geometry Fiber cylinder with SiPMs.");
+    msg_=new G4GenericMessenger(this,"/Geometry/Fib_SiPM_cyl/",
+        "Control commands of geometry Fiber cylinder with SiPMs.");
 
     G4GenericMessenger::Command& radius_cmd =
             msg_->DeclareProperty("radius",radius_,"Radius of the cylindrical optical fibre");
@@ -64,7 +65,7 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
 
 }
 Fib_SiPM_cyl::~Fib_SiPM_cyl() {
-    delete sipm_;
+    // delete sipm_;
     delete cyl_vertex_gen_;
     delete msg_;
 }
@@ -94,7 +95,6 @@ void Fib_SiPM_cyl::Construct(){
     G4double z = 0.;
 
     // SiPM
-    // SiPM11_eff* sipm_;
     G4LogicalVolume* sipm_logic;
 
     // loop
@@ -114,7 +114,6 @@ void Fib_SiPM_cyl::Construct(){
                               fiber_logic->GetName(),lab_logic,true,0,true);
 
       // SiPM
-      // sipm_ = new SiPM11_eff();
       sipm_->Construct();
       sipm_logic = sipm_->GetLogicalVolume();
 
