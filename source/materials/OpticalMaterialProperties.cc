@@ -735,6 +735,54 @@ namespace opticalprops {
     return mpt;
   }
 
+  /// PolishedAl ///
+  G4MaterialPropertiesTable* PolishedAl()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    // REFLECTIVITY
+    std::vector<G4double> ENERGIES = {
+       h_Planck * c_light / (70.79892 * nm), h_Planck * c_light / (134.77821 * nm),
+       h_Planck * c_light / (269.86787 * nm), h_Planck * c_light / (466.34142 * nm),
+       h_Planck * c_light / (598.94308 * nm), h_Planck * c_light / (800.29598 * nm),
+       h_Planck * c_light / (999.25754 * nm), h_Planck * c_light / (1131.88067 * nm),
+       h_Planck * c_light / (1264.50381 * nm), h_Planck * c_light / (1465.91041 * nm),
+       h_Planck * c_light / (1664.86122 * nm), h_Planck * c_light / (1863.79056 * nm),
+       h_Planck * c_light / (2062.75211 * nm), h_Planck * c_light / (2195.37525 * nm),
+       h_Planck * c_light / (2330.45417 * nm)
+    };
+    std::vector<G4double> REFLECTIVITY = {
+      .94311, .96056, .96340, .96474,
+      .96321, .96017, .96589, .96727,
+      .96865, .97291, .97716, .97851,
+      .98422, .98560, .98698
+    };
+    mpt->AddProperty("REFLECTIVITY", ENERGIES, REFLECTIVITY);
+
+    // REFLEXION BEHAVIOR
+    std::vector<G4double> ENERGIES_2    = {optPhotMinE_, optPhotMaxE_};
+    // Specular reflection about the normal to a microfacet.
+    // Such a vector is chosen according to a gaussian distribution with
+    // sigma = SigmaAlhpa (in rad) and centered in the average normal.
+    std::vector<G4double> specularlobe  = {0., 0.};
+    // specular reflection about the average normal
+    std::vector<G4double> specularspike = {0., 0.};
+    // 180 degrees reflection.
+    std::vector<G4double> backscatter   = {0., 0.};
+    // 1 - the sum of these three last parameters is the percentage of Lambertian reflection
+
+    mpt->AddProperty("SPECULARLOBECONSTANT", ENERGIES_2, specularlobe);
+    mpt->AddProperty("SPECULARSPIKECONSTANT",ENERGIES_2, specularspike);
+    mpt->AddProperty("BACKSCATTERCONSTANT",  ENERGIES_2, backscatter);
+
+    // REFRACTIVE INDEX
+    // std::vector<G4double> rIndex = {1.41, 1.41};
+    std::vector<G4double> rIndex = {0.04,12.17};
+    mpt->AddProperty("RINDEX", ENERGIES_2, rIndex);
+
+    return mpt;
+  }
+
 
   /// TPB (tetraphenyl butadiene) ///
   G4MaterialPropertiesTable* TPB()
