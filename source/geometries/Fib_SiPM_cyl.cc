@@ -35,7 +35,6 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
     radius_(1.*mm),
     length_(1.*cm),
     radius_cyl_(1. *cm),
-    // sipm_visibility_(1),
     cyl_vertex_gen_(0)
   {
     msg_=new G4GenericMessenger(this,"/Geometry/Fib_SiPM_cyl/",
@@ -65,7 +64,6 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
 
 }
 Fib_SiPM_cyl::~Fib_SiPM_cyl() {
-    // delete sipm_;
     delete cyl_vertex_gen_;
     delete msg_;
 }
@@ -97,6 +95,36 @@ void Fib_SiPM_cyl::Construct(){
     // SiPM
     G4LogicalVolume* sipm_logic;
 
+    // Al BOX
+
+    G4String box_name = "Al BOX";
+
+    G4Material* box_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+    box_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+    // std::cout<<"HERE!"<<std::endl;
+
+    G4double box_z = 1 * mm;
+    G4double box_xy = 2 * mm;
+
+    G4Box* box_solid_vol =
+      new G4Box(box_name, box_xy/2., box_xy/2., box_z/2.);
+
+    G4LogicalVolume* box_logic_vol =
+      new G4LogicalVolume(box_solid_vol, box_mat, box_name);
+
+    G4VisAttributes box_col = nexus::LightBlue();
+    box_logic_vol->SetVisAttributes(box_col);
+    // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    // // Al box
+    //
+    // G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2);
+    //
+    // G4VPhysicalVolume* box_phys_vol =
+    //  new G4PVPlacement(0, box_pos,
+    //                    box_logic_vol, box_name, lab_logic,
+    //                    false, 0, false);
+
     // loop
     for (int i=0; i<=2*n_fibers; i++){
 
@@ -125,6 +153,15 @@ void Fib_SiPM_cyl::Construct(){
       sipm_rot_->rotateY(rot_angle_);
       new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
                         sipm_logic->GetName(),lab_logic,true,0,true);
+
+      // Al box
+
+      G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2);
+
+      G4VPhysicalVolume* box_phys_vol =
+       new G4PVPlacement(0, box_pos,
+                         box_logic_vol, box_name, lab_logic,
+                         false, 0, false);
 
     }
 
