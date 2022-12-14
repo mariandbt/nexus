@@ -761,6 +761,13 @@ namespace opticalprops {
 
     // REFLEXION BEHAVIOR
     std::vector<G4double> ENERGIES_2    = {optPhotMinE_, optPhotMaxE_};
+    std::vector<G4double> ENERGIES_3    = {0.204, 0.213, 0.222,
+      0.231, 0.241, 0.251,
+      0.262, 0.273, 0.285,
+      0.297, 0.310, 0.323,
+      0.337, 0.351, 0.366,
+      0.381, 0.398, 0.415,
+      0.432, 0.451, 0.4698};
     // Specular reflection about the normal to a microfacet.
     // Such a vector is chosen according to a gaussian distribution with
     // sigma = SigmaAlhpa (in rad) and centered in the average normal.
@@ -777,8 +784,13 @@ namespace opticalprops {
 
     // REFRACTIVE INDEX
     // std::vector<G4double> rIndex = {1.41, 1.41};
-    std::vector<G4double> rIndex = {0.04,12.17};
-    mpt->AddProperty("RINDEX", ENERGIES_2, rIndex);
+    std::vector<G4double> rIndex = {12.175, 11.53, 10.906, 10.304, 9.7236,
+      9.1649, 8.6281, 8.1133, 7.6206, 7.1501,
+      6.7019, 6.2757, 5.8714, 5.4887, 5.1273,
+      4.7867, 4.4664, 4.1657, 3.8841, 3.6209,
+      3.3754};
+    // from https://refractiveindex.info/?shelf=3d&book=metals&page=aluminium
+    mpt->AddProperty("RINDEX", ENERGIES_3, rIndex);
 
     return mpt;
   }
