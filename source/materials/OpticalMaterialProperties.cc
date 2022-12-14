@@ -742,32 +742,31 @@ namespace opticalprops {
 
     // REFLECTIVITY
     std::vector<G4double> ENERGIES = {
-       h_Planck * c_light / (70.79892 * nm), h_Planck * c_light / (134.77821 * nm),
-       h_Planck * c_light / (269.86787 * nm), h_Planck * c_light / (466.34142 * nm),
-       h_Planck * c_light / (598.94308 * nm), h_Planck * c_light / (800.29598 * nm),
-       h_Planck * c_light / (999.25754 * nm), h_Planck * c_light / (1131.88067 * nm),
-       h_Planck * c_light / (1264.50381 * nm), h_Planck * c_light / (1465.91041 * nm),
-       h_Planck * c_light / (1664.86122 * nm), h_Planck * c_light / (1863.79056 * nm),
-       h_Planck * c_light / (2062.75211 * nm), h_Planck * c_light / (2195.37525 * nm),
-       h_Planck * c_light / (2330.45417 * nm)
+       h_Planck * c_light / (2330.45417 * nm), h_Planck * c_light / (2195.37525 * nm),
+       h_Planck * c_light / (2062.75211 * nm), h_Planck * c_light / (1863.79056 * nm),
+       h_Planck * c_light / (1664.86122 * nm), h_Planck * c_light / (1465.91041 * nm),
+       h_Planck * c_light / (1264.50381 * nm), h_Planck * c_light / (1131.88067 * nm),
+       h_Planck * c_light / (999.25754 * nm), h_Planck * c_light / (800.29598 * nm),
+       h_Planck * c_light / (598.94308 * nm), h_Planck * c_light / (466.34142 * nm),
+       h_Planck * c_light / (269.86787 * nm), h_Planck * c_light / (134.77821 * nm),
+       h_Planck * c_light / (70.79892 * nm)
     };
-    std::vector<G4double> REFLECTIVITY = {
-      .94311, .96056, .96340, .96474,
-      .96321, .96017, .96589, .96727,
-      .96865, .97291, .97716, .97851,
-      .98422, .98560, .98698
+    std::vector<G4double> REFLECTIVITY = {.98698, .98560, .98422, .97851, .97716,
+      .97291, .96865, .96727, .96589, .96017,
+      .96321, .96474, .96340, .96056, .94311
     };
     mpt->AddProperty("REFLECTIVITY", ENERGIES, REFLECTIVITY);
 
     // REFLEXION BEHAVIOR
     std::vector<G4double> ENERGIES_2    = {optPhotMinE_, optPhotMaxE_};
-    std::vector<G4double> ENERGIES_3    = {0.204, 0.213, 0.222,
-      0.231, 0.241, 0.251,
-      0.262, 0.273, 0.285,
-      0.297, 0.310, 0.323,
-      0.337, 0.351, 0.366,
-      0.381, 0.398, 0.415,
-      0.432, 0.451, 0.4698};
+    std::vector<G4double> ENERGIES_3    = {0.204 * eV, 0.213 * eV, 0.222 * eV,
+      0.231 * eV, 0.241 * eV, 0.251 * eV,
+      0.262 * eV, 0.273 * eV, 0.285 * eV,
+      0.297 * eV, 0.310 * eV, 0.323 * eV,
+      0.337 * eV, 0.351 * eV, 0.366 * eV,
+      0.381 * eV, 0.398 * eV, 0.415 * eV,
+      0.432 * eV, 0.451 * eV, 0.4698 * eV
+    };
     // Specular reflection about the normal to a microfacet.
     // Such a vector is chosen according to a gaussian distribution with
     // sigma = SigmaAlhpa (in rad) and centered in the average normal.
