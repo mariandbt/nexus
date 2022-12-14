@@ -20,7 +20,6 @@ namespace nexus
         G4double radius_;     //radius of the cylindrical optical fibre
         G4double length_;     //length of the cylindrical optical fibre
         G4double radius_cyl_; //radius of the cylinder
-        // G4bool sipm_visibility_; // Visibility of the tracking plane
         SiPM11_eff* sipm_;   // SiPM
         CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
         G4GenericMessenger*   msg_;
