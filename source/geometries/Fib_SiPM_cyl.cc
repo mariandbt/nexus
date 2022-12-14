@@ -104,7 +104,7 @@ void Fib_SiPM_cyl::Construct(){
     // std::cout<<"HERE!"<<std::endl;
 
     G4double box_z = 1 * mm;
-    G4double box_xy = 2*radius_;
+    G4double box_xy = radius_;
     // G4double box_xy = 2 * mm;
 
     G4Box* box_solid_vol =
@@ -114,7 +114,7 @@ void Fib_SiPM_cyl::Construct(){
       new G4LogicalVolume(box_solid_vol, box_mat, box_name);
 
     // G4VisAttributes box_col = nexus::LightBlue();
-    G4VisAttributes box_col = nexus::DirtyWhite();
+    G4VisAttributes box_col = nexus::Blue();
     box_logic_vol->SetVisAttributes(box_col);
     // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
