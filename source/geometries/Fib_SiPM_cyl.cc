@@ -85,8 +85,8 @@ void Fib_SiPM_cyl::Construct(){
     // fibers
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
-    G4double n_fibers = radius_cyl_*pi/radius_;
-    G4double dif_theta = .5*2*pi/n_fibers; // angular separation between fibers
+    G4double n_fibers = 2*radius_cyl_*pi/radius_;
+    G4double dif_theta = 2*pi/n_fibers; // angular separation between fibers
     G4double theta;
     G4double x;
     G4double y;
@@ -128,7 +128,7 @@ void Fib_SiPM_cyl::Construct(){
     //                    false, 0, false);
 
     // loop
-    for (int i=0; i<=2*n_fibers; i++){
+    for (int i=0; i<=n_fibers; i++){
 
       // fiber
       fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
