@@ -104,7 +104,8 @@ void Fib_SiPM_cyl::Construct(){
     // std::cout<<"HERE!"<<std::endl;
 
     G4double box_z = 1 * mm;
-    G4double box_xy = 2 * mm;
+    G4double box_xy = 2*radius_;
+    // G4double box_xy = 2 * mm;
 
     G4Box* box_solid_vol =
       new G4Box(box_name, box_xy/2., box_xy/2., box_z/2.);
@@ -112,7 +113,8 @@ void Fib_SiPM_cyl::Construct(){
     G4LogicalVolume* box_logic_vol =
       new G4LogicalVolume(box_solid_vol, box_mat, box_name);
 
-    G4VisAttributes box_col = nexus::LightBlue();
+    // G4VisAttributes box_col = nexus::LightBlue();
+    G4VisAttributes box_col = nexus::DirtyWhite();
     box_logic_vol->SetVisAttributes(box_col);
     // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
@@ -148,8 +150,8 @@ void Fib_SiPM_cyl::Construct(){
       G4ThreeVector sipm_pos = G4ThreeVector(x, y, z + length_/2);
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
-      G4double rot_angle_ = pi;
-      //G4double rot_angle_ = 0.;
+      // G4double rot_angle_ = pi;
+      G4double rot_angle_ = 0.;
       sipm_rot_->rotateY(rot_angle_);
       new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
                         sipm_logic->GetName(),lab_logic,true,0,true);
@@ -158,10 +160,10 @@ void Fib_SiPM_cyl::Construct(){
 
       G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2);
 
-      G4VPhysicalVolume* box_phys_vol =
-       new G4PVPlacement(0, box_pos,
-                         box_logic_vol, box_name, lab_logic,
-                         false, 0, false);
+      // G4VPhysicalVolume* box_phys_vol =
+      new G4PVPlacement(0, box_pos,
+                        box_logic_vol, box_name, lab_logic,
+                        false, 0, false);
 
     }
 
