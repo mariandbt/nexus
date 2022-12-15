@@ -99,29 +99,27 @@ void Fib_SiPM_cyl::Construct(){
     // SiPM
     G4LogicalVolume* sipm_logic;
 
-    // Al BOX
-    G4String box_name = "Al BOX";
+    // Al DISK
+    G4String disk_name = "Al BOX";
 
-    G4Material* box_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
-    box_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+    G4Material* disk_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+    disk_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
     // std::cout<<"HERE!"<<std::endl;
 
-    G4double box_z = 1 * mm;
-    G4double box_xy = radius_;
-    // G4double box_xy = 2 * mm;
+    G4double disk_thickness = .1 * mm;
 
-    G4Tubs* box_solid_vol =
-      new G4Tubs(box_name, 0., radius_/2., box_z/2., 0., 360.*deg);
+    G4Tubs* disk_solid_vol =
+      new G4Tubs(disk_name, 0., radius_/2., disk_thickness/2., 0., 360.*deg);
     // G4Box* box_solid_vol =
     //   new G4Box(box_name, box_xy/2., box_xy/2., box_z/2.);
 
-    G4LogicalVolume* box_logic_vol =
-      new G4LogicalVolume(box_solid_vol, box_mat, box_name);
+    G4LogicalVolume* disk_logic_vol =
+      new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
 
-    // G4VisAttributes box_col = nexus::LightBlue();
-    G4VisAttributes box_col = nexus::Blue();
-    box_logic_vol->SetVisAttributes(box_col);
-    // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    // G4VisAttributes disk_col = nexus::LightBlue();
+    G4VisAttributes disk_col = nexus::Blue();
+    disk_logic_vol->SetVisAttributes(disk_col);
+    // disk_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
 
     // loop
@@ -156,12 +154,12 @@ void Fib_SiPM_cyl::Construct(){
       new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
                         sipm_logic->GetName(),lab_logic,true,0,true);
 
-      // Al box
+      // Al disk
 
-      G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2 - box_z/2.);
+      G4ThreeVector disk_pos = G4ThreeVector(x, y, z - length_/2 - disk_thickness/2.);
 
-      new G4PVPlacement(0, box_pos,
-                        box_logic_vol, box_name, lab_logic,
+      new G4PVPlacement(0, disk_pos,
+                        disk_logic_vol, disk_name, lab_logic,
                         false, 0, false);
 
     }
