@@ -103,7 +103,8 @@ namespace nexus {
 
     G4double active_side     = 1.0   * mm;
     G4double active_depth    = 0.01   * mm;
-    G4double active_offset_x = 0.975 * mm;
+    // G4double active_offset_x = 0.975 * mm;
+    G4double active_offset_x = 0. * mm;
 
     G4Box* active_solid =
       new G4Box("PHOTODIODES", active_side/2., active_side/2., active_depth/2);
