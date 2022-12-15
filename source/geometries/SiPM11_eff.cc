@@ -118,7 +118,7 @@ namespace nexus {
 
     G4double pos_x = - sipm_x/2. + active_offset_x + active_side/2.;
     // G4double pos_z = epoxy_z/2. - active_depth/2. - pcb_z/2;
-    G4double pos_z = epoxy_z/2. - active_depth/2.;
+    G4double pos_z = epoxy_z/2. + active_depth;
 
     new G4PVPlacement(0, G4ThreeVector(pos_x, 0., pos_z), active_logic,
 		      "PHOTODIODES", sipm_logic, false, 0, false);

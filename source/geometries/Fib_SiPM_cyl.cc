@@ -143,7 +143,8 @@ void Fib_SiPM_cyl::Construct(){
       sipm_logic = sipm_->GetLogicalVolume();
 
       // to avoid overlap among SiPMs intercalate them in Z
-      G4double sipm_z_pos = z + length_/2. + .45 * mm + (.85 * mm)*(i%3);
+      // G4double sipm_z_pos = z + length_/2. + .45 * mm + (.85 * mm)*(i%3);
+      G4double sipm_z_pos = z + length_/2. + .45 * mm + (.85 * mm)*(i%2);
       std::cout<<"sipm_z_pos = "<<sipm_z_pos<<std::endl;
       G4ThreeVector sipm_pos = G4ThreeVector(x, y, sipm_z_pos);
 
