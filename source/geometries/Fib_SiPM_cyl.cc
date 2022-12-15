@@ -79,13 +79,17 @@ void Fib_SiPM_cyl::Construct(){
                           "LAB");
     lab_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     this->SetLogicalVolume(lab_logic);
-    G4Material* ps = materials::PS();
+    // G4Material* ps = materials::PS();
+    G4Material* ps = materials::Y11();
     G4Material* tpb = materials::TPB();
 
     // fibers
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
-    G4double n_fibers = 2*radius_cyl_*pi/radius_;
+    // G4double n_fibers = floor(2*radius_cyl_*pi/radius_) - 10;
+    G4double n_fibers = floor(2*radius_cyl_*pi/(3 * mm)) ;
+    // n_fibers = 5;
+    std::cout<<"n_fibers = "<<n_fibers<<std::endl;
     G4double dif_theta = 2*pi/n_fibers; // angular separation between fibers
     G4double theta;
     G4double x;
@@ -118,14 +122,6 @@ void Fib_SiPM_cyl::Construct(){
     box_logic_vol->SetVisAttributes(box_col);
     // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    // // Al box
-    //
-    // G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2);
-    //
-    // G4VPhysicalVolume* box_phys_vol =
-    //  new G4PVPlacement(0, box_pos,
-    //                    box_logic_vol, box_name, lab_logic,
-    //                    false, 0, false);
 
     // loop
     for (int i=0; i<=n_fibers; i++){
@@ -147,7 +143,8 @@ void Fib_SiPM_cyl::Construct(){
       sipm_->Construct();
       sipm_logic = sipm_->GetLogicalVolume();
 
-      G4ThreeVector sipm_pos = G4ThreeVector(x, y, z + length_/2);
+      // G4ThreeVector sipm_pos = G4ThreeVector(x, y, z + length_/2 + 2 * mm);
+      G4ThreeVector sipm_pos = G4ThreeVector(x, y, z + length_);
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
       // G4double rot_angle_ = pi;
@@ -158,7 +155,9 @@ void Fib_SiPM_cyl::Construct(){
 
       // Al box
 
-      G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2);
+      // G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2 - box_z/2.);
+      G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_);
+      // G4ThreeVector box_pos = G4ThreeVector(x, y, z - 3*length_/4);
 
       // G4VPhysicalVolume* box_phys_vol =
       new G4PVPlacement(0, box_pos,
