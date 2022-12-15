@@ -61,8 +61,11 @@ namespace nexus {
   {
     // PACKAGE ///////////////////////////////////////////////////////
 
-    G4double sipm_x = 2.425 * mm;
-    G4double sipm_y = 1.900 * mm;
+    // G4double sipm_x = 2.425 * mm;
+    // G4double sipm_y = 1.900 * mm;
+    // G4double sipm_z = 0.850 * mm;
+    G4double sipm_x = 1. * mm;
+    G4double sipm_y = 1. * mm;
     G4double sipm_z = 0.850 * mm;
 
     dimensions_.setX(sipm_x);
@@ -80,8 +83,8 @@ namespace nexus {
     this->SetLogicalVolume(sipm_logic);
 
 
-    // PCB ///////////////////////////////////////////////////////
-
+    // // PCB ///////////////////////////////////////////////////////
+    //
     G4double pcb_z = 0.550 * mm;
 
     G4Material* plastic = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYCARBONATE");
@@ -112,7 +115,8 @@ namespace nexus {
       new G4LogicalVolume(active_solid, silicon, "PHOTODIODES");
 
     G4double pos_x = - sipm_x/2. + active_offset_x + active_side/2.;
-    G4double pos_z = epoxy_z/2. - active_depth/2. - pcb_z/2;
+    // G4double pos_z = epoxy_z/2. - active_depth/2. - pcb_z/2;
+    G4double pos_z = epoxy_z/2. - active_depth/2.;
 
     new G4PVPlacement(0, G4ThreeVector(pos_x, 0., pos_z), active_logic,
 		      "PHOTODIODES", sipm_logic, false, 0, false);
