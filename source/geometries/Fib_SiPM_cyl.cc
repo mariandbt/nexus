@@ -118,8 +118,8 @@ void Fib_SiPM_cyl::Construct(){
     G4LogicalVolume* box_logic_vol =
       new G4LogicalVolume(box_solid_vol, box_mat, box_name);
 
-    G4VisAttributes box_col = nexus::LightBlue();
-    // G4VisAttributes box_col = nexus::Blue();
+    // G4VisAttributes box_col = nexus::LightBlue();
+    G4VisAttributes box_col = nexus::Blue();
     box_logic_vol->SetVisAttributes(box_col);
     // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
