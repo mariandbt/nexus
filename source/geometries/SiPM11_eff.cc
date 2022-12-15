@@ -85,19 +85,20 @@ namespace nexus {
 
     // // PCB ///////////////////////////////////////////////////////
     //
-    G4double pcb_z = 0.550 * mm;
-
-    G4Material* plastic = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYCARBONATE");
-
-    G4Box* plastic_solid = new G4Box("PLASTIC", sipm_x/2., sipm_y/2., pcb_z/2);
-
-    G4LogicalVolume* plastic_logic =
-    new G4LogicalVolume(plastic_solid, plastic, "PLASTIC");
-
-    G4double epoxy_z = 0.300 * mm;
-
-    new G4PVPlacement(0, G4ThreeVector(0, 0., epoxy_z/2), plastic_logic,
-		      "PLASTIC", sipm_logic, false, 0, false);
+    // G4double pcb_z = 0.550 * mm;
+    //
+    // G4Material* plastic = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYCARBONATE");
+    //
+    // G4Box* plastic_solid = new G4Box("PLASTIC", sipm_x/2., sipm_y/2., pcb_z/2);
+    //
+    // G4LogicalVolume* plastic_logic =
+    // new G4LogicalVolume(plastic_solid, plastic, "PLASTIC");
+    //
+    // G4double epoxy_z = 0.300 * mm;
+    G4double epoxy_z = 0. * mm;
+    //
+    // new G4PVPlacement(0, G4ThreeVector(0, 0., epoxy_z/2), plastic_logic,
+		//       "PLASTIC", sipm_logic, false, 0, false);
 
     // ACTIVE WINDOW /////////////////////////////////////////////////
 
@@ -212,12 +213,12 @@ namespace nexus {
       active_logic->SetVisAttributes(blue_col);
       G4VisAttributes plastic_col = nexus::Lilla();
       plastic_col.SetForceSolid(true);
-      plastic_logic->SetVisAttributes(plastic_col);
+      // plastic_logic->SetVisAttributes(plastic_col);
     }
     else {
       sipm_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
       active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-      plastic_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+      // plastic_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     }
   }
 
