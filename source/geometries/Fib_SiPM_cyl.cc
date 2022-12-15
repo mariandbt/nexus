@@ -70,7 +70,7 @@ Fib_SiPM_cyl::~Fib_SiPM_cyl() {
 }
 void Fib_SiPM_cyl::Construct(){
     // G4Box* lab_solid = new G4Box("LAB", 2 * mm,2 * mm,1.1*cm);
-    G4Box* lab_solid = new G4Box("LAB", 20 * m,20 * m, 10.1 * m);
+    G4Box* lab_solid = new G4Box("LAB", 2 * m,2 * m, 10.1 * m);
 
     G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     air->SetMaterialPropertiesTable(opticalprops::Vacuum());
