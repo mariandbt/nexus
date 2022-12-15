@@ -86,8 +86,8 @@ void Fib_SiPM_cyl::Construct(){
     // fibers
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
-    // G4double n_fibers = floor(2*radius_cyl_*pi/radius_) - 10;
-    G4double n_fibers = floor(2*radius_cyl_*pi/(3 * mm)) ;
+    // the factor 2 it's because "radius_" actually stands for the fiber DIAMETER
+    G4double n_fibers = floor(2*radius_cyl_*pi/radius_);
     // n_fibers = 5;
     std::cout<<"n_fibers = "<<n_fibers<<std::endl;
     G4double dif_theta = 2*pi/n_fibers; // angular separation between fibers
@@ -100,7 +100,6 @@ void Fib_SiPM_cyl::Construct(){
     G4LogicalVolume* sipm_logic;
 
     // Al BOX
-
     G4String box_name = "Al BOX";
 
     G4Material* box_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
@@ -111,20 +110,22 @@ void Fib_SiPM_cyl::Construct(){
     G4double box_xy = radius_;
     // G4double box_xy = 2 * mm;
 
-    G4Box* box_solid_vol =
-      new G4Box(box_name, box_xy/2., box_xy/2., box_z/2.);
+    G4Tubs* box_solid_vol =
+      new G4Tubs(box_name, 0., radius_/2., box_z/2., 0., 360.*deg);
+    // G4Box* box_solid_vol =
+    //   new G4Box(box_name, box_xy/2., box_xy/2., box_z/2.);
 
     G4LogicalVolume* box_logic_vol =
       new G4LogicalVolume(box_solid_vol, box_mat, box_name);
 
-    // G4VisAttributes box_col = nexus::LightBlue();
-    G4VisAttributes box_col = nexus::Blue();
+    G4VisAttributes box_col = nexus::LightBlue();
+    // G4VisAttributes box_col = nexus::Blue();
     box_logic_vol->SetVisAttributes(box_col);
     // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
 
     // loop
-    for (int i=0; i<=n_fibers; i++){
+    for (int i=0; i < n_fibers; i++){
 
       // fiber
       fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
@@ -143,8 +144,10 @@ void Fib_SiPM_cyl::Construct(){
       sipm_->Construct();
       sipm_logic = sipm_->GetLogicalVolume();
 
-      // G4ThreeVector sipm_pos = G4ThreeVector(x, y, z + length_/2 + 2 * mm);
-      G4ThreeVector sipm_pos = G4ThreeVector(x, y, z + length_);
+      // to avoid overlap among SiPMs intercalate them in Z
+      G4double sipm_z_pos = z + length_/2. + .45 * mm + (.85 * mm)*(i%3);
+      std::cout<<"sipm_z_pos = "<<sipm_z_pos<<std::endl;
+      G4ThreeVector sipm_pos = G4ThreeVector(x, y, sipm_z_pos);
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
       // G4double rot_angle_ = pi;
@@ -155,11 +158,8 @@ void Fib_SiPM_cyl::Construct(){
 
       // Al box
 
-      // G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2 - box_z/2.);
-      G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_);
-      // G4ThreeVector box_pos = G4ThreeVector(x, y, z - 3*length_/4);
+      G4ThreeVector box_pos = G4ThreeVector(x, y, z - length_/2 - box_z/2.);
 
-      // G4VPhysicalVolume* box_phys_vol =
       new G4PVPlacement(0, box_pos,
                         box_logic_vol, box_name, lab_logic,
                         false, 0, false);
