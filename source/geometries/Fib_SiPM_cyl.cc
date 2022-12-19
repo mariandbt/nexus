@@ -34,8 +34,7 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
     GeometryBase(),
     radius_(1.*mm),
     length_(1.*cm),
-    radius_cyl_(1. *cm),
-    cyl_vertex_gen_(0)
+    radius_cyl_(1. *cm)
   {
     msg_=new G4GenericMessenger(this,"/Geometry/Fib_SiPM_cyl/",
         "Control commands of geometry Fiber cylinder with SiPMs.");
@@ -58,20 +57,19 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
     radius_cyl_cmd.SetParameterName("radius_cyl",false);
     radius_cyl_cmd.SetRange("radius_cyl>0.");
 
-    // cyl_vertex_gen_ = new CylinderPointSampler2020(0.5*radius_cyl_, 0.5*length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
-    cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_, length_, 0.,  0., nullptr, G4ThreeVector(0., 0., 0.));
-    // cyl_vertex_gen_ = new CylinderPointSampler2020(radius_cyl_, length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
-
     sipm_ = new SiPM11_eff();
 
 }
 Fib_SiPM_cyl::~Fib_SiPM_cyl() {
-    delete cyl_vertex_gen_;
     delete msg_;
 }
 void Fib_SiPM_cyl::Construct(){
     // G4Box* lab_solid = new G4Box("LAB", 2 * mm,2 * mm,1.1*cm);
-    G4Box* lab_solid = new G4Box("LAB", 2 * m,2 * m, 10.1 * m);
+    G4double lab_z_ = length_ * 2;
+    G4double lab_xy_ = radius_cyl_ * 2;
+    G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
+
+    cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_, length_/2, 0, 2 * pi);
 
     G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     air->SetMaterialPropertiesTable(opticalprops::Vacuum());
@@ -112,8 +110,6 @@ void Fib_SiPM_cyl::Construct(){
 
     G4Tubs* disk_solid_vol =
       new G4Tubs(disk_name, 0., radius_/2., disk_thickness/2., 0., 360.*deg);
-    // G4Box* box_solid_vol =
-    //   new G4Box(box_name, box_xy/2., box_xy/2., box_z/2.);
 
     G4LogicalVolume* disk_logic_vol =
       new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
