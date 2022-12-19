@@ -12,7 +12,7 @@
 /Geometry/Fib_SiPM_cyl/sipm_visibility true
 
 /Generator/SingleParticle/particle opticalphoton
-/Generator/SingleParticle/region WHOLE_VOL
+/Generator/SingleParticle/region VOLUME
 /Generator/SingleParticle/min_energy 7 eV
 /Generator/SingleParticle/max_energy 7 eV
 #/Generator/SingleParticle/min_costheta 0

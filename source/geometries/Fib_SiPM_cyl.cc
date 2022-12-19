@@ -5,7 +5,7 @@
 #include "MaterialsList.h"
 #include "OpticalMaterialProperties.h"
 #include "Visibilities.h"
-#include "CylinderPointSampler.h"
+#include "CylinderPointSampler2020.h"
 #include "FactoryBase.h"
 
 #include <G4Tubs.hh>
@@ -58,8 +58,9 @@ Fib_SiPM_cyl::Fib_SiPM_cyl():
     radius_cyl_cmd.SetParameterName("radius_cyl",false);
     radius_cyl_cmd.SetRange("radius_cyl>0.");
 
-    // cyl_vertex_gen_ = new CylinderPointSampler(0.5*radius_cyl_, 0.5*length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
-    cyl_vertex_gen_ = new CylinderPointSampler(radius_cyl_, length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
+    // cyl_vertex_gen_ = new CylinderPointSampler2020(0.5*radius_cyl_, 0.5*length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
+    cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_, length_, 0.,  0., nullptr, G4ThreeVector(0., 0., 0.));
+    // cyl_vertex_gen_ = new CylinderPointSampler2020(radius_cyl_, length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
 
     sipm_ = new SiPM11_eff();
 

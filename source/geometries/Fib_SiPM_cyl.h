@@ -9,11 +9,11 @@
 class G4Material;
 class G4GenericMessenger;
 class G4MaterialPropertiesTable;
-class CylinderPointSampler;
+class CylinderPointSampler2020;
 
 namespace nexus
 {
-    class CylinderPointSampler;
+    class CylinderPointSampler2020;
     class Fib_SiPM_cyl: public GeometryBase
     {
         private:
@@ -21,7 +21,7 @@ namespace nexus
         G4double length_;     //length of the cylindrical optical fibre
         G4double radius_cyl_; //radius of the cylinder
         SiPM11_eff* sipm_;   // SiPM
-        CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
+        CylinderPointSampler2020* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
         G4GenericMessenger*   msg_;
 
         public:
