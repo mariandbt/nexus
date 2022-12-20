@@ -742,19 +742,26 @@ namespace opticalprops {
 
     // REFLECTIVITY
     std::vector<G4double> ENERGIES = {
-       h_Planck * c_light / (2330.45417 * nm), h_Planck * c_light / (2195.37525 * nm),
-       h_Planck * c_light / (2062.75211 * nm), h_Planck * c_light / (1863.79056 * nm),
-       h_Planck * c_light / (1664.86122 * nm), h_Planck * c_light / (1465.91041 * nm),
-       h_Planck * c_light / (1264.50381 * nm), h_Planck * c_light / (1131.88067 * nm),
-       h_Planck * c_light / (999.25754 * nm), h_Planck * c_light / (800.29598 * nm),
-       h_Planck * c_light / (598.94308 * nm), h_Planck * c_light / (466.34142 * nm),
-       h_Planck * c_light / (269.86787 * nm), h_Planck * c_light / (134.77821 * nm),
-       h_Planck * c_light / (70.79892 * nm)
+      optPhotMinE_, optPhotMaxE_
     };
-    std::vector<G4double> REFLECTIVITY = {.98698, .98560, .98422, .97851, .97716,
-      .97291, .96865, .96727, .96589, .96017,
-      .96321, .96474, .96340, .96056, .94311
+    std::vector<G4double> REFLECTIVITY = {
+      1., 1.
     };
+
+    // std::vector<G4double> ENERGIES = {
+    //    h_Planck * c_light / (2330.45417 * nm), h_Planck * c_light / (2195.37525 * nm),
+    //    h_Planck * c_light / (2062.75211 * nm), h_Planck * c_light / (1863.79056 * nm),
+    //    h_Planck * c_light / (1664.86122 * nm), h_Planck * c_light / (1465.91041 * nm),
+    //    h_Planck * c_light / (1264.50381 * nm), h_Planck * c_light / (1131.88067 * nm),
+    //    h_Planck * c_light / (999.25754 * nm), h_Planck * c_light / (800.29598 * nm),
+    //    h_Planck * c_light / (598.94308 * nm), h_Planck * c_light / (466.34142 * nm),
+    //    h_Planck * c_light / (269.86787 * nm), h_Planck * c_light / (134.77821 * nm),
+    //    h_Planck * c_light / (70.79892 * nm)
+    // };
+    // std::vector<G4double> REFLECTIVITY = {.98698, .98560, .98422, .97851, .97716,
+    //   .97291, .96865, .96727, .96589, .96017,
+    //   .96321, .96474, .96340, .96056, .94311
+    // };
     mpt->AddProperty("REFLECTIVITY", ENERGIES, REFLECTIVITY);
 
     // REFLEXION BEHAVIOR

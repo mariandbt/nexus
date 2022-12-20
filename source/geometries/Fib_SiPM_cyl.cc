@@ -104,6 +104,7 @@ void Fib_SiPM_cyl::Construct(){
 
     G4Material* disk_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
     disk_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
     // std::cout<<"HERE!"<<std::endl;
 
     G4double disk_thickness = .1 * mm;
@@ -113,6 +114,13 @@ void Fib_SiPM_cyl::Construct(){
 
     G4LogicalVolume* disk_logic_vol =
       new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
+
+    G4OpticalSurface* opsur =
+      new G4OpticalSurface("PERFECT_OPSURF", unified, polished, dielectric_metal);
+      // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
+      opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
+    new G4LogicalSkinSurface("PERFECT_OPSURF", disk_logic_vol, opsur);
 
     // G4VisAttributes disk_col = nexus::LightBlue();
     G4VisAttributes disk_col = nexus::Blue();
