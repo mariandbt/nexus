@@ -12,6 +12,7 @@
 #include "OpticalMaterialProperties.h"
 #include "Visibilities.h"
 
+#include <G4Tubs.hh>
 #include <G4Box.hh>
 #include <G4GenericMessenger.hh>
 #include <G4LogicalVolume.hh>
@@ -72,7 +73,9 @@ namespace nexus {
     dimensions_.setY(sipm_y);
     dimensions_.setZ(sipm_z);
 
-    G4Box* sipm_solid = new G4Box("SiPM11_eff", sipm_x/2., sipm_y/2., sipm_z/2);
+    // G4Box* sipm_solid = new G4Box("SiPM11_eff", sipm_x/2., sipm_y/2., sipm_z/2);
+    G4Tubs* sipm_solid =
+      new G4Tubs("SiPM11_eff", 0., sipm_x/2., sipm_z/2., 0., 360.*deg);
 
     G4Material* epoxy = materials::Epoxy();
     epoxy->SetMaterialPropertiesTable(opticalprops::GlassEpoxy());
