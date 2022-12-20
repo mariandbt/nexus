@@ -5,8 +5,8 @@
 /process/em/verbose 0
 
 # BIG CYL
-/Geometry/Fib_SiPM_cyl/length 3. m
-#/Geometry/Fib_SiPM_cyl/length 1. m
+#/Geometry/Fib_SiPM_cyl/length 3. m
+/Geometry/Fib_SiPM_cyl/length 1. m
 /Geometry/Fib_SiPM_cyl/radius_cyl 1. m
 
 # SMALL CYL
