@@ -116,11 +116,11 @@ void Fib_SiPM_cyl::Construct(){
       new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
 
     G4OpticalSurface* opsur =
-      new G4OpticalSurface("PERFECT_OPSURF", unified, polished, dielectric_metal);
+      new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
       // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
       opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
-    new G4LogicalSkinSurface("PERFECT_OPSURF", disk_logic_vol, opsur);
+    new G4LogicalSkinSurface("Al_OPSURF", disk_logic_vol, opsur);
 
     // G4VisAttributes disk_col = nexus::LightBlue();
     G4VisAttributes disk_col = nexus::Blue();
@@ -152,7 +152,7 @@ void Fib_SiPM_cyl::Construct(){
       // G4double sipm_z_pos = z + length_/2. + .45 * mm + (.85 * mm)*(i%3);
       // G4double sipm_z_pos = z + length_/2. + .45 * mm + (.85 * mm)*(i%2);
       G4double sipm_z_pos = z + length_/2. + .45 * mm;
-      std::cout<<"sipm_z_pos = "<<sipm_z_pos<<std::endl;
+      // std::cout<<"sipm_z_pos = "<<sipm_z_pos<<std::endl;
       G4ThreeVector sipm_pos = G4ThreeVector(x, y, sipm_z_pos);
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
@@ -162,16 +162,26 @@ void Fib_SiPM_cyl::Construct(){
       new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
                         sipm_logic->GetName(),lab_logic,true,0,true);
 
-      // Al disk
+      sipm_z_pos = z - (length_/2. + .45 * mm);
+      // std::cout<<"sipm_z_pos = "<<sipm_z_pos<<std::endl;
+      sipm_pos = G4ThreeVector(x, y, sipm_z_pos);
+      rot_angle_ = pi;
+      sipm_rot_->rotateY(rot_angle_);
+      new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
+                        sipm_logic->GetName(),lab_logic,true,0,true);
 
-      G4ThreeVector disk_pos = G4ThreeVector(x, y, z - length_/2 - disk_thickness/2.);
-
-      new G4PVPlacement(0, disk_pos,
-                        disk_logic_vol, disk_name, lab_logic,
-                        false, 0, false);
+      // // Al disk
+      //
+      // G4ThreeVector disk_pos = G4ThreeVector(x, y, z - length_/2 - disk_thickness/2.);
+      //
+      // new G4PVPlacement(0, disk_pos,
+      //                   disk_logic_vol, disk_name, lab_logic,
+      //                   false, 0, false);
 
     }
 
+    std::cout<<"R = "<<radius_cyl_<<std::endl;
+    std::cout<<"L = "<<length_<<std::endl;
 
 }
 
