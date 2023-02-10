@@ -100,7 +100,7 @@ void Fib_SiPM_cyl::Construct(){
     G4LogicalVolume* sipm_logic;
 
     // Al DISK
-    G4String disk_name = "Al BOX";
+    G4String disk_name = "Al DISK";
 
     G4Material* disk_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
     disk_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
