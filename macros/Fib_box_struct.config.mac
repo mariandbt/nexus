@@ -5,7 +5,7 @@
 /process/em/verbose 0
 
 #/Geometry/Fib_box_struct/length 1. m
-/Geometry/Fib_box_struct/length 10. cm
+/Geometry/Fib_box_struct/length 25. cm
 
 /Geometry/Fib_box_struct/radius 1. mm
 #/Geometry/Fib_box_struct/sipm_visibility true
