@@ -226,8 +226,8 @@ void Fib_box_struct::Construct(){
     new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
 
     G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
-    // G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
-    G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos + 1.*cm);
+    G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
+    // G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos + 1.*cm);
 
     G4RotationMatrix* panel_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
@@ -248,6 +248,7 @@ void Fib_box_struct::Construct(){
       // fiber_->Construct();
       // fiber_logic = fiber_->GetLogicalVolume();
 
+      x = length_/2 - 1*mm;
       y = i*radius_ - box_xy_/2;
       z = box_z_ + radius_/2;
 
@@ -256,8 +257,8 @@ void Fib_box_struct::Construct(){
       // rot_angle_ = 0.;
       fib_rot_->rotateY(rot_angle_);
 
-      // new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
-      //                         fiber_logic->GetName(),lab_logic,true,0,true);
+      new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
+                              fiber_logic->GetName(),lab_logic,true,0,true);
 
       // // SiPM
       // sipm_->Construct();
@@ -278,11 +279,14 @@ void Fib_box_struct::Construct(){
 
       // Al disk
 
-      G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
-
-      // new G4PVPlacement(0, disk_pos,
-      //                   disk_logic_vol, disk_name, lab_logic,
-      //                   false, 0, false);
+      G4ThreeVector disk_pos = G4ThreeVector(x - 1*mm - disk_thickness/2., y, z);
+      G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
+      rot_angle_ = pi/2.;
+      // rot_angle_ = 0.;
+      disk_rot_->rotateY(rot_angle_);
+      new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
+                        disk_logic_vol, disk_name, lab_logic,
+                        false, 0, false);
 
     }
 
