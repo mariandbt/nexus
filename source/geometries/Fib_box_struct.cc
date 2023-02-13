@@ -241,15 +241,11 @@ void Fib_box_struct::Construct(){
 
     for (int i=0; i < n_fibers; i++){
 
-      // // fiber
-      // fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
-      // fiber_->SetCoreOpticalProperties(opticalprops::Y11());
-      // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
-      // fiber_->Construct();
-      // fiber_logic = fiber_->GetLogicalVolume();
+      // fiber
 
       x = length_/2 - box_xy_/2 - 1*mm;
-      y = i*radius_ - box_xy_/2;
+      // y = i*radius_ - box_xy_/2;
+      y = (box_xy_/n_fibers)*i - box_xy_/2 + radius_/2.;
       z = box_z_ + radius_/2;
 
       G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
