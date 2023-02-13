@@ -22,7 +22,7 @@
 /Generator/SingleParticle/min_costheta 0
 /Generator/SingleParticle/max_costheta .5
 /Generator/SingleParticle/min_phi 0
-/Generator/SingleParticle/max_phi pi
+/Generator/SingleParticle/max_phi 90.
 
 /process/optical/processActivation Cerenkov false
 
