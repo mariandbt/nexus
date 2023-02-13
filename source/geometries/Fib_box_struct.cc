@@ -290,16 +290,13 @@ void Fib_box_struct::Construct(){
 
     }
 
-    // std::cout<<"R = "<<radius_cyl_<<std::endl;
-    // std::cout<<"L = "<<length_<<std::endl;
-
 }
 G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
     // return cyl_vertex_gen_->GenerateVertex(region);
 
     // // G4ThreeVector vertex(1.,1.,1.);
     // G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
-    G4ThreeVector vertex(0., 0., side_thickness*3/2);
+    G4ThreeVector vertex(0., 0., side_thickness*2);
 
     // WORLD
     if (region == "CENTER") {
