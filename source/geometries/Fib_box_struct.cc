@@ -163,11 +163,11 @@ void Fib_box_struct::Construct(){
 
     G4String box_name = "Black box";
     G4String box_side_name = "Black box side";
+    G4double side_thickness = .1 * mm;
 
     G4Box* box_outer_solid_vol =
       new G4Box(box_name, box_xy_/2., box_xy_/2., box_z_/2.);
 
-    G4double side_thickness = .1 * mm;
     G4Box* box_inner_solid_vol =
     // new G4Box(box_side_name, box_xy_/2., box_xy_/2., side_thickness/2.);
     new G4Box(box_side_name, box_xy_/2. - side_thickness,
@@ -295,7 +295,7 @@ G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
 
     // // G4ThreeVector vertex(1.,1.,1.);
     // G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
-    G4ThreeVector vertex(0., 0., 0.);
+    G4ThreeVector vertex(0., 0., 0.1);
 
     // WORLD
     if (region == "CENTER") {
