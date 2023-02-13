@@ -19,6 +19,7 @@
 #include <G4Tubs.hh>
 #include <G4Box.hh>
 #include <G4LogicalVolume.hh>
+#include <G4SubtractionSolid.hh>
 #include <G4PVPlacement.hh>
 #include <G4Material.hh>
 #include <G4Colour.hh>
@@ -114,7 +115,6 @@ void Fib_box_struct::Construct(){
     G4double n_fibers = 33;
     // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
 
-
     fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
     fiber_->SetCoreOpticalProperties(opticalprops::Y11());
     fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
@@ -125,6 +125,9 @@ void Fib_box_struct::Construct(){
     // SiPM______________________________________________________
 
     G4LogicalVolume* sipm_logic;
+
+    sipm_->Construct();
+    sipm_logic = sipm_->GetLogicalVolume();
 
 
     // Al DISK____________________________________________________
@@ -156,15 +159,32 @@ void Fib_box_struct::Construct(){
     // disk_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
 
-    // BLACK BOX_____________________________________________________
+    // Black box_____________________________________________________
 
-    G4String box_name = "BLACK BOX";
+    G4String box_name = "Black box";
+    G4String box_side_name = "Black box side";
 
-    G4Box* box_solid_vol =
+    G4Box* full_box_solid_vol =
       new G4Box(box_name, box_xy_/2., box_xy_/2., box_z_/2.);
 
+    G4double side_thickness = .1 * mm;
+    G4Box* box_side_solid_vol =
+      new G4Box(box_side_name, box_xy_/2., box_xy_/2., side_thickness/2.);
+
+    G4ThreeVector side_pos = G4ThreeVector(0., 0., box_z_/2. - side_thickness/2.);
+    G4RotationMatrix* side_rot_ = new G4RotationMatrix();
+    // rot_angle_ = pi;
+    G4double rot_angle_ = 0.;
+    side_rot_->rotateY(rot_angle_);
+    G4SubtractionSolid* box_solid_vol =
+      new G4SubtractionSolid("Box-Side", full_box_solid_vol, box_side_solid_vol,
+                              side_rot_, side_pos);
+
+    G4Material* box_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Pyrex_Glass");
+    // box_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
+
     G4LogicalVolume* box_logic_vol =
-      new G4LogicalVolume(box_solid_vol, air, box_name);
+      new G4LogicalVolume(box_solid_vol, box_mat, box_name);
     G4VisAttributes box_col = nexus::Red();
     // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
     box_logic_vol->SetVisAttributes(box_col);
@@ -172,9 +192,10 @@ void Fib_box_struct::Construct(){
     G4ThreeVector box_pos = G4ThreeVector(0., 0., box_z_/2.);
 
     G4RotationMatrix* box_rot_ = new G4RotationMatrix();
-    // G4double rot_angle_ = pi;
-    G4double rot_angle_ = 0.;
+    // rot_angle_ = pi;
+    rot_angle_ = 0.;
     box_rot_->rotateY(rot_angle_);
+
     new G4PVPlacement(G4Transform3D(*box_rot_, box_pos),
                       box_logic_vol, box_name, lab_logic,
                       false, 0, false);
@@ -185,8 +206,8 @@ void Fib_box_struct::Construct(){
 
     G4double panel_thickness = .1 * mm;
 
-    G4Material* panel_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
-    panel_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+    G4Material* panel_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
+    panel_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
 
     G4Box* panel_solid_vol =
       new G4Box(panel_name, box_xy_/2., box_xy_/2., panel_thickness/2.);
@@ -199,7 +220,7 @@ void Fib_box_struct::Construct(){
     G4OpticalSurface* panel_opsur =
       new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
       // disk_opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
-      panel_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+      panel_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
     new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
 
     G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
@@ -209,9 +230,9 @@ void Fib_box_struct::Construct(){
     // rot_angle_ = pi;
     rot_angle_ = 0.;
     panel_rot_->rotateY(rot_angle_);
-    new G4PVPlacement(G4Transform3D(*panel_rot_, panel_pos),
-                      panel_logic_vol, panel_name, lab_logic,
-                      false, 0, false);
+    // new G4PVPlacement(G4Transform3D(*panel_rot_, panel_pos),
+    //                   panel_logic_vol, panel_name, lab_logic,
+    //                   false, 0, false);
 
     // loop_____________________________________________________________
 
@@ -232,12 +253,12 @@ void Fib_box_struct::Construct(){
       // rot_angle_ = 0.;
       fib_rot_->rotateY(rot_angle_);
 
-      new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
-                              fiber_logic->GetName(),lab_logic,true,0,true);
+      // new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
+      //                         fiber_logic->GetName(),lab_logic,true,0,true);
 
-      // SiPM
-      sipm_->Construct();
-      sipm_logic = sipm_->GetLogicalVolume();
+      // // SiPM
+      // sipm_->Construct();
+      // sipm_logic = sipm_->GetLogicalVolume();
 
       // to avoid overlap among SiPMs intercalate them in X
       G4double sipm_x_pos = x + length_/2. + .45 * mm;
