@@ -97,6 +97,10 @@ void Fib_box_struct::Construct(){
     lab_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     this->SetLogicalVolume(lab_logic);
 
+    G4double x = 0.;
+    G4double y = 0.;
+    G4double z = 0.;
+
 
     // fibers______________________________________________________
 
@@ -109,9 +113,13 @@ void Fib_box_struct::Construct(){
     // the factor 2 it's because "radius_" actually stands for the fiber DIAMETER
     G4double n_fibers = 33;
     // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
-    G4double x = 0.;
-    G4double y = 0.;
-    G4double z = 0.;
+
+
+    fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
+    fiber_->SetCoreOpticalProperties(opticalprops::Y11());
+    fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
+    fiber_->Construct();
+    fiber_logic = fiber_->GetLogicalVolume();
 
 
     // SiPM______________________________________________________
@@ -209,12 +217,12 @@ void Fib_box_struct::Construct(){
 
     for (int i=0; i < n_fibers; i++){
 
-      // fiber
-      fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
-      fiber_->SetCoreOpticalProperties(opticalprops::Y11());
-      fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
-      fiber_->Construct();
-      fiber_logic = fiber_->GetLogicalVolume();
+      // // fiber
+      // fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
+      // fiber_->SetCoreOpticalProperties(opticalprops::Y11());
+      // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
+      // fiber_->Construct();
+      // fiber_logic = fiber_->GetLogicalVolume();
 
       y = i*radius_ - box_xy_/2;
       z = box_z_ + radius_/2;
