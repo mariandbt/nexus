@@ -19,8 +19,8 @@
 #/Generator/SingleParticle/min_energy 3.54 eV
 #/Generator/SingleParticle/max_energy 3.54 eV
 
-/Generator/SingleParticle/min_costheta 0
-/Generator/SingleParticle/max_costheta .5
+/Generator/SingleParticle/min_costheta 0.5
+/Generator/SingleParticle/max_costheta 1.
 /Generator/SingleParticle/min_phi 0
 /Generator/SingleParticle/max_phi 90.
 
