@@ -164,22 +164,23 @@ void Fib_box_struct::Construct(){
     G4String box_name = "Black box";
     G4String box_side_name = "Black box side";
 
-    G4Box* full_box_solid_vol =
+    G4Box* box_outer_solid_vol =
       new G4Box(box_name, box_xy_/2., box_xy_/2., box_z_/2.);
 
     G4double side_thickness = .1 * mm;
-    G4Box* box_side_solid_vol =
+    G4Box* box_inner_solid_vol =
     // new G4Box(box_side_name, box_xy_/2., box_xy_/2., side_thickness/2.);
-    new G4Box(box_side_name, box_xy_/2. - 0.1*mm, box_xy_/2. - 0.1*mm, box_z_/2. - 0.1*mm);
+    new G4Box(box_side_name, box_xy_/2. - side_thickness,
+      box_xy_/2. - side_thickness, box_z_/2. - side_thickness);
 
-    G4ThreeVector side_pos = G4ThreeVector(0., 0., 0.1*mm);
-    G4RotationMatrix* side_rot_ = new G4RotationMatrix();
+    G4ThreeVector inner_pos = G4ThreeVector(0., 0., 0.1*mm);
+    G4RotationMatrix* inner_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
     G4double rot_angle_ = 0.;
-    side_rot_->rotateY(rot_angle_);
+    inner_rot_->rotateY(rot_angle_);
     G4SubtractionSolid* box_solid_vol =
-      new G4SubtractionSolid("Box-Side", full_box_solid_vol, box_side_solid_vol,
-                              side_rot_, side_pos);
+      new G4SubtractionSolid("Box-Side", box_outer_solid_vol, box_inner_solid_vol,
+                              inner_rot_, inner_pos);
 
     G4Material* box_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Pyrex_Glass");
     // box_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
@@ -231,9 +232,9 @@ void Fib_box_struct::Construct(){
     // rot_angle_ = pi;
     rot_angle_ = 0.;
     panel_rot_->rotateY(rot_angle_);
-    // new G4PVPlacement(G4Transform3D(*panel_rot_, panel_pos),
-    //                   panel_logic_vol, panel_name, lab_logic,
-    //                   false, 0, false);
+    new G4PVPlacement(G4Transform3D(*panel_rot_, panel_pos),
+                      panel_logic_vol, panel_name, lab_logic,
+                      false, 0, false);
 
     // loop_____________________________________________________________
 
