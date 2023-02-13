@@ -15,10 +15,11 @@ namespace nexus
     class Fib_box_struct: public GeometryBase
     {
         private:
-        G4double radius_;     //radius of the cylindrical optical fibre
-        G4double length_;     //length of the cylindrical optical fibre
-        G4double box_xy_;     //side of the box structure
-        G4double box_z_;     //length of the box structure
+        G4double radius_;     // radius of the cylindrical optical fibre
+        G4double length_;     // length of the cylindrical optical fibre
+        G4double box_xy_;     // outer side of the box structure
+        G4double box_z_;     // outer length of the box structure
+        G4double side_thickness; // thickness of the box
         SiPM11_eff* sipm_;   // SiPM
         G4GenericMessenger*   msg_;
 
