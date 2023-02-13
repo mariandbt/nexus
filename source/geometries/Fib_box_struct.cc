@@ -186,7 +186,7 @@ void Fib_box_struct::Construct(){
       z = box_z_ + radius_/2;
 
       G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
-      rot_angle_ = pi;
+      rot_angle_ = pi/2.;
       // rot_angle_ = 0.;
       fib_rot_->rotateY(rot_angle_);
 
