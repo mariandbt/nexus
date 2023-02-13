@@ -248,7 +248,7 @@ void Fib_box_struct::Construct(){
       // fiber_->Construct();
       // fiber_logic = fiber_->GetLogicalVolume();
 
-      x = length_/2 - 1*mm;
+      x = length_/2 - box_xy_/2 - 1*mm;
       y = i*radius_ - box_xy_/2;
       z = box_z_ + radius_/2;
 
@@ -270,16 +270,16 @@ void Fib_box_struct::Construct(){
       G4ThreeVector sipm_pos = G4ThreeVector(sipm_x_pos, y, z);
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
-      rot_angle_ = pi;
+      rot_angle_ = pi/2.;
       // rot_angle_ = 0.;
       sipm_rot_->rotateY(rot_angle_);
-      // new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
-      //                   sipm_logic->GetName(),lab_logic,true,0,true);
+      new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
+                        sipm_logic->GetName(),lab_logic,true,0,true);
 
 
       // Al disk
 
-      G4ThreeVector disk_pos = G4ThreeVector(x - 1*mm - disk_thickness/2., y, z);
+      G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
       G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
       rot_angle_ = pi/2.;
       // rot_angle_ = 0.;
