@@ -41,7 +41,7 @@ Fib_box_struct::Fib_box_struct():
     GeometryBase(),
     radius_(1.*mm),
     length_(1.*cm),
-    box_xy_(36.*mm),
+    box_xy_(40.*mm),
     box_z_(14.*cm)
   {
     std::cout<<"HERE!"<<std::endl;
@@ -163,7 +163,7 @@ void Fib_box_struct::Construct(){
 
     G4String box_name = "Black box";
     G4String box_side_name = "Black box side";
-    G4double side_thickness = .1 * mm;
+    G4double side_thickness = 2. * mm;
 
     G4Box* box_outer_solid_vol =
       new G4Box(box_name, box_xy_/2., box_xy_/2., box_z_/2.);
