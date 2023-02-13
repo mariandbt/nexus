@@ -173,7 +173,7 @@ void Fib_box_struct::Construct(){
     new G4Box(box_side_name, box_xy_/2. - side_thickness,
       box_xy_/2. - side_thickness, box_z_/2. - side_thickness);
 
-    G4ThreeVector inner_pos = G4ThreeVector(0., 0., 0.1*mm);
+    G4ThreeVector inner_pos = G4ThreeVector(0., 0., side_thickness);
     G4RotationMatrix* inner_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
     G4double rot_angle_ = 0.;
@@ -299,7 +299,7 @@ G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
 
     // // G4ThreeVector vertex(1.,1.,1.);
     // G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
-    G4ThreeVector vertex(0., 0., 1.);
+    G4ThreeVector vertex(0., 0., 2.);
 
     // WORLD
     if (region == "CENTER") {
