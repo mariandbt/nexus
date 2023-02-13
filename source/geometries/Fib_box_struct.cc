@@ -170,9 +170,9 @@ void Fib_box_struct::Construct(){
     G4double side_thickness = .1 * mm;
     G4Box* box_side_solid_vol =
     // new G4Box(box_side_name, box_xy_/2., box_xy_/2., side_thickness/2.);
-    new G4Box(box_side_name, box_xy_/2., box_xy_/4., box_z_/4.);
+    new G4Box(box_side_name, box_xy_/2. - 0.1*mm, box_xy_/2. - 0.1*mm, box_z_/2. - 0.1*mm);
 
-    G4ThreeVector side_pos = G4ThreeVector(0., 0., box_z_/2. + side_thickness/2.);
+    G4ThreeVector side_pos = G4ThreeVector(0., 0., 0.1*mm);
     G4RotationMatrix* side_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
     G4double rot_angle_ = 0.;
