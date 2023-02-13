@@ -110,8 +110,8 @@ void Fib_box_struct::Construct(){
     G4double n_fibers = 33;
     // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
     G4double x = 0.;
-    G4double y;
-    G4double z = box_z_;
+    G4double y = 0.;
+    G4double z = 0.;
 
 
     // SiPM______________________________________________________
@@ -182,11 +182,12 @@ void Fib_box_struct::Construct(){
       fiber_->Construct();
       fiber_logic = fiber_->GetLogicalVolume();
 
-      y = i*radius_/2;
+      y = i*radius_;
+      z = box_z_ + radius_/2;
 
       G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
-      // G4double rot_angle_ = pi;
-      rot_angle_ = 0.;
+      rot_angle_ = pi;
+      // rot_angle_ = 0.;
       fib_rot_->rotateY(rot_angle_);
 
       new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
@@ -202,8 +203,8 @@ void Fib_box_struct::Construct(){
       G4ThreeVector sipm_pos = G4ThreeVector(sipm_x_pos, y, z);
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
-      // G4double rot_angle_ = pi;
-      rot_angle_ = 0.;
+      rot_angle_ = pi;
+      // rot_angle_ = 0.;
       sipm_rot_->rotateY(rot_angle_);
       // new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
       //                   sipm_logic->GetName(),lab_logic,true,0,true);
@@ -227,7 +228,8 @@ G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
     // return cyl_vertex_gen_->GenerateVertex(region);
 
     // // G4ThreeVector vertex(1.,1.,1.);
-    G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
+    // G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
+    G4ThreeVector vertex(0., 0., 0.);
 
     // WORLD
     if (region == "CENTER") {
