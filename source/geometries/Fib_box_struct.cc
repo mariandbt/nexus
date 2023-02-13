@@ -42,7 +42,8 @@ Fib_box_struct::Fib_box_struct():
     radius_(1.*mm),
     length_(1.*cm),
     box_xy_(40.*mm),
-    box_z_(14.*cm)
+    box_z_(14.*cm),
+    side_thickness (2. * mm)
   {
     std::cout<<"HERE!"<<std::endl;
     msg_=new G4GenericMessenger(this,"/Geometry/Fib_box_struct/",
@@ -163,7 +164,6 @@ void Fib_box_struct::Construct(){
 
     G4String box_name = "Black box";
     G4String box_side_name = "Black box side";
-    G4double side_thickness = 2. * mm;
 
     G4Box* box_outer_solid_vol =
       new G4Box(box_name, box_xy_/2., box_xy_/2., box_z_/2.);
@@ -299,7 +299,7 @@ G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
 
     // // G4ThreeVector vertex(1.,1.,1.);
     // G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
-    G4ThreeVector vertex(0., 0., 2.);
+    G4ThreeVector vertex(0., 0., side_thickness);
 
     // WORLD
     if (region == "CENTER") {
