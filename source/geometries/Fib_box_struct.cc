@@ -13,6 +13,7 @@
 #include "MaterialsList.h"
 #include "OpticalMaterialProperties.h"
 #include "Visibilities.h"
+#include "FactoryBase.h"
 
 #include <G4GenericMessenger.hh>
 #include <G4Tubs.hh>
@@ -156,12 +157,19 @@ void Fib_box_struct::Construct(){
 
     G4LogicalVolume* box_logic_vol =
       new G4LogicalVolume(box_solid_vol, air, box_name);
-    box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    G4VisAttributes box_col = nexus::Red();
+    // box_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    box_logic_vol->SetVisAttributes(box_col);
 
-    // G4VPhysicalVolume* box_phys_vol =
-   new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),
-                     box_logic_vol, box_name, lab_logic,
-                     false, 0, false);
+    G4ThreeVector box_pos = G4ThreeVector(0., 0., box_z_/2.);
+
+    G4RotationMatrix* box_rot_ = new G4RotationMatrix();
+    // G4double rot_angle_ = pi;
+    G4double rot_angle_ = 0.;
+    box_rot_->rotateY(rot_angle_);
+    new G4PVPlacement(G4Transform3D(*box_rot_, box_pos),
+                      box_logic_vol, box_name, lab_logic,
+                      false, 0, false);
 
     // loop_____________________________________________________________
 
@@ -175,7 +183,13 @@ void Fib_box_struct::Construct(){
       fiber_logic = fiber_->GetLogicalVolume();
 
       y = i*radius_/2;
-      new G4PVPlacement(0,G4ThreeVector(x, y, z),fiber_logic,
+
+      G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
+      // G4double rot_angle_ = pi;
+      rot_angle_ = 0.;
+      fib_rot_->rotateY(rot_angle_);
+
+      new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
                               fiber_logic->GetName(),lab_logic,true,0,true);
 
       // SiPM
@@ -189,19 +203,19 @@ void Fib_box_struct::Construct(){
 
       G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
       // G4double rot_angle_ = pi;
-      G4double rot_angle_ = 0.;
+      rot_angle_ = 0.;
       sipm_rot_->rotateY(rot_angle_);
-      new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
-                        sipm_logic->GetName(),lab_logic,true,0,true);
+      // new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
+      //                   sipm_logic->GetName(),lab_logic,true,0,true);
 
 
       // Al disk
 
       G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
 
-      new G4PVPlacement(0, disk_pos,
-                        disk_logic_vol, disk_name, lab_logic,
-                        false, 0, false);
+      // new G4PVPlacement(0, disk_pos,
+      //                   disk_logic_vol, disk_name, lab_logic,
+      //                   false, 0, false);
 
     }
 
@@ -213,7 +227,7 @@ G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
     // return cyl_vertex_gen_->GenerateVertex(region);
 
     // // G4ThreeVector vertex(1.,1.,1.);
-    G4ThreeVector vertex(0., 0., 0.);
+    G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
 
     // WORLD
     if (region == "CENTER") {
