@@ -135,12 +135,12 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* disk_logic_vol =
       new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
 
-    G4OpticalSurface* opsur =
+    G4OpticalSurface* disk_opsur =
       new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
-      // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
-      opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+      // disk_opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
+      disk_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
-    new G4LogicalSkinSurface("Al_OPSURF", disk_logic_vol, opsur);
+    new G4LogicalSkinSurface("Al_OPSURF", disk_logic_vol, disk_opsur);
 
     // G4VisAttributes disk_col = nexus::LightBlue();
     G4VisAttributes disk_col = nexus::Blue();
@@ -171,6 +171,40 @@ void Fib_box_struct::Construct(){
                       box_logic_vol, box_name, lab_logic,
                       false, 0, false);
 
+    // Teflon panel_____________________________________________________
+
+    G4String panel_name = "Teflon panel";
+
+    G4double panel_thickness = .1 * mm;
+
+    G4Material* panel_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+    panel_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
+    G4Box* panel_solid_vol =
+      new G4Box(panel_name, box_xy_/2., box_xy_/2., panel_thickness/2.);
+
+    G4LogicalVolume* panel_logic_vol =
+      new G4LogicalVolume(panel_solid_vol, panel_mat, panel_name);
+    G4VisAttributes panel_col = nexus::White();
+    panel_logic_vol->SetVisAttributes(panel_col);
+
+    G4OpticalSurface* panel_opsur =
+      new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
+      // disk_opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
+      panel_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+    new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
+
+    G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
+    G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
+
+    G4RotationMatrix* panel_rot_ = new G4RotationMatrix();
+    // rot_angle_ = pi;
+    rot_angle_ = 0.;
+    panel_rot_->rotateY(rot_angle_);
+    new G4PVPlacement(G4Transform3D(*panel_rot_, panel_pos),
+                      panel_logic_vol, panel_name, lab_logic,
+                      false, 0, false);
+
     // loop_____________________________________________________________
 
     for (int i=0; i < n_fibers; i++){
@@ -182,7 +216,7 @@ void Fib_box_struct::Construct(){
       fiber_->Construct();
       fiber_logic = fiber_->GetLogicalVolume();
 
-      y = i*radius_;
+      y = i*radius_ - box_xy_/2;
       z = box_z_ + radius_/2;
 
       G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
