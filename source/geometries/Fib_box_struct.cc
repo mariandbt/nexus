@@ -299,7 +299,7 @@ G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
 
     // // G4ThreeVector vertex(1.,1.,1.);
     // G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
-    G4ThreeVector vertex(0., 0., side_thickness);
+    G4ThreeVector vertex(0., 0., side_thickness + 0.1*mm);
 
     // WORLD
     if (region == "CENTER") {
