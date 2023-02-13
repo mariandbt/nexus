@@ -226,7 +226,8 @@ void Fib_box_struct::Construct(){
     new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
 
     G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
-    G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
+    // G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
+    G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos + 1.*cm);
 
     G4RotationMatrix* panel_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
