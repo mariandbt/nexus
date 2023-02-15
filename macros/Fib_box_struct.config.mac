@@ -19,10 +19,10 @@
 /Generator/SingleParticle/region CENTER
 #/Generator/SingleParticle/region VOLUME
 
-/Generator/SingleParticle/min_energy 7 eV
-/Generator/SingleParticle/max_energy 7 eV
-#/Generator/SingleParticle/min_energy 3.54 eV
-#/Generator/SingleParticle/max_energy 3.54 eV
+#/Generator/SingleParticle/min_energy 7 eV
+#/Generator/SingleParticle/max_energy 7 eV
+/Generator/SingleParticle/min_energy 2.88 eV
+/Generator/SingleParticle/max_energy 2.88 eV
 
 /Generator/SingleParticle/min_costheta 0.98995 # costheta_min = box_z/sqrt((box_xy/2)² + box_z²)
 /Generator/SingleParticle/max_costheta 1.
