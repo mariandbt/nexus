@@ -10,7 +10,9 @@
 /Geometry/Fib_box_struct/radius 1. mm
 
 # sensor______________________________________________________
-/Geometry/Fib_box_struct/sensor_size 1. mm # if we want to put several SMALL sensors instead of 1 BIG sensor
+#/Geometry/Fib_box_struct/sensor_size 1. mm # if we want to put several SMALL sensors
+#/Geometry/Fib_box_struct/sensor_size 40. mm # if we want to put 1 BIG
+/Geometry/Fib_box_struct/sensor_size 70. mm # if we want to put 1 BIG
 /Geometry/Fib_box_struct/sensor_visibility true
 
 /Generator/SingleParticle/particle opticalphoton
