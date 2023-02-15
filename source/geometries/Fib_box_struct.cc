@@ -65,11 +65,11 @@ Fib_box_struct::Fib_box_struct():
     length_cmd.SetParameterName("length",false);
     length_cmd.SetRange("length>0.");
 
-    G4GenericMessenger::Command& sensor_size__cmd =
+    G4GenericMessenger::Command& sensor_size_cmd =
             msg_->DeclareProperty("sensor_size",sensor_size_,"Side length of squared fiber sensors");
-    length_cmd.SetUnitCategory("Length");
-    length_cmd.SetParameterName("sensor_size",false);
-    length_cmd.SetRange("sensor_size>0.");
+    sensor_size_cmd.SetUnitCategory("Length");
+    sensor_size_cmd.SetParameterName("sensor_size",false);
+    sensor_size_cmd.SetRange("sensor_size>0.");
 
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
                           "Sensors visibility");
