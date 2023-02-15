@@ -209,7 +209,8 @@ void Fib_box_struct::Construct(){
 
     // only 1 BIG photosensor
     // G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2.;
-    G4double sensor_x_pos = length_ + sensor_thickness_/2. - 1. * mm;
+    G4double sensor_x_pos = x + length_/2.;
+    // G4double sensor_x_pos = length_ + sensor_thickness_/2. - 1. * mm;
     // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
     G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
 
