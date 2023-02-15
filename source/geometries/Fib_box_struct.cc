@@ -44,7 +44,9 @@ Fib_box_struct::Fib_box_struct():
     length_(1.*cm),
     box_xy_(40.*mm),
     box_z_(14.*cm),
-    side_thickness (2. * mm),
+    side_thickness_ (2. * mm),
+    sensor_size_ (40. * mm),
+    sensor_thickness_ (2. * mm),
     sensor_visibility_ (true)
   {
     std::cout<<"HERE!"<<std::endl;
@@ -81,9 +83,6 @@ Fib_box_struct::Fib_box_struct():
 
     // sipm_ = new SiPM11_eff();
     // Build the sensor_________________________________________________
-    // G4double sensor_size_      = 1. * mm;   // Side length of squared fiber sensors
-    G4double sensor_size_      = box_xy_;   // Side length of squared fiber sensors
-    G4double sensor_thickness_ = 1. * mm;   // (Thickness set to a fix value of 1 mm)
     photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
                                             sensor_size_, sensor_thickness_);
 
@@ -116,8 +115,6 @@ void Fib_box_struct::Construct(){
     G4double y = 0.;
     G4double z = 0.;
     G4double rot_angle_;
-    G4double sensor_size_      = box_xy_;   // Side length of squared fiber sensors
-    G4double sensor_thickness_ = 1. * mm;   // (Thickness set to a fix value of 1 mm)
 
 
     // fibers______________________________________________________
@@ -200,7 +197,7 @@ void Fib_box_struct::Construct(){
     x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
     G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2;
     // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
-    G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, box_xy_/2., box_z_);
+    G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
 
     G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
     rot_angle_ = pi/2.;
@@ -249,11 +246,11 @@ void Fib_box_struct::Construct(){
       new G4Box(box_name, box_xy_/2., box_xy_/2., box_z_/2.);
 
     G4Box* box_inner_solid_vol =
-    // new G4Box(box_side_name, box_xy_/2., box_xy_/2., side_thickness/2.);
-    new G4Box(box_side_name, box_xy_/2. - side_thickness,
-      box_xy_/2. - side_thickness, box_z_/2. - side_thickness/2.);
+    // new G4Box(box_side_name, box_xy_/2., box_xy_/2., side_thickness_/2.);
+    new G4Box(box_side_name, box_xy_/2. - side_thickness_,
+      box_xy_/2. - side_thickness_, box_z_/2. - side_thickness_/2.);
 
-    G4ThreeVector inner_pos = G4ThreeVector(0., 0., side_thickness/2.);
+    G4ThreeVector inner_pos = G4ThreeVector(0., 0., side_thickness_/2.);
     G4RotationMatrix* inner_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
     rot_angle_ = 0.;
@@ -373,7 +370,7 @@ G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
 
     // // G4ThreeVector vertex(1.,1.,1.);
     // G4ThreeVector vertex(box_xy_/2, box_xy_/2, 0.);
-    G4ThreeVector vertex(0., 0., side_thickness);
+    G4ThreeVector vertex(0., 0., side_thickness_);
 
     // WORLD
     if (region == "CENTER") {
