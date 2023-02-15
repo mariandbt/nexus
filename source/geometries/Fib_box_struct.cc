@@ -46,7 +46,8 @@ Fib_box_struct::Fib_box_struct():
     box_z_(14.*cm),
     side_thickness_ (2. * mm),
     sensor_size_ (40. * mm),
-    sensor_thickness_ (2. * mm),
+    // sensor_thickness_ (2. * mm),
+    sensor_thickness_ (20. * mm),
     sensor_visibility_ (true)
   {
     std::cout<<"HERE!"<<std::endl;
