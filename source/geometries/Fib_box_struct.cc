@@ -201,17 +201,17 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // only 1 BIG photosensor
-    // x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
-    // G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2.;
-    // // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
-    // G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
-    //
-    // G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
-    // rot_angle_ = pi/2.;
-    // // rot_angle_ = 0.;
-    // sensor_rot_->rotateY(rot_angle_);
-    // new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
-    //                   photo_sensor_logic->GetName(),lab_logic,true,0,true);
+    x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
+    G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2.;
+    // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
+    G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
+
+    G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
+    rot_angle_ = pi/2.;
+    // rot_angle_ = 0.;
+    sensor_rot_->rotateY(rot_angle_);
+    new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
+                      photo_sensor_logic->GetName(),lab_logic,true,0,true);
 
 
 
@@ -345,17 +345,17 @@ void Fib_box_struct::Construct(){
       // // SiPM
       // sipm_->Construct();
       // sipm_logic = sipm_->GetLogicalVolume();
-
-      G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2;
-      // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
-      G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, y, z);
-
-      G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
-      rot_angle_ = pi/2.;
-      // rot_angle_ = 0.;
-      sensor_rot_->rotateY(rot_angle_);
-      new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
-                        photo_sensor_logic->GetName(),lab_logic,true,0,true);
+      //
+      // G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2;
+      // // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
+      // G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, y, z);
+      //
+      // G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
+      // rot_angle_ = pi/2.;
+      // // rot_angle_ = 0.;
+      // sensor_rot_->rotateY(rot_angle_);
+      // new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
+      //                   photo_sensor_logic->GetName(),lab_logic,true,0,true);
 
 
       // Al disk
