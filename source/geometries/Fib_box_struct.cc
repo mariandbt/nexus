@@ -45,7 +45,7 @@ Fib_box_struct::Fib_box_struct():
     box_xy_(40.*mm),
     box_z_(14.*cm),
     side_thickness_ (2. * mm),
-    sensor_size_ (40. * mm),
+    sensor_size_ (),
     sensor_thickness_ (2. * mm),
     sensor_visibility_ (true)
   {
