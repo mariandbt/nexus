@@ -23,11 +23,13 @@ namespace nexus
         // box
         G4double box_xy_;     // outer side of the box structure
         G4double box_z_;     // outer length of the box structure
-        G4double side_thickness; // thickness of the box
+        G4double side_thickness_; // thickness of the box
 
         // sensor
         // SiPM11_eff* sipm_;   // SiPM
         GenericPhotosensor* photo_sensor_;
+        G4double sensor_size_;   // Side length of squared fiber sensors
+        G4double sensor_thickness_;   // (Thickness set to a fix value of 1 mm)
         G4bool sensor_visibility_;
 
         G4GenericMessenger*   msg_;
