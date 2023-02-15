@@ -89,8 +89,9 @@ Fib_box_struct::Fib_box_struct():
 
     // sipm_ = new SiPM11_eff();
     // Build the sensor_________________________________________________
-    photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
-                                            sensor_size_, sensor_thickness_);
+    // std::cout<<"sensor_size = "<<sensor_size_<<std::endl;
+    // photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
+    //                                         sensor_size_, sensor_thickness_);
 
 }
 Fib_box_struct::~Fib_box_struct() {
@@ -137,7 +138,7 @@ void Fib_box_struct::Construct(){
 
     fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
     fiber_->SetCoreOpticalProperties(opticalprops::Y11());
-    fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
+    // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
     fiber_->Construct();
     fiber_logic = fiber_->GetLogicalVolume();
 
@@ -150,6 +151,10 @@ void Fib_box_struct::Construct(){
     // sipm_logic = sipm_->GetLogicalVolume();
 
     // Sensor______________________________________________________
+    // Build the sensor_________________________________________________
+    std::cout<<"sensor_size = "<<sensor_size_<<std::endl;
+    photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
+                                            sensor_size_, sensor_thickness_);
     /// Constructing the sensors
     // Optical Properties of the sensor
     G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
@@ -371,7 +376,6 @@ void Fib_box_struct::Construct(){
 
     }
 
-    std::cout<<"sensor_size = "<<sensor_size_<<std::endl;
 
 
 }
