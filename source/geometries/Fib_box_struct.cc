@@ -335,6 +335,7 @@ void Fib_box_struct::Construct(){
 
       // several SMALL photosensors
       // sensor
+      sensor_size_ = 1. * mm;
       // // SiPM
       // sipm_->Construct();
       // sipm_logic = sipm_->GetLogicalVolume();
