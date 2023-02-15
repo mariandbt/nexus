@@ -65,6 +65,12 @@ Fib_box_struct::Fib_box_struct():
     length_cmd.SetParameterName("length",false);
     length_cmd.SetRange("length>0.");
 
+    G4GenericMessenger::Command& sensor_size__cmd =
+            msg_->DeclareProperty("sensor_size",sensor_size_,"Side length of squared fiber sensors");
+    length_cmd.SetUnitCategory("Length");
+    length_cmd.SetParameterName("sensor_size",false);
+    length_cmd.SetRange("sensor_size>0.");
+
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
                           "Sensors visibility");
 
@@ -115,7 +121,6 @@ void Fib_box_struct::Construct(){
     G4double y = 0.;
     G4double z = 0.;
     G4double rot_angle_;
-    sensor_size_ = 1. * mm; // if we want to put several SMALL sensors instead of 1 BIG sensor
 
 
     // fibers______________________________________________________
@@ -142,7 +147,7 @@ void Fib_box_struct::Construct(){
     //
     // sipm_->Construct();
     // sipm_logic = sipm_->GetLogicalVolume();
-    
+
     // Sensor______________________________________________________
     /// Constructing the sensors
     // Optical Properties of the sensor
@@ -197,7 +202,7 @@ void Fib_box_struct::Construct(){
 
     // only 1 BIG photosensor
     // x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
-    // G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2;
+    // G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2.;
     // // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
     // G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
     //
@@ -341,7 +346,7 @@ void Fib_box_struct::Construct(){
       // sipm_->Construct();
       // sipm_logic = sipm_->GetLogicalVolume();
 
-      G4double sensor_x_pos = x + length_/2. + .45 * mm;
+      G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2;
       // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
       G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, y, z);
 
@@ -365,6 +370,9 @@ void Fib_box_struct::Construct(){
                         false, 0, false);
 
     }
+
+    std::cout<<"sensor_size = "<<sensor_size_<<std::endl;
+
 
 }
 G4ThreeVector Fib_box_struct::GenerateVertex(const G4String& region) const {
