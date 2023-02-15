@@ -4,10 +4,13 @@
 
 /process/em/verbose 0
 
+# fibers______________________________________________________
 #/Geometry/Fib_box_struct/length 1. m
 /Geometry/Fib_box_struct/length 25. cm
-
 /Geometry/Fib_box_struct/radius 1. mm
+
+# sensor______________________________________________________
+/Geometry/Fib_box_struct/sensor_size 1. mm # if we want to put several SMALL sensors instead of 1 BIG sensor
 /Geometry/Fib_box_struct/sensor_visibility true
 
 /Generator/SingleParticle/particle opticalphoton
