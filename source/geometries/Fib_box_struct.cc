@@ -117,8 +117,8 @@ void Fib_box_struct::Construct(){
 
     // general parameters______________________________________________________
 
-    // G4double x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
-    G4double x = 0.; // x position of the fibers
+    G4double x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
+    // G4double x = 0.; // x position of the fibers
     G4double y = 0.;
     G4double z = 0.;
     G4double rot_angle_;
