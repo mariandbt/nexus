@@ -8,7 +8,8 @@
 
 #include "Fib_box_struct.h"
 #include "GenericWLSFiber.h"
-#include "SiPM11_eff.h"
+#include "GenericPhotosensor.h"
+// #include "SiPM11_eff.h"
 
 #include "MaterialsList.h"
 #include "OpticalMaterialProperties.h"
@@ -43,7 +44,8 @@ Fib_box_struct::Fib_box_struct():
     length_(1.*cm),
     box_xy_(40.*mm),
     box_z_(14.*cm),
-    side_thickness (2. * mm)
+    side_thickness (2. * mm),
+    sensor_visibility_ (true)
   {
     std::cout<<"HERE!"<<std::endl;
     msg_=new G4GenericMessenger(this,"/Geometry/Fib_box_struct/",
@@ -61,6 +63,9 @@ Fib_box_struct::Fib_box_struct():
     length_cmd.SetParameterName("length",false);
     length_cmd.SetRange("length>0.");
 
+    msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
+                          "Sensors visibility");
+
     // G4GenericMessenger::Command& box_xy_cmd =
     //         msg_->DeclareProperty("box_xy",box_xy_,"Side of the fiber box structure");
     // radius_cmd.SetUnitCategory("Length");
@@ -74,7 +79,13 @@ Fib_box_struct::Fib_box_struct():
     // length_cmd.SetRange("box_z>0.");
 
 
-    sipm_ = new SiPM11_eff();
+    // sipm_ = new SiPM11_eff();
+    // Build the sensor_________________________________________________
+    // G4double sensor_size_      = 1. * mm;   // Side length of squared fiber sensors
+    G4double sensor_size_      = box_xy_;   // Side length of squared fiber sensors
+    G4double sensor_thickness_ = 1. * mm;   // (Thickness set to a fix value of 1 mm)
+    photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
+                                            sensor_size_, sensor_thickness_);
 
 }
 Fib_box_struct::~Fib_box_struct() {
@@ -99,14 +110,18 @@ void Fib_box_struct::Construct(){
     lab_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     this->SetLogicalVolume(lab_logic);
 
+    // general parameters______________________________________________________
+
     G4double x = 0.;
     G4double y = 0.;
     G4double z = 0.;
+    G4double rot_angle_;
+    G4double sensor_size_      = box_xy_;   // Side length of squared fiber sensors
+    G4double sensor_thickness_ = 1. * mm;   // (Thickness set to a fix value of 1 mm)
 
 
     // fibers______________________________________________________
 
-    // G4Material* ps = materials::PS();
     G4Material* ps = materials::Y11();
     G4Material* tpb = materials::TPB();
 
@@ -123,12 +138,77 @@ void Fib_box_struct::Construct(){
     fiber_logic = fiber_->GetLogicalVolume();
 
 
-    // SiPM______________________________________________________
+    // // SiPM______________________________________________________
+    //
+    // G4LogicalVolume* sipm_logic;
+    //
+    // sipm_->Construct();
+    // sipm_logic = sipm_->GetLogicalVolume();
+    // Sensor______________________________________________________
+    /// Constructing the sensors
+    // Optical Properties of the sensor
+    G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
 
-    G4LogicalVolume* sipm_logic;
+    const G4int entries = 4;
+    // perfect detector
+    G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+    G4double reflectivity[entries] = {0.      , 0.      , 0.      ,  0.     };
+    G4double efficiency[entries]   = {1.      , 1.      , 1.      ,  1.     };
 
-    sipm_->Construct();
-    sipm_logic = sipm_->GetLogicalVolume();
+    // // SiPM
+    // G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+    // G4double reflectivity[entries] = {0.      , 0.      , 0.      ,  0.     };
+    // G4double efficiency[entries]   = {1.      , 1.      , 1.      ,  1.     };
+    //
+    // // PMT
+    // G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+    // G4double reflectivity[entries] = {0.      , 0.      , 0.      ,  0.     };
+    // G4double efficiency[entries]   = {1.      , 1.      , 1.      ,  1.     };
+
+    // G4double efficiency_red[entries];
+    // for (G4int i=0; i<entries; ++i) {
+    //   efficiency_red[i] = efficiency[i]*.6;
+    // }
+
+    photosensor_mpt->AddProperty("REFLECTIVITY", energy, reflectivity, entries);
+    // photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency_red,   entries);
+    photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+    photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
+
+    // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
+    G4MaterialPropertyVector* fibers_rindex =
+      ps->GetMaterialPropertiesTable()->GetProperty("RINDEX");
+    photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
+
+    // Setting the time binning
+    // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
+
+    // Set mother depth & naming order
+    photo_sensor_ ->SetSensorDepth(1);
+    photo_sensor_ ->SetMotherDepth(2);
+    photo_sensor_ ->SetNamingOrder(1);
+
+    // Set visibilities
+    photo_sensor_ ->SetVisibility(sensor_visibility_);
+
+    // Construct
+    photo_sensor_ ->Construct();
+
+    G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
+
+    // only 1 BIG photosensor
+    x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
+    G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2;
+    // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
+    G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, box_xy_/2., box_z_);
+
+    G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
+    rot_angle_ = pi/2.;
+    // rot_angle_ = 0.;
+    sensor_rot_->rotateY(rot_angle_);
+    new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
+                      photo_sensor_logic->GetName(),lab_logic,true,0,true);
+
 
 
     // Al DISK____________________________________________________
@@ -176,7 +256,7 @@ void Fib_box_struct::Construct(){
     G4ThreeVector inner_pos = G4ThreeVector(0., 0., side_thickness/2.);
     G4RotationMatrix* inner_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
-    G4double rot_angle_ = 0.;
+    rot_angle_ = 0.;
     inner_rot_->rotateY(rot_angle_);
     G4SubtractionSolid* box_solid_vol =
       new G4SubtractionSolid("Box-Side", box_outer_solid_vol, box_inner_solid_vol,
@@ -256,21 +336,22 @@ void Fib_box_struct::Construct(){
       new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
                               fiber_logic->GetName(),lab_logic,true,0,true);
 
+      // several SMALL photosensors
+      // sensor
       // // SiPM
       // sipm_->Construct();
       // sipm_logic = sipm_->GetLogicalVolume();
 
-      // to avoid overlap among SiPMs intercalate them in X
-      G4double sipm_x_pos = x + length_/2. + .45 * mm;
-      // std::cout<<"sipm_x_pos = "<<sipm_x_pos<<std::endl;
-      G4ThreeVector sipm_pos = G4ThreeVector(sipm_x_pos, y, z);
-
-      G4RotationMatrix* sipm_rot_ = new G4RotationMatrix();
-      rot_angle_ = pi/2.;
-      // rot_angle_ = 0.;
-      sipm_rot_->rotateY(rot_angle_);
-      new G4PVPlacement(G4Transform3D(*sipm_rot_, sipm_pos), sipm_logic,
-                        sipm_logic->GetName(),lab_logic,true,0,true);
+      // G4double sensor_x_pos = x + length_/2. + .45 * mm;
+      // // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
+      // G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, y, z);
+      //
+      // G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
+      // rot_angle_ = pi/2.;
+      // // rot_angle_ = 0.;
+      // sensor_rot_->rotateY(rot_angle_);
+      // new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
+      //                   photo_sensor_logic->GetName(),lab_logic,true,0,true);
 
 
       // Al disk
