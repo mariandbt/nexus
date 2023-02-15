@@ -204,7 +204,8 @@ void GenericPhotosensor::Construct()
 
   // VISIBILITIES /////////////////////////////////////////////
   if (visibility_) {
-    window_logic_vol  ->SetVisAttributes(G4VisAttributes::GetInvisible());
+    // window_logic_vol  ->SetVisAttributes(G4VisAttributes::GetInvisible());
+    window_logic_vol  ->SetVisAttributes(nexus::DirtyWhite());
     G4VisAttributes red = Red();
     red.SetForceSolid(true);
     sensarea_logic_vol->SetVisAttributes(red);
