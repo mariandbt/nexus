@@ -117,7 +117,8 @@ void Fib_box_struct::Construct(){
 
     // general parameters______________________________________________________
 
-    G4double x = 0.;
+    // G4double x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
+    G4double x = 0.; // x position of the fibers
     G4double y = 0.;
     G4double z = 0.;
     G4double rot_angle_;
@@ -201,7 +202,6 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // only 1 BIG photosensor
-    x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
     G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2.;
     // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
     G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
