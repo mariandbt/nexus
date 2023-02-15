@@ -215,7 +215,7 @@ void Fib_box_struct::Construct(){
     G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
 
     G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
-    rot_angle_ = pi/2.;
+    rot_angle_ = -pi/2.;
     // rot_angle_ = 0.;
     sensor_rot_->rotateY(rot_angle_);
     new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
