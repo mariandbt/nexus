@@ -115,6 +115,7 @@ void Fib_box_struct::Construct(){
     G4double y = 0.;
     G4double z = 0.;
     G4double rot_angle_;
+    sensor_size_ = 1. * mm; // if we want to put several SMALL sensors instead of 1 BIG sensor
 
 
     // fibers______________________________________________________
@@ -141,6 +142,7 @@ void Fib_box_struct::Construct(){
     //
     // sipm_->Construct();
     // sipm_logic = sipm_->GetLogicalVolume();
+    
     // Sensor______________________________________________________
     /// Constructing the sensors
     // Optical Properties of the sensor
@@ -335,7 +337,6 @@ void Fib_box_struct::Construct(){
 
       // several SMALL photosensors
       // sensor
-      sensor_size_ = 1. * mm;
       // // SiPM
       // sipm_->Construct();
       // sipm_logic = sipm_->GetLogicalVolume();
