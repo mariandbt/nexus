@@ -5,7 +5,6 @@
 #include <G4MaterialPropertyVector.hh>
 #include "GenericWLSFiber.h"
 #include "GenericPhotosensor.h"
-// #include "SiPM11_eff.h"
 
 class G4Material;
 class G4GenericMessenger;
@@ -26,8 +25,8 @@ namespace nexus
         G4double side_thickness_; // thickness of the box
 
         // sensor
-        // SiPM11_eff* sipm_;   // SiPM
         GenericPhotosensor* photo_sensor_;
+        G4String sensor_type_; // SiPM, PMT, PERFECT, ...
         G4double sensor_size_;   // Side length of squared fiber sensors
         G4double sensor_thickness_;   // (Thickness set to a fix value of 1 mm)
         G4bool sensor_visibility_;
