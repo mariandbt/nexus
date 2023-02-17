@@ -13,7 +13,7 @@
 # sensor______________________________________________________
 #/Geometry/Fib_box_struct/sensor_type PERFECT
 /Geometry/Fib_box_struct/sensor_type SiPM
-/Geometry/Fib_box_struct/sensor_type PMT
+#/Geometry/Fib_box_struct/sensor_type PMT
 
 /Geometry/Fib_box_struct/sensor_size 40. mm
 #/Geometry/Fib_box_struct/sensor_size 70. mm
