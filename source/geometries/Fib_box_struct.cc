@@ -9,7 +9,6 @@
 #include "Fib_box_struct.h"
 #include "GenericWLSFiber.h"
 #include "GenericPhotosensor.h"
-// #include "SiPM11_eff.h"
 
 #include "MaterialsList.h"
 #include "OpticalMaterialProperties.h"
@@ -45,6 +44,7 @@ Fib_box_struct::Fib_box_struct():
     box_xy_(40.*mm),
     box_z_(14.*cm),
     side_thickness_ (2. * mm),
+    sensor_type_ ("PERFECT"),
     sensor_size_ (40. * mm),
     sensor_thickness_ (2. * mm),
     sensor_visibility_ (true)
@@ -74,6 +74,10 @@ Fib_box_struct::Fib_box_struct():
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
                           "Sensors visibility");
 
+    msg_->DeclareProperty("sensor_type", sensor_type_,
+                          "Sensors type");
+
+
     // G4GenericMessenger::Command& box_xy_cmd =
     //         msg_->DeclareProperty("box_xy",box_xy_,"Side of the fiber box structure");
     // radius_cmd.SetUnitCategory("Length");
@@ -86,18 +90,16 @@ Fib_box_struct::Fib_box_struct():
     // length_cmd.SetParameterName("box_z",false);
     // length_cmd.SetRange("box_z>0.");
 
-
-    // sipm_ = new SiPM11_eff();
-    // Build the sensor_________________________________________________
-    // std::cout<<"sensor_size = "<<sensor_size_<<std::endl;
-    // photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
-    //                                         sensor_size_, sensor_thickness_);
-
 }
 Fib_box_struct::~Fib_box_struct() {
     delete msg_;
 }
 void Fib_box_struct::Construct(){
+    // INTRO COUT___________________________________________________
+
+    std::cout<<"Selected sensor type = "<<sensor_type_<<std::endl;
+    std::cout<<"Sensor size = "<<sensor_size_<<std::endl;
+
     // LAB CREATION___________________________________________________
 
     // G4Box* lab_solid = new G4Box("LAB", 2 * mm,2 * mm,1.1*cm);
@@ -105,7 +107,6 @@ void Fib_box_struct::Construct(){
     G4double lab_xy_ = length_ * 2;
     G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
 
-    // cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_, length_/2, 0, 2 * pi);
 
     G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     air->SetMaterialPropertiesTable(opticalprops::Vacuum());
@@ -118,21 +119,21 @@ void Fib_box_struct::Construct(){
 
     // general parameters______________________________________________________
 
-    G4double x = length_/2 - box_xy_/2 - 1*mm; // x position of the fibers
+    G4double x = length_/2 - box_xy_/2 - 1*mm; // x-position of the fibers
     // G4double x = 0.; // x position of the fibers
     G4double y = 0.;
     G4double z = 0.;
     G4double rot_angle_;
 
 
-    // fibers______________________________________________________
+    // FIBERS______________________________________________________
 
     G4Material* ps = materials::Y11();
     G4Material* tpb = materials::TPB();
 
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
-    // the factor 2 it's because "radius_" actually stands for the fiber DIAMETER
+    // IMPORTANT: "radius_" actually stands for the fiber DIAMETER
     G4double n_fibers = 33;
     // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
 
@@ -143,16 +144,28 @@ void Fib_box_struct::Construct(){
     fiber_logic = fiber_->GetLogicalVolume();
 
 
-    // // SiPM______________________________________________________
-    //
-    // G4LogicalVolume* sipm_logic;
-    //
-    // sipm_->Construct();
-    // sipm_logic = sipm_->GetLogicalVolume();
+    // OPTICAL GEL____________________________________________________
 
-    // Sensor______________________________________________________
+    G4String opt_gel_name = "Optical gel";
+
+    G4Material* optical_coupler = materials::OpticalSilicone();
+    optical_coupler->SetMaterialPropertiesTable(opticalprops::OptCoupler());
+
+    G4double opt_gel_thickness = .1 * mm;
+
+    G4Tubs* opt_gel_solid_vol =
+      new G4Tubs(opt_gel_name, 0., radius_/2., opt_gel_thickness/2., 0., 360.*deg);
+
+    G4LogicalVolume* opt_gel_logic_vol =
+      new G4LogicalVolume(opt_gel_solid_vol, optical_coupler, opt_gel_name);
+
+    G4VisAttributes opt_gel_col = nexus::Lilla();
+    opt_gel_logic_vol->SetVisAttributes(opt_gel_col);
+    // opt_gel_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+
+    // SENSOR______________________________________________________
     // Build the sensor_________________________________________________
-    std::cout<<"sensor_size = "<<sensor_size_<<std::endl;
     photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
                                             sensor_size_, sensor_thickness_);
     /// Constructing the sensors
@@ -160,28 +173,50 @@ void Fib_box_struct::Construct(){
     G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
 
     const G4int entries = 4;
-    // perfect detector
-    G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
-    G4double reflectivity[entries] = {0.      , 0.      , 0.      ,  0.     };
-    G4double efficiency[entries]   = {1.      , 1.      , 1.      ,  1.     };
+    G4double energy[entries];
+    G4double reflectivity[entries];
+    G4double efficiency[entries];
 
-    // // SiPM
-    // G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
-    // G4double reflectivity[entries] = {0.      , 0.      , 0.      ,  0.     };
-    // G4double efficiency[entries]   = {1.      , 1.      , 1.      ,  1.     };
-    //
-    // // PMT
-    // G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
-    // G4double reflectivity[entries] = {0.      , 0.      , 0.      ,  0.     };
-    // G4double efficiency[entries]   = {1.      , 1.      , 1.      ,  1.     };
+    if (sensor_type_ == "PERFECT") {
+      // perfect detector
+      G4double energy_values[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,  0.     };
+      G4double efficiency_values[entries]   = {1.      , 1.      , 1.      ,  1.     };
 
-    // G4double efficiency_red[entries];
-    // for (G4int i=0; i<entries; ++i) {
-    //   efficiency_red[i] = efficiency[i]*.6;
-    // }
+      for (G4int n=0; n<entries; ++n) {
+        energy[n]       = energy_values[n];
+        reflectivity[n] = reflectivity_values[n];
+        efficiency[n]   = efficiency_values[n];
+      }
+    }
+
+    else if (sensor_type_ == "SiPM") {
+      // SiPM
+      G4double energy_values[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,  0.     };
+      G4double efficiency_values[entries]   = {1.      , 1.      , 1.      ,  1.     };
+
+      for (G4int n=0; n<entries; ++n) {
+        energy[n]       = energy_values[n];
+        reflectivity[n] = reflectivity_values[n];
+        efficiency[n]   = efficiency_values[n];
+      }
+    }
+
+    else if (sensor_type_ == "PMT") {
+      // PMT
+      G4double energy_values[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,  0.     };
+      G4double efficiency_values[entries]   = {1.      , 1.      , 1.      ,  1.     };
+
+      for (G4int n=0; n<entries; ++n) {
+        energy[n]       = energy_values[n];
+        reflectivity[n] = reflectivity_values[n];
+        efficiency[n]   = efficiency_values[n];
+      }
+    }
 
     photosensor_mpt->AddProperty("REFLECTIVITY", energy, reflectivity, entries);
-    // photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency_red,   entries);
     photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
     photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
 
@@ -206,11 +241,42 @@ void Fib_box_struct::Construct(){
 
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
-    // only 1 BIG photosensor
-    G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2.;
-    // G4double sensor_x_pos = x + length_/2.;
-    // G4double sensor_x_pos = length_ + sensor_thickness_/2. - 1. * mm;
-    // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
+    // Sensor placement
+    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness/2. + sensor_thickness_/2.;
+
+    if (sensor_type_ == "SiPM") {
+
+      // Metacrilate window
+      G4String window_name = "Metacrilate window";
+
+      G4double window_thickness = 1.5 * mm;
+
+      G4Material* window_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
+      window_mat->SetMaterialPropertiesTable(opticalprops::GlassEpoxy());
+
+      G4Box* window_solid_vol =
+        new G4Box(window_name, box_xy_/2., box_xy_/2., window_thickness/2.);
+
+      G4LogicalVolume* window_logic_vol =
+        new G4LogicalVolume(window_solid_vol, window_mat, window_name);
+      G4VisAttributes window_col = nexus::LightBlue();
+      window_logic_vol->SetVisAttributes(window_col);
+
+      G4double window_x_pos = x + length_/2. + opt_gel_thickness/2. + window_thickness/2.;
+      G4ThreeVector window_pos = G4ThreeVector(window_x_pos, 0., box_z_);
+
+      G4RotationMatrix* window_rot_ = new G4RotationMatrix();
+      rot_angle_ = pi/2.;
+      // rot_angle_ = 0.;
+      window_rot_->rotateY(rot_angle_);
+      new G4PVPlacement(G4Transform3D(*window_rot_, window_pos),
+                        window_logic_vol, window_name, lab_logic,
+                        false, 0, false);
+
+      sensor_x_pos = sensor_x_pos + window_thickness + 1.5 * mm;
+
+    }
+
     G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
 
     G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
@@ -221,14 +287,12 @@ void Fib_box_struct::Construct(){
                       photo_sensor_logic->GetName(),lab_logic,true,0,true);
 
 
-
     // Al DISK____________________________________________________
 
-    G4String disk_name = "Al DISK";
+    G4String disk_name = "Al disk";
 
     G4Material* disk_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
     disk_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
-
 
     G4double disk_thickness = .1 * mm;
 
@@ -251,17 +315,17 @@ void Fib_box_struct::Construct(){
     // disk_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
 
-    // Black box_____________________________________________________
+    // BLACK BOX_____________________________________________________
 
     G4String box_name = "Black box";
-    G4String box_side_name = "Black box side";
+    G4String box_inner_name = "inner Black box";
 
     G4Box* box_outer_solid_vol =
       new G4Box(box_name, box_xy_/2., box_xy_/2., box_z_/2.);
 
     G4Box* box_inner_solid_vol =
     // new G4Box(box_side_name, box_xy_/2., box_xy_/2., side_thickness_/2.);
-    new G4Box(box_side_name, box_xy_/2. - side_thickness_,
+    new G4Box(box_inner_name, box_xy_/2. - side_thickness_,
       box_xy_/2. - side_thickness_, box_z_/2. - side_thickness_/2.);
 
     G4ThreeVector inner_pos = G4ThreeVector(0., 0., side_thickness_/2.);
@@ -293,7 +357,7 @@ void Fib_box_struct::Construct(){
                       box_logic_vol, box_name, lab_logic,
                       false, 0, false);
 
-    // Teflon panel_____________________________________________________
+    // TEFLON PANEL_____________________________________________________
 
     G4String panel_name = "Teflon panel";
 
@@ -310,15 +374,13 @@ void Fib_box_struct::Construct(){
     G4VisAttributes panel_col = nexus::White();
     panel_logic_vol->SetVisAttributes(panel_col);
 
-    G4OpticalSurface* panel_opsur =
-      new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
-      // disk_opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
-      panel_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
-    new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
+    // G4OpticalSurface* panel_opsur =
+    //   new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
+    //   panel_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
+    // new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
 
     G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
     G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
-    // G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos + 1.*cm);
 
     G4RotationMatrix* panel_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
@@ -347,22 +409,17 @@ void Fib_box_struct::Construct(){
       new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
                               fiber_logic->GetName(),lab_logic,true,0,true);
 
-      // several SMALL photosensors
-      // sensor
-      // // SiPM
-      // sipm_->Construct();
-      // sipm_logic = sipm_->GetLogicalVolume();
-      //
-      // G4double sensor_x_pos = x + length_/2. + sensor_thickness_/2;
-      // // std::cout<<"sensor_x_pos = "<<sensor_x_pos<<std::endl;
-      // G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, y, z);
-      //
-      // G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
-      // rot_angle_ = pi/2.;
-      // // rot_angle_ = 0.;
-      // sensor_rot_->rotateY(rot_angle_);
-      // new G4PVPlacement(G4Transform3D(*sensor_rot_, sensor_pos), photo_sensor_logic,
-      //                   photo_sensor_logic->GetName(),lab_logic,true,0,true);
+
+      // Optical gel
+
+      G4ThreeVector opt_gel_pos = G4ThreeVector(x + length_/2 + opt_gel_thickness/2., y, z);
+      G4RotationMatrix* opt_gel_rot_ = new G4RotationMatrix();
+      rot_angle_ = pi/2.;
+      // rot_angle_ = 0.;
+      opt_gel_rot_->rotateY(rot_angle_);
+      new G4PVPlacement(G4Transform3D(*opt_gel_rot_, opt_gel_pos),
+                        opt_gel_logic_vol, opt_gel_name, lab_logic,
+                        false, 0, false);
 
 
       // Al disk
