@@ -7,13 +7,20 @@
 # fibers______________________________________________________
 #/Geometry/Fib_box_struct/length 1. m
 /Geometry/Fib_box_struct/length 25. cm
+
 /Geometry/Fib_box_struct/radius 1. mm
 
 # sensor______________________________________________________
-#/Geometry/Fib_box_struct/sensor_size 1. mm # if we want to put several SMALL sensors
-#/Geometry/Fib_box_struct/sensor_size 40. mm # if we want to put 1 BIG
-/Geometry/Fib_box_struct/sensor_size 70. mm # if we want to put 1 BIG
+#/Geometry/Fib_box_struct/sensor_type PERFECT
+/Geometry/Fib_box_struct/sensor_type SiPM
+/Geometry/Fib_box_struct/sensor_type PMT
+
+/Geometry/Fib_box_struct/sensor_size 40. mm
+#/Geometry/Fib_box_struct/sensor_size 70. mm
+
 /Geometry/Fib_box_struct/sensor_visibility true
+
+
 
 /Generator/SingleParticle/particle opticalphoton
 /Generator/SingleParticle/region CENTER
