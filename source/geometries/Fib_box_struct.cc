@@ -77,28 +77,17 @@ Fib_box_struct::Fib_box_struct():
     msg_->DeclareProperty("sensor_type", sensor_type_,
                           "Sensors type");
 
-
-    // G4GenericMessenger::Command& box_xy_cmd =
-    //         msg_->DeclareProperty("box_xy",box_xy_,"Side of the fiber box structure");
-    // radius_cmd.SetUnitCategory("Length");
-    // radius_cmd.SetParameterName("box_xy",false);
-    // radius_cmd.SetRange("box_xy>0.");
-    //
-    // G4GenericMessenger::Command& box_z_cmd =
-    //         msg_->DeclareProperty("box_z",box_z_,"Length of the fiber box structure");
-    // length_cmd.SetUnitCategory("Length");
-    // length_cmd.SetParameterName("box_z",false);
-    // length_cmd.SetRange("box_z>0.");
-
 }
 Fib_box_struct::~Fib_box_struct() {
     delete msg_;
 }
 void Fib_box_struct::Construct(){
+
     // INTRO COUT___________________________________________________
 
     std::cout<<"Selected sensor type = "<<sensor_type_<<std::endl;
     std::cout<<"Sensor size = "<<sensor_size_<<std::endl;
+
 
     // LAB CREATION___________________________________________________
 
@@ -106,7 +95,6 @@ void Fib_box_struct::Construct(){
     G4double lab_z_ = box_z_ * 2;
     G4double lab_xy_ = length_ * 2;
     G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
-
 
     G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     air->SetMaterialPropertiesTable(opticalprops::Vacuum());
@@ -117,7 +105,8 @@ void Fib_box_struct::Construct(){
     lab_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     this->SetLogicalVolume(lab_logic);
 
-    // general parameters______________________________________________________
+
+    // GENERAL PARAMETERS______________________________________________________
 
     G4double x = length_/2 - box_xy_/2 - 1*mm; // x-position of the fibers
     // G4double x = 0.; // x position of the fibers
@@ -165,7 +154,8 @@ void Fib_box_struct::Construct(){
 
 
     // SENSOR______________________________________________________
-    // Build the sensor_________________________________________________
+
+    /// Build the sensor
     photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
                                             sensor_size_, sensor_thickness_);
     /// Constructing the sensors
@@ -247,6 +237,7 @@ void Fib_box_struct::Construct(){
     if (sensor_type_ == "SiPM") {
 
       // Metacrilate window
+
       G4String window_name = "Metacrilate window";
 
       G4double window_thickness = 1.5 * mm;
@@ -272,6 +263,7 @@ void Fib_box_struct::Construct(){
       new G4PVPlacement(G4Transform3D(*window_rot_, window_pos),
                         window_logic_vol, window_name, lab_logic,
                         false, 0, false);
+
 
       sensor_x_pos = sensor_x_pos + window_thickness + 1.5 * mm;
 
@@ -390,7 +382,7 @@ void Fib_box_struct::Construct(){
                       panel_logic_vol, panel_name, lab_logic,
                       false, 0, false);
 
-    // loop_____________________________________________________________
+    // LOOP_____________________________________________________________
 
     for (int i=0; i < n_fibers; i++){
 
