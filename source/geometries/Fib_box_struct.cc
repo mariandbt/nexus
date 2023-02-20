@@ -393,10 +393,10 @@ void Fib_box_struct::Construct(){
     G4VisAttributes panel_col = nexus::White();
     panel_logic_vol->SetVisAttributes(panel_col);
 
-    // G4OpticalSurface* panel_opsur =
-    //   new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
-    //   panel_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
-    // new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
+    G4OpticalSurface* panel_opsur =
+      new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
+      panel_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
+    new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
 
     G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
     G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
