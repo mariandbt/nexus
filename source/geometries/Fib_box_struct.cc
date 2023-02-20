@@ -162,16 +162,22 @@ void Fib_box_struct::Construct(){
     // Optical Properties of the sensor
     G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
 
-    const G4int entries = 4;
+    const G4int entries = 9;
     G4double energy[entries];
     G4double reflectivity[entries];
     G4double efficiency[entries];
 
     if (sensor_type_ == "PERFECT") {
       // perfect detector
-      G4double energy_values[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
-      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,  0.     };
-      G4double efficiency_values[entries]   = {1.      , 1.      , 1.      ,  1.     };
+      G4double energy_values[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV,
+                                               4.2 * eV, 5.5 * eV, 7.6 * eV,
+                                               8.2 * eV, 9.5 * eV, 11.5 * eV};
+      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,
+                                               0.      , 0.      , 0.      ,
+                                               0.      , 0.      , 0.      };
+      G4double efficiency_values[entries]   = {1.      , 1.      , 1.      ,
+                                               1.      , 1.      , 1.      ,
+                                               1.      , 1.      , 1.      };
 
       for (G4int n=0; n<entries; ++n) {
         energy[n]       = energy_values[n];
@@ -182,9 +188,20 @@ void Fib_box_struct::Construct(){
 
     else if (sensor_type_ == "SiPM") {
       // SiPM
-      G4double energy_values[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
-      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,  0.     };
-      G4double efficiency_values[entries]   = {1.      , 1.      , 1.      ,  1.     };
+      G4double energy_values[entries]       = {
+        h_Planck * c_light / (815.514 * nm), h_Planck * c_light / (725.221 * nm),
+        h_Planck * c_light / (626.346 * nm), h_Planck * c_light / (545.181 * nm),
+        h_Planck * c_light / (457.196 * nm), h_Planck * c_light / (392.546 * nm),
+        h_Planck * c_light / (369.434 * nm), h_Planck * c_light / (343.040 * nm),
+        h_Planck * c_light / (328.480 * nm)
+      };
+      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,
+                                               0.      , 0.      , 0.      ,
+                                               0.      , 0.      , 0.      };
+      G4double efficiency_values[entries]   = {.09049, .16291, .28700, .41550,
+                                               .49751, .43264, .34189, .20612,
+                                               .06887
+                                              };
 
       for (G4int n=0; n<entries; ++n) {
         energy[n]       = energy_values[n];
@@ -195,9 +212,19 @@ void Fib_box_struct::Construct(){
 
     else if (sensor_type_ == "PMT") {
       // PMT
-      G4double energy_values[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
-      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,  0.     };
-      G4double efficiency_values[entries]   = {1.      , 1.      , 1.      ,  1.     };
+      G4double energy_values[entries]       = {
+        h_Planck * c_light / (903.715 * nm), h_Planck * c_light / (895.975 * nm),
+        h_Planck * c_light / (866.563 * nm), h_Planck * c_light / (826.316 * nm),
+        h_Planck * c_light / (628.173 * nm), h_Planck * c_light / (490.402 * nm),
+        h_Planck * c_light / (389.783 * nm), h_Planck * c_light / (330.96 * nm),
+        h_Planck * c_light / (296.904 * nm)
+      };
+      G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,
+                                               0.      , 0.      , 0.      ,
+                                               0.      , 0.      , 0.      };
+      G4double efficiency_values[entries]   = {0.00041, 0.00107, 0.01248, 0.06181,
+                                               0.12887, 0.19246, 0.09477, 0.06040,
+                                               0.00826};
 
       for (G4int n=0; n<entries; ++n) {
         energy[n]       = energy_values[n];
