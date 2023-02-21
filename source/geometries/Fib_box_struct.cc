@@ -123,10 +123,12 @@ void Fib_box_struct::Construct(){
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
     // IMPORTANT: "radius_" actually stands for the fiber DIAMETER
-    G4double n_fibers = 33;
+    // G4double n_fibers = 33;
+    G4double n_fibers = 36;
     // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
 
-    fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
+    // fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
+    fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, false, tpb, ps, true);
     fiber_->SetCoreOpticalProperties(opticalprops::Y11());
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
     fiber_->Construct();
@@ -147,6 +149,12 @@ void Fib_box_struct::Construct(){
 
     G4LogicalVolume* opt_gel_logic_vol =
       new G4LogicalVolume(opt_gel_solid_vol, optical_coupler, opt_gel_name);
+
+    G4OpticalSurface* opt_gel_opsur =
+      new G4OpticalSurface("opt_gel_OPSURF", unified, polished, dielectric_dielectric);
+      opt_gel_opsur->SetMaterialPropertiesTable(opticalprops::OptCoupler());
+
+    new G4LogicalSkinSurface("opt_gel_OPSURF", opt_gel_logic_vol, opt_gel_opsur);
 
     G4VisAttributes opt_gel_col = nexus::Lilla();
     opt_gel_logic_vol->SetVisAttributes(opt_gel_col);
@@ -238,9 +246,13 @@ void Fib_box_struct::Construct(){
     photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
 
     // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
-    G4MaterialPropertyVector* fibers_rindex =
-      ps->GetMaterialPropertiesTable()->GetProperty("RINDEX");
-    photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
+    // G4MaterialPropertyVector* fibers_rindex =
+    //   ps->GetMaterialPropertiesTable()->GetProperty("RINDEX");
+    G4MaterialPropertyVector* gel_rindex =
+      optical_coupler->GetMaterialPropertiesTable()->GetProperty("RINDEX");
+
+    // photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
+    photo_sensor_ ->SetWindowRefractiveIndex(gel_rindex);
 
     // Setting the time binning
     // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
@@ -259,7 +271,7 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // Sensor placement
-    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness/2. + sensor_thickness_/2.;
+    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness/2. + sensor_thickness_/2. + 1. *mm;
 
     if (sensor_type_ == "SiPM") {
 
@@ -270,7 +282,7 @@ void Fib_box_struct::Construct(){
       G4double window_thickness = 1.5 * mm;
 
       G4Material* window_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
-      window_mat->SetMaterialPropertiesTable(opticalprops::GlassEpoxy());
+      window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
 
       G4Box* window_solid_vol =
         new G4Box(window_name, box_xy_/2., box_xy_/2., window_thickness/2.);
@@ -280,7 +292,12 @@ void Fib_box_struct::Construct(){
       G4VisAttributes window_col = nexus::LightBlue();
       window_logic_vol->SetVisAttributes(window_col);
 
-      G4double window_x_pos = x + length_/2. + opt_gel_thickness/2. + window_thickness/2.;
+      G4OpticalSurface* window_opsur =
+        new G4OpticalSurface("window_OPSURF", unified, polished, dielectric_dielectric);
+        window_opsur->SetMaterialPropertiesTable(opticalprops::PMMA());
+      new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
+
+      G4double window_x_pos = x + length_/2. + opt_gel_thickness/2. + window_thickness/2. + 1. * mm;
       G4ThreeVector window_pos = G4ThreeVector(window_x_pos, 0., box_z_);
 
       G4RotationMatrix* window_rot_ = new G4RotationMatrix();
@@ -292,7 +309,7 @@ void Fib_box_struct::Construct(){
                         false, 0, false);
 
 
-      sensor_x_pos = sensor_x_pos + window_thickness + 1.5 * mm;
+      sensor_x_pos = sensor_x_pos + window_thickness + 1. * mm;
 
     }
 
@@ -394,9 +411,9 @@ void Fib_box_struct::Construct(){
     panel_logic_vol->SetVisAttributes(panel_col);
 
     G4OpticalSurface* panel_opsur =
-      new G4OpticalSurface("Al_OPSURF", unified, polished, dielectric_metal);
+      new G4OpticalSurface("panel_OPSURF", unified, polished, dielectric_metal);
       panel_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
-    new G4LogicalSkinSurface("Al_OPSURF", panel_logic_vol, panel_opsur);
+    new G4LogicalSkinSurface("panel_OPSURF", panel_logic_vol, panel_opsur);
 
     G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
     G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
