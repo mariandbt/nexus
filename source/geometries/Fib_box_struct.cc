@@ -204,18 +204,20 @@ void Fib_box_struct::Construct(){
     else if (sensor_type_ == "SiPM") {
       // SiPM
       G4double energy_values[entries]       = {
-        h_Planck * c_light / (815.514 * nm), h_Planck * c_light / (725.221 * nm),
-        h_Planck * c_light / (626.346 * nm), h_Planck * c_light / (545.181 * nm),
-        h_Planck * c_light / (457.196 * nm), h_Planck * c_light / (392.546 * nm),
-        h_Planck * c_light / (369.434 * nm), h_Planck * c_light / (343.040 * nm),
-        h_Planck * c_light / (328.480 * nm)
+        h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
+        h_Planck * c_light / (590.43 * nm), h_Planck * c_light / (544.78 * nm),
+        h_Planck * c_light / (499.57 * nm), h_Planck * c_light / (435.22 * nm),
+        h_Planck * c_light / (409.57 * nm), h_Planck * c_light / (389.57 * nm),
+        h_Planck * c_light / (364.78 * nm)
       };
       G4double reflectivity_values[entries] = {0.      , 0.      , 0.      ,
                                                0.      , 0.      , 0.      ,
                                                0.      , 0.      , 0.      };
-      G4double efficiency_values[entries]   = {.09049, .16291, .28700, .41550,
-                                               .49751, .43264, .34189, .20612,
-                                               .06887
+      G4double efficiency_values[entries]   = {.2137, .2743,
+                                               .3189, .3634,
+                                               .4434, .5440,
+                                               .5829, .5657,
+                                               .4743
                                               };
 
       for (G4int n=0; n<entries; ++n) {
