@@ -27,7 +27,8 @@ namespace nexus
         // sensor
         GenericPhotosensor* photo_sensor_;
         G4String sensor_type_; // SiPM, PMT, PERFECT, ...
-        G4double sensor_size_;   // Side length of squared fiber sensors
+        G4double sensor_width_;   // Width of rectangular fiber sensors
+        G4double sensor_height_;   // Height of rectangular fiber sensors
         G4double sensor_thickness_;   // (Thickness set to a fix value of 1 mm)
         G4bool sensor_visibility_;
 

@@ -45,7 +45,8 @@ Fib_box_struct::Fib_box_struct():
     box_z_(14.*cm),
     side_thickness_ (2. * mm),
     sensor_type_ ("PERFECT"),
-    sensor_size_ (40. * mm),
+    sensor_width_ (3. * mm),
+    sensor_height_ (40. * mm),
     sensor_thickness_ (2. * mm),
     sensor_visibility_ (true)
   {
@@ -65,11 +66,17 @@ Fib_box_struct::Fib_box_struct():
     length_cmd.SetParameterName("length",false);
     length_cmd.SetRange("length>0.");
 
-    G4GenericMessenger::Command& sensor_size_cmd =
-            msg_->DeclareProperty("sensor_size",sensor_size_,"Side length of squared fiber sensors");
-    sensor_size_cmd.SetUnitCategory("Length");
-    sensor_size_cmd.SetParameterName("sensor_size",false);
-    sensor_size_cmd.SetRange("sensor_size>0.");
+    G4GenericMessenger::Command& sensor_width_cmd =
+            msg_->DeclareProperty("sensor_width",sensor_width_,"Width of rectangular fiber sensors");
+    sensor_width_cmd.SetUnitCategory("Length");
+    sensor_width_cmd.SetParameterName("sensor_width",false);
+    sensor_width_cmd.SetRange("sensor_width>0.");
+
+    G4GenericMessenger::Command& sensor_height_cmd =
+            msg_->DeclareProperty("sensor_height",sensor_height_,"Height of rectangular fiber sensors");
+    sensor_height_cmd.SetUnitCategory("Length");
+    sensor_height_cmd.SetParameterName("sensor_height",false);
+    sensor_height_cmd.SetRange("sensor_height>0.");
 
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
                           "Sensors visibility");
@@ -86,7 +93,7 @@ void Fib_box_struct::Construct(){
     // INTRO COUT___________________________________________________
 
     std::cout<<"Selected sensor type = "<<sensor_type_<<std::endl;
-    std::cout<<"Sensor size = "<<sensor_size_<<std::endl;
+    std::cout<<"Sensor size = "<<sensor_width_<<"x"<<sensor_height_<<std::endl;
 
 
     // LAB CREATION___________________________________________________
@@ -164,8 +171,8 @@ void Fib_box_struct::Construct(){
     // SENSOR______________________________________________________
 
     /// Build the sensor
-    photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_size_,
-                                            sensor_size_, sensor_thickness_);
+    photo_sensor_  = new GenericPhotosensor("F_SENSOR", sensor_width_,
+                                            sensor_height_, sensor_thickness_);
     /// Constructing the sensors
     // Optical Properties of the sensor
     G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
