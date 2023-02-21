@@ -39,7 +39,7 @@ REGISTER_CLASS(Fib_box_struct,GeometryBase)
 
 Fib_box_struct::Fib_box_struct():
     GeometryBase(),
-    radius_(1.*mm),
+    diameter_(1.*mm),
     length_(1.*cm),
     box_xy_(40.*mm),
     box_z_(14.*cm),
@@ -54,11 +54,11 @@ Fib_box_struct::Fib_box_struct():
     msg_=new G4GenericMessenger(this,"/Geometry/Fib_box_struct/",
         "Control commands of geometry Fiber box structure.");
 
-    G4GenericMessenger::Command& radius_cmd =
-            msg_->DeclareProperty("radius",radius_,"Radius of the cylindrical optical fibre");
-    radius_cmd.SetUnitCategory("Length");
-    radius_cmd.SetParameterName("radius",false);
-    radius_cmd.SetRange("radius>0.");
+    G4GenericMessenger::Command& diameter_cmd =
+            msg_->DeclareProperty("diameter",diameter_,"Diameter of the cylindrical optical fibre");
+    diameter_cmd.SetUnitCategory("Length");
+    diameter_cmd.SetParameterName("diameter",false);
+    diameter_cmd.SetRange("diameter>0.");
 
     G4GenericMessenger::Command& length_cmd =
             msg_->DeclareProperty("length",length_,"Length of the cylindrical optical fibre");
@@ -129,13 +129,13 @@ void Fib_box_struct::Construct(){
 
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
-    // IMPORTANT: "radius_" actually stands for the fiber DIAMETER
+    // IMPORTANT: "diameter_" actually stands for the fiber DIAMETER
     // G4double n_fibers = 33;
     G4double n_fibers = 36;
     // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
 
-    // fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true);
-    fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, false, tpb, ps, true);
+    // fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, true, tpb, ps, true);
+    fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, false, tpb, ps, true);
     fiber_->SetCoreOpticalProperties(opticalprops::Y11());
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
     fiber_->Construct();
@@ -152,7 +152,7 @@ void Fib_box_struct::Construct(){
     G4double opt_gel_thickness = .1 * mm;
 
     G4Tubs* opt_gel_solid_vol =
-      new G4Tubs(opt_gel_name, 0., radius_/2., opt_gel_thickness/2., 0., 360.*deg);
+      new G4Tubs(opt_gel_name, 0., diameter_/2., opt_gel_thickness/2., 0., 360.*deg);
 
     G4LogicalVolume* opt_gel_logic_vol =
       new G4LogicalVolume(opt_gel_solid_vol, optical_coupler, opt_gel_name);
@@ -342,7 +342,7 @@ void Fib_box_struct::Construct(){
     G4double disk_thickness = .1 * mm;
 
     G4Tubs* disk_solid_vol =
-      new G4Tubs(disk_name, 0., radius_/2., disk_thickness/2., 0., 360.*deg);
+      new G4Tubs(disk_name, 0., diameter_/2., disk_thickness/2., 0., 360.*deg);
 
     G4LogicalVolume* disk_logic_vol =
       new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
@@ -424,7 +424,7 @@ void Fib_box_struct::Construct(){
       panel_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
     new G4LogicalSkinSurface("panel_OPSURF", panel_logic_vol, panel_opsur);
 
-    G4double panel_z_pos = box_z_ + radius_ + panel_thickness/2.;
+    G4double panel_z_pos = box_z_ + diameter_ + panel_thickness/2.;
     G4ThreeVector panel_pos = G4ThreeVector(0., 0., panel_z_pos);
 
     G4RotationMatrix* panel_rot_ = new G4RotationMatrix();
@@ -442,9 +442,9 @@ void Fib_box_struct::Construct(){
       // fiber
 
       x = length_/2 - box_xy_/2 - 1*mm;
-      // y = i*radius_ - box_xy_/2;
-      y = (box_xy_/n_fibers)*i - box_xy_/2 + radius_/2.;
-      z = box_z_ + radius_/2;
+      // y = i*diameter_ - box_xy_/2;
+      y = (box_xy_/n_fibers)*i - box_xy_/2 + diameter_/2.;
+      z = box_z_ + diameter_/2;
 
       G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
       rot_angle_ = pi/2.;

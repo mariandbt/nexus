@@ -16,7 +16,7 @@ namespace nexus
     {
         private:
         // fiber
-        G4double radius_;     // radius of the cylindrical optical fibre
+        G4double diameter_;     // diameter of the cylindrical optical fibre
         G4double length_;     // length of the cylindrical optical fibre
 
         // box
