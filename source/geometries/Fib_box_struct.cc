@@ -124,7 +124,8 @@ void Fib_box_struct::Construct(){
 
     // FIBERS______________________________________________________
 
-    G4Material* ps = materials::Y11();
+    // G4Material* ps = materials::Y11();
+    G4Material* ps = materials::B2();
     G4Material* tpb = materials::TPB();
 
     GenericWLSFiber* fiber_;
@@ -135,8 +136,10 @@ void Fib_box_struct::Construct(){
     // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
 
     // fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, true, tpb, ps, true);
-    fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, false, tpb, ps, true);
-    fiber_->SetCoreOpticalProperties(opticalprops::Y11());
+    // fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, false, tpb, ps, true);
+    fiber_ = new GenericWLSFiber("B2", true, diameter_, length_, true, false, tpb, ps, true);
+    // fiber_->SetCoreOpticalProperties(opticalprops::Y11());
+    fiber_->SetCoreOpticalProperties(opticalprops::B2());
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
     fiber_->Construct();
     fiber_logic = fiber_->GetLogicalVolume();
@@ -228,7 +231,7 @@ void Fib_box_struct::Construct(){
     }
 
 
-    G4double MinE_MaxE[] = {0.2, 11.5};
+    G4double MinE_MaxE[] = {0.2 * eV, 11.5 * eV};
     G4double reflectivity[] = {0., 0.};
     photosensor_mpt->AddProperty("REFLECTIVITY", MinE_MaxE, reflectivity, 2);
 
@@ -260,7 +263,8 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // Sensor placement
-    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness/2. + sensor_thickness_/2. + 1. *mm;
+    // G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + 1. *mm;
+    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2.;
 
     if (sensor_type_ == "SiPM") {
 
