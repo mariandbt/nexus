@@ -124,8 +124,8 @@ void Fib_box_struct::Construct(){
 
     // FIBERS______________________________________________________
 
-    G4Material* ps = materials::Y11();
-    // G4Material* ps = materials::B2();
+    G4Material* ps = materials::Y11(); std::cout<<"Y11 fibers"<<std::endl;
+    // G4Material* ps = materials::B2(); std::cout<<"B2 fibers"<<std::endl;
     G4Material* tpb = materials::TPB();
 
     GenericWLSFiber* fiber_;
@@ -287,8 +287,9 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // Sensor placement
-    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + .5 *mm;
-    // G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2.;
+    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2.;
+    // G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + .5 *mm;
+    // G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + 1. *mm;
 
     if (sensor_type_ == "SiPM_FBK") {
 
