@@ -189,6 +189,23 @@ void Fib_box_struct::Construct(){
       photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
     }
 
+    else if (sensor_type_ == "PMT") {
+      // PMT
+      G4int entries = 9;
+      G4double energy[entries]       = {
+        h_Planck * c_light / (903.715 * nm), h_Planck * c_light / (895.975 * nm),
+        h_Planck * c_light / (866.563 * nm), h_Planck * c_light / (826.316 * nm),
+        h_Planck * c_light / (628.173 * nm), h_Planck * c_light / (490.402 * nm),
+        h_Planck * c_light / (389.783 * nm), h_Planck * c_light / (330.96 * nm),
+        h_Planck * c_light / (296.904 * nm)
+      };
+      G4double efficiency[entries]   = {0.00041, 0.00107, 0.01248, 0.06181,
+                                        0.12887, 0.19246, 0.09477, 0.06040,
+                                        0.00826};
+
+      photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+    }
+
     else if (sensor_type_ == "SiPM_FBK") {
       // SiPM_FBK
       G4int entries = 13;
@@ -213,19 +230,26 @@ void Fib_box_struct::Construct(){
       photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
     }
 
-    else if (sensor_type_ == "PMT") {
-      // PMT
-      G4int entries = 9;
+    else if (sensor_type_ == "SiPM_Hamamatsu") {
+      // SiPM_Hamamatsu
+      G4int entries = 13;
       G4double energy[entries]       = {
-        h_Planck * c_light / (903.715 * nm), h_Planck * c_light / (895.975 * nm),
-        h_Planck * c_light / (866.563 * nm), h_Planck * c_light / (826.316 * nm),
-        h_Planck * c_light / (628.173 * nm), h_Planck * c_light / (490.402 * nm),
-        h_Planck * c_light / (389.783 * nm), h_Planck * c_light / (330.96 * nm),
-        h_Planck * c_light / (296.904 * nm)
+        h_Planck * c_light / (831.818 * nm), h_Planck * c_light / (761.932 * nm),
+        h_Planck * c_light / (681.818 * nm), h_Planck * c_light / (620.455 * nm),
+        h_Planck * c_light / (572.727 * nm), h_Planck * c_light / (516.477 * nm),
+        h_Planck * c_light / (460.227 * nm), h_Planck * c_light / (400.568 * nm),
+        h_Planck * c_light / (357.955 * nm), h_Planck * c_light / (344.318 * nm),
+        h_Planck * c_light / (311.932 * nm), h_Planck * c_light / (289.773 * nm),
+        h_Planck * c_light / (282.955 * nm)
       };
-      G4double efficiency[entries]   = {0.00041, 0.00107, 0.01248, 0.06181,
-                                        0.12887, 0.19246, 0.09477, 0.06040,
-                                        0.00826};
+      G4double efficiency[entries]   = {.07329, .12673,
+                                        .20254, .29851,
+                                        .36889, .45739,
+                                        .49695, .44929,
+                                        .35476, .35374,
+                                        .29960, .19862,
+                                        .12204
+                                        };
 
       photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
     }
