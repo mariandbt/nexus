@@ -12,14 +12,18 @@
 
 # sensor______________________________________________________
 #/Geometry/Fib_box_struct/sensor_type PERFECT
-#/Geometry/Fib_box_struct/sensor_type SiPM_FBK
-/Geometry/Fib_box_struct/sensor_type SiPM_Hamamatsu
-#/Geometry/Fib_box_struct/sensor_type PMT
+/Geometry/Fib_box_struct/sensor_type SiPM_FBK
+#/Geometry/Fib_box_struct/sensor_type SiPM_Hamamatsu
+/Geometry/Fib_box_struct/sensor_type PMT
 
-/Geometry/Fib_box_struct/sensor_width 1.6 mm
-#/Geometry/Fib_box_struct/sensor_width 1. mm
+#/Geometry/Fib_box_struct/sensor_width 1.6 mm
+/Geometry/Fib_box_struct/sensor_width 1. mm
 /Geometry/Fib_box_struct/sensor_height 40. mm
 #/Geometry/Fib_box_struct/sensor_height 70. mm
+
+/Geometry/Fib_box_struct/sensor_distance 1. mm
+/Geometry/Fib_box_struct/sensor_distance 0.5 mm
+/Geometry/Fib_box_struct/sensor_distance 0. mm
 
 /Geometry/Fib_box_struct/sensor_visibility true
 
@@ -31,10 +35,13 @@
 
 #/Generator/SingleParticle/min_energy 7 eV # Y11 with TPB
 #/Generator/SingleParticle/max_energy 7 eV # Y11 with TPB
-#/Generator/SingleParticle/min_energy 2.88 eV # Y11
-#/Generator/SingleParticle/max_energy 2.88 eV # Y11
-/Generator/SingleParticle/min_energy 3.35 eV # B2
-/Generator/SingleParticle/max_energy 3.35 eV # B2
+
+/Geometry/Fib_box_struct/fiber_type Y11
+/Generator/SingleParticle/min_energy 2.88 eV # Y11
+/Generator/SingleParticle/max_energy 2.88 eV # Y11
+#/Geometry/Fib_box_struct/fiber_type B2
+#/Generator/SingleParticle/min_energy 3.35 eV # B2
+#/Generator/SingleParticle/max_energy 3.35 eV # B2
 
 /Generator/SingleParticle/min_costheta 0.98995 # costheta_min = box_z/sqrt((box_xy/2)² + box_z²)
 /Generator/SingleParticle/max_costheta 1.

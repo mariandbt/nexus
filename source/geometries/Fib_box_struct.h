@@ -16,20 +16,22 @@ namespace nexus
     {
         private:
         // fiber
-        G4double diameter_;     // diameter of the cylindrical optical fibre
+        G4String fiber_type_; // Y11 or B2
+        G4double diameter_;   // diameter of the cylindrical optical fibre
         G4double length_;     // length of the cylindrical optical fibre
 
         // box
-        G4double box_xy_;     // outer side of the box structure
-        G4double box_z_;     // outer length of the box structure
+        G4double box_xy_;         // outer side of the box structure
+        G4double box_z_;          // outer length of the box structure
         G4double side_thickness_; // thickness of the box
 
         // sensor
         GenericPhotosensor* photo_sensor_;
-        G4String sensor_type_; // SiPM, PMT, PERFECT, ...
-        G4double sensor_width_;   // Width of rectangular fiber sensors
-        G4double sensor_height_;   // Height of rectangular fiber sensors
+        G4String sensor_type_;        // SiPM, PMT, PERFECT, ...
+        G4double sensor_width_;       // Width of rectangular fiber sensors
+        G4double sensor_height_;      // Height of rectangular fiber sensors
         G4double sensor_thickness_;   // (Thickness set to a fix value of 1 mm)
+        G4double sensor_distance_;    // Air separation between sensor and fibers
         G4bool sensor_visibility_;
 
         G4GenericMessenger*   msg_;

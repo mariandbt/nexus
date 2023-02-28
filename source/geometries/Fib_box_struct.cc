@@ -39,6 +39,7 @@ REGISTER_CLASS(Fib_box_struct,GeometryBase)
 
 Fib_box_struct::Fib_box_struct():
     GeometryBase(),
+    fiber_type_ ("Y11"),
     diameter_(1.*mm),
     length_(1.*cm),
     box_xy_(40.*mm),
@@ -48,11 +49,15 @@ Fib_box_struct::Fib_box_struct():
     sensor_width_ (3. * mm),
     sensor_height_ (40. * mm),
     sensor_thickness_ (2. * mm),
+    sensor_distance_ (0. * mm),
     sensor_visibility_ (true)
   {
     std::cout<<"HERE!"<<std::endl;
     msg_=new G4GenericMessenger(this,"/Geometry/Fib_box_struct/",
         "Control commands of geometry Fiber box structure.");
+
+    msg_->DeclareProperty("fiber_type", fiber_type_,
+            "Fiber type");
 
     G4GenericMessenger::Command& diameter_cmd =
             msg_->DeclareProperty("diameter",diameter_,"Diameter of the cylindrical optical fibre");
@@ -84,17 +89,24 @@ Fib_box_struct::Fib_box_struct():
     msg_->DeclareProperty("sensor_type", sensor_type_,
                           "Sensors type");
 
+    G4GenericMessenger::Command& sensor_distance_cmd =
+            msg_->DeclareProperty("sensor_distance",sensor_distance_,"Air separation between sensor and fibers");
+    sensor_distance_cmd.SetUnitCategory("Length");
+    sensor_distance_cmd.SetParameterName("sensor_distance",false);
+    sensor_distance_cmd.SetRange("sensor_distance>=0.");
+
 }
 Fib_box_struct::~Fib_box_struct() {
     delete msg_;
 }
 void Fib_box_struct::Construct(){
 
-    // INTRO COUT___________________________________________________
+    // INFO COUT___________________________________________________
 
+    std::cout<<"Selected fiber type = "<<fiber_type_<<std::endl;
     std::cout<<"Selected sensor type = "<<sensor_type_<<std::endl;
+    std::cout<<"Selected sensor distance = "<<sensor_distance_<<std::endl;
     std::cout<<"Sensor size = "<<sensor_width_<<"x"<<sensor_height_<<std::endl;
-
 
     // LAB CREATION___________________________________________________
 
@@ -124,22 +136,27 @@ void Fib_box_struct::Construct(){
 
     // FIBERS______________________________________________________
 
-    G4Material* ps = materials::Y11(); std::cout<<"Y11 fibers"<<std::endl;
-    // G4Material* ps = materials::B2(); std::cout<<"B2 fibers"<<std::endl;
+    G4Material* ps;
     G4Material* tpb = materials::TPB();
+
+    if (fiber_type_ == "Y11") ps = materials::Y11();
+    else if (fiber_type_ == "B2") ps = materials::B2();
 
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
-    // IMPORTANT: "diameter_" actually stands for the fiber DIAMETER
-    // G4double n_fibers = 33;
     G4double n_fibers = 36;
-    // std::cout<<"n_fibers = "<<n_fibers<<std::endl;
 
-    // fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, true, tpb, ps, true);
-    fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, false, tpb, ps, true);
-    // fiber_ = new GenericWLSFiber("B2", true, diameter_, length_, true, false, tpb, ps, true);
-    fiber_->SetCoreOpticalProperties(opticalprops::Y11());
-    // fiber_->SetCoreOpticalProperties(opticalprops::B2());
+    if (fiber_type_ == "Y11") {
+      // fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, true, tpb, ps, true);
+      fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, false, tpb, ps, true);
+      fiber_->SetCoreOpticalProperties(opticalprops::Y11());
+    }
+
+    else if (fiber_type_ == "B2") {
+      fiber_ = new GenericWLSFiber("B2", true, diameter_, length_, true, false, tpb, ps, true);
+      fiber_->SetCoreOpticalProperties(opticalprops::B2());
+    }
+
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
     fiber_->Construct();
     fiber_logic = fiber_->GetLogicalVolume();
@@ -287,9 +304,7 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // Sensor placement
-    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2.;
-    // G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + .5 *mm;
-    // G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + 1. *mm;
+    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + sensor_distance_;
 
     if (sensor_type_ == "SiPM_FBK") {
 
@@ -488,6 +503,7 @@ void Fib_box_struct::Construct(){
                         false, 0, false);
 
     }
+
 
 
 
