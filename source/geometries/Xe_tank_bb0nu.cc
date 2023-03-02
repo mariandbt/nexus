@@ -43,7 +43,6 @@ namespace nexus {
     pressure_(STP_Pressure),
     radius_(1.*m),
     length_(3.*m)
-    // tank_vertex_gen_(0)
   {
     msg_ = new G4GenericMessenger(this, "/Geometry/Xe_tank_bb0nu/",
       "Control commands of geometry Xenon tank for bb0nu simulations.");
@@ -70,15 +69,12 @@ namespace nexus {
     length_cmd.SetParameterName("length", false);
     length_cmd.SetRange("length>0.");
 
-    // // Create a vertex generator for a tank
-    // tank_vertex_gen_ = new CylinderPointSampler2020(0., radius_, length_/2., 0, 2 * pi);
   }
 
 
 
   Xe_tank_bb0nu::~Xe_tank_bb0nu()
   {
-    // delete tank_vertex_gen_;
     delete msg_;
   }
 
@@ -111,6 +107,10 @@ namespace nexus {
     tank_vertex_gen_ = new CylinderPointSampler2020(0., radius_, length_/2., 0, 2 * pi);
 
 
+    // GENERAL PARAMETERS______________________________________________________
+
+    G4double rot_angle_;
+
 
     // Xe tank__________________________________________________________________
 
@@ -142,6 +142,18 @@ namespace nexus {
     IonizationSD* ionizsd = new IonizationSD("/Xe_tank");
     G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
     tank_logic->SetSensitiveDetector(ionizsd);
+
+
+    G4ThreeVector tank_pos = G4ThreeVector(0., 0., 0.);
+
+    G4RotationMatrix* tank_rot_ = new G4RotationMatrix();
+    // rot_angle_ = pi;
+    rot_angle_ = 0.;
+    tank_rot_->rotateY(rot_angle_);
+
+    new G4PVPlacement(G4Transform3D(*tank_rot_, tank_pos),
+                      tank_logic, name, lab_logic,
+                      false, 0, false);
 
     // Al disk__________________________________________________________________
 
