@@ -109,6 +109,9 @@ namespace nexus {
 
     // GENERAL PARAMETERS______________________________________________________
 
+    G4double x = 0.;
+    G4double y = 0.;
+    G4double z = 0.;
     G4double rot_angle_;
 
 
@@ -144,7 +147,7 @@ namespace nexus {
     tank_logic->SetSensitiveDetector(ionizsd);
 
 
-    G4ThreeVector tank_pos = G4ThreeVector(0., 0., 0.);
+    G4ThreeVector tank_pos = G4ThreeVector(x, y, z);
 
     G4RotationMatrix* tank_rot_ = new G4RotationMatrix();
     // rot_angle_ = pi;
@@ -162,9 +165,7 @@ namespace nexus {
     G4Material* disk_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
     disk_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
-    // std::cout<<"HERE!"<<std::endl;
-
-    G4double disk_thickness = .1 * mm;
+    G4double disk_thickness = 1. * m;
 
     G4Tubs* disk_solid_vol =
       new G4Tubs(disk_name, 0., radius_, disk_thickness/2., 0., 360.*deg);
@@ -184,11 +185,14 @@ namespace nexus {
     disk_logic_vol->SetVisAttributes(disk_col);
     // disk_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    G4ThreeVector disk_pos = G4ThreeVector(0., 0., length_/2. + disk_thickness/2.);
-
-    new G4PVPlacement(0, disk_pos,
-                      disk_logic_vol, disk_name, lab_logic,
-                      false, 0, false);
+    G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
+      G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
+      rot_angle_ = pi/2.;
+      // rot_angle_ = 0.;
+      disk_rot_->rotateY(rot_angle_);
+      new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
+                        disk_logic_vol, disk_name, lab_logic,
+                        false, 0, false);
 
 
 
