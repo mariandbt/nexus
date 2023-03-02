@@ -10,6 +10,7 @@
 
 #include "CylinderPointSampler2020.h"
 #include "MaterialsList.h"
+#include "Visibilities.h"
 #include "OpticalMaterialProperties.h"
 #include "IonizationSD.h"
 #include "FactoryBase.h"
@@ -19,6 +20,8 @@
 #include <G4Box.hh>
 #include <G4NistManager.hh>
 #include <G4LogicalVolume.hh>
+#include <G4OpticalSurface.hh>
+#include <G4LogicalSkinSurface.hh>
 #include <G4PVPlacement.hh>
 #include <G4Material.hh>
 #include <G4VisAttributes.hh>
@@ -84,11 +87,11 @@ namespace nexus {
   void Xe_tank_bb0nu::Construct()
   {
 
-    // INFO COUT___________________________________________________
+    // INFO COUT________________________________________________________________
 
     std::cout<<"Tank size = "<<radius_<<" (radius) x "<<length_<<" (length)"<<std::endl;
 
-    // LAB CREATION___________________________________________________
+    // LAB CREATION_____________________________________________________________
 
     // G4Box* lab_solid = new G4Box("LAB", 2 * mm,2 * mm,1.1*cm);
     G4double lab_z_ = length_ * 2;
@@ -109,7 +112,7 @@ namespace nexus {
 
 
 
-    // Xe tank_______________________________________________________
+    // Xe tank__________________________________________________________________
 
     G4String name = "Xe_tank";
 
@@ -139,6 +142,44 @@ namespace nexus {
     IonizationSD* ionizsd = new IonizationSD("/Xe_tank");
     G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
     tank_logic->SetSensitiveDetector(ionizsd);
+
+    // Al disk__________________________________________________________________
+
+    G4String disk_name = "Al_disk";
+
+    G4Material* disk_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+    disk_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
+    // std::cout<<"HERE!"<<std::endl;
+
+    G4double disk_thickness = .1 * mm;
+
+    G4Tubs* disk_solid_vol =
+      new G4Tubs(disk_name, 0., radius_, disk_thickness/2., 0., 360.*deg);
+
+    G4LogicalVolume* disk_logic_vol =
+      new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
+
+    G4OpticalSurface* opsur =
+      new G4OpticalSurface("Al_opsurf", unified, polished, dielectric_metal);
+      // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
+      opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
+    new G4LogicalSkinSurface("Al_opsurf", disk_logic_vol, opsur);
+
+    // G4VisAttributes disk_col = nexus::LightBlue();
+    G4VisAttributes disk_col = nexus::Blue();
+    disk_logic_vol->SetVisAttributes(disk_col);
+    // disk_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    G4ThreeVector disk_pos = G4ThreeVector(0., 0., length_/2. + disk_thickness/2.);
+
+    new G4PVPlacement(0, disk_pos,
+                      disk_logic_vol, disk_name, lab_logic,
+                      false, 0, false);
+
+
+
   }
 
 
