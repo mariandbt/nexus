@@ -1,0 +1,41 @@
+## ----------------------------------------------------------------------------
+## nexus | Xe_tank_bb0nu.config.mac
+##
+## Configuration macro to simulate bb0nu decays in a Xenon tank geometry.
+##
+## The NEXT Collaboration
+## ----------------------------------------------------------------------------
+
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+/nexus/random_seed 542862
+
+/Geometry/Xe_tank_bb0nu/LXe false
+/Geometry/Xe_tank_bb0nu/pressure 15. bar
+/Geometry/Xe_tank_bb0nu/radius 1. m
+/Geometry/Xe_tank_bb0nu/length 3. m
+
+
+# use C++ translation of DECAY0
+/Generator/Decay0Interface/inputFile none
+#
+# for 0 neutrino  bb to Barium Ground state.
+/Generator/Decay0Interface/Xe136DecayMode 1
+#
+# for 2 neutrino  bb to Barium Ground state.
+#/Generator/Decay0Interface/Xe136DecayMode 4
+#
+/Generator/Decay0Interface/EnergyThreshold 0.5
+/Generator/Decay0Interface/Ba136FinalState 0
+
+/Generator/Decay0Interface/region VOLUME
+
+#/control/execute macros/generators/GenbbTranslatedInterface.mac
+
+/control/execute macros/physics/IonizationElectron.mac
+
+/nexus/persistency/outputFile Xe_tank_bb0nu.next

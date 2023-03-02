@@ -1,0 +1,22 @@
+## ----------------------------------------------------------------------------
+## nexus | Xe_tank_bb0nu.init.mac
+##
+## Initialization macro to simulate bb0nu decays in a Xenon tank geometry.
+##
+## The NEXT Collaboration
+## ----------------------------------------------------------------------------
+
+/control/execute macros/physics/DefaultPhysicsList.mac
+
+/nexus/RegisterGeometry Xe_tank_bb0nu
+
+/nexus/RegisterGenerator Decay0Interface
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+/nexus/RegisterTrackingAction DefaultTrackingAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterSteppingAction AnalysisSteppingAction
+
+/nexus/RegisterMacro macros/Xe_tank_bb0nu.config.mac
