@@ -6,7 +6,7 @@
 ## The NEXT Collaboration
 ## ----------------------------------------------------------------------------
 
-/run/verbose 1
+/run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
