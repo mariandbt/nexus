@@ -139,6 +139,16 @@ namespace nexus {
     new G4LogicalVolume(tank_solid, xenon, name);
     GeometryBase::SetLogicalVolume(tank_logic);
 
+    G4VisAttributes tank_col = nexus::Red();
+    tank_logic->SetVisAttributes(tank_col);
+
+    G4OpticalSurface* tank_opsur =
+      new G4OpticalSurface("tank_opsur", unified, polished, dielectric_metal);
+      // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
+      tank_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
+    new G4LogicalSkinSurface("tank_opsur", tank_logic, tank_opsur);
+
     // Set the logical volume of the tank as an ionization
     // sensitive detector, i.e. position, time and energy deposition
     // will be stored for each step of any charged particle crossing
@@ -177,12 +187,12 @@ namespace nexus {
     G4LogicalVolume* disk_logic_vol =
       new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
 
-    G4OpticalSurface* opsur =
+    G4OpticalSurface* Al_opsur =
       new G4OpticalSurface("Al_opsurf", unified, polished, dielectric_metal);
       // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
-      opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+      Al_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
-    new G4LogicalSkinSurface("Al_opsurf", disk_logic_vol, opsur);
+    new G4LogicalSkinSurface("Al_opsurf", disk_logic_vol, Al_opsur);
 
     // G4VisAttributes disk_col = nexus::LightBlue();
     G4VisAttributes disk_col = nexus::Blue();
@@ -191,15 +201,15 @@ namespace nexus {
 
     // G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
     G4ThreeVector disk_pos = G4ThreeVector(x, y, z);
-      G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
-      rot_angle_ = pi/2.;
-      // rot_angle_ = 0.;
-      disk_rot_->rotateY(rot_angle_);
-      new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
-                        disk_logic_vol, disk_name, lab_logic,
-                        false, 0, false);
+    G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
+    rot_angle_ = pi/2.;
+    // rot_angle_ = 0.;
+    disk_rot_->rotateY(rot_angle_);
+    new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
+                      disk_logic_vol, disk_name, lab_logic,
+                      false, 0, false);
 
-      std::cout<<"AlDisk position = "<<disk_pos<<std::endl;
+    std::cout<<"AlDisk position = "<<disk_pos<<std::endl;
 
 
 
