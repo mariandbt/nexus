@@ -159,6 +159,9 @@ namespace nexus {
                       tank_logic, name, lab_logic,
                       false, 0, false);
 
+    std::cout<<"Tank position = "<<tank_pos<<std::endl;
+
+
     // Al disk__________________________________________________________________
 
     G4String disk_name = "Al_disk";
@@ -186,7 +189,8 @@ namespace nexus {
     disk_logic_vol->SetVisAttributes(disk_col);
     // disk_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
+    // G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
+    G4ThreeVector disk_pos = G4ThreeVector(x, y, z);
       G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
       rot_angle_ = pi/2.;
       // rot_angle_ = 0.;
@@ -194,6 +198,8 @@ namespace nexus {
       new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
                         disk_logic_vol, disk_name, lab_logic,
                         false, 0, false);
+
+      std::cout<<"AlDisk position = "<<disk_pos<<std::endl;
 
 
 
