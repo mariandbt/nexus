@@ -24,6 +24,7 @@
 #include <G4LogicalSkinSurface.hh>
 #include <G4PVPlacement.hh>
 #include <G4Material.hh>
+#include <G4Colour.hh>
 #include <G4VisAttributes.hh>
 #include <G4SDManager.hh>
 #include <G4VUserDetectorConstruction.hh>
