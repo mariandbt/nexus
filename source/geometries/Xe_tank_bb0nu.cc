@@ -95,7 +95,7 @@ namespace nexus {
     G4double lab_xy_ = radius_ * 2;
     G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
 
-    G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+    G4Material* air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     air->SetMaterialPropertiesTable(opticalprops::Vacuum());
     G4LogicalVolume* lab_logic =
       new G4LogicalVolume(lab_solid,
@@ -137,15 +137,15 @@ namespace nexus {
     // and the solid volume defined above
     G4LogicalVolume* tank_logic =
     new G4LogicalVolume(tank_solid, xenon, name);
-    GeometryBase::SetLogicalVolume(tank_logic);
 
     G4VisAttributes tank_col = nexus::Red();
     tank_logic->SetVisAttributes(tank_col);
+    // tank_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     G4OpticalSurface* tank_opsur =
       new G4OpticalSurface("tank_opsur", unified, polished, dielectric_metal);
-      // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
-      tank_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+    // tank_opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
+    tank_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
     new G4LogicalSkinSurface("tank_opsur", tank_logic, tank_opsur);
 
@@ -179,7 +179,8 @@ namespace nexus {
     G4Material* disk_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
     disk_mat->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
-    G4double disk_thickness = 1. * m;
+    // G4double disk_thickness = 1. * m;
+    G4double disk_thickness = 1. * cm;
 
     G4Tubs* disk_solid_vol =
       new G4Tubs(disk_name, 0., radius_, disk_thickness/2., 0., 360.*deg);
@@ -189,8 +190,8 @@ namespace nexus {
 
     G4OpticalSurface* Al_opsur =
       new G4OpticalSurface("Al_opsurf", unified, polished, dielectric_metal);
-      // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
-      Al_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+    // opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
+    Al_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
     new G4LogicalSkinSurface("Al_opsurf", disk_logic_vol, Al_opsur);
 
@@ -200,11 +201,16 @@ namespace nexus {
     // disk_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
 
     // G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
-    G4ThreeVector disk_pos = G4ThreeVector(x, y, z);
+    G4ThreeVector disk_pos = G4ThreeVector(x, y, z + length_/2. + disk_thickness/2.);
     G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
-    rot_angle_ = pi/2.;
-    // rot_angle_ = 0.;
+    // rot_angle_ = pi/2.;
+    rot_angle_ = 0.;
     disk_rot_->rotateY(rot_angle_);
+    new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
+                      disk_logic_vol, disk_name, lab_logic,
+                      false, 0, false);
+
+    disk_pos = G4ThreeVector(x, y, z - length_/2. - disk_thickness/2.);
     new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
                       disk_logic_vol, disk_name, lab_logic,
                       false, 0, false);
