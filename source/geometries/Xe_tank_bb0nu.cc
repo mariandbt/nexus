@@ -138,16 +138,9 @@ namespace nexus {
     G4LogicalVolume* tank_logic =
     new G4LogicalVolume(tank_solid, xenon, name);
 
-    G4VisAttributes tank_col = nexus::Red();
+    G4VisAttributes tank_col = nexus::Lilla();
     tank_logic->SetVisAttributes(tank_col);
     // tank_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-    G4OpticalSurface* tank_opsur =
-      new G4OpticalSurface("tank_opsur", unified, polished, dielectric_metal);
-    // tank_opsur->SetMaterialPropertiesTable(opticalprops::PerfectAbsorber());
-    tank_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
-
-    new G4LogicalSkinSurface("tank_opsur", tank_logic, tank_opsur);
 
     // Set the logical volume of the tank as an ionization
     // sensitive detector, i.e. position, time and energy deposition
@@ -156,6 +149,13 @@ namespace nexus {
     IonizationSD* ionizsd = new IonizationSD("/Xe_tank");
     G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
     tank_logic->SetSensitiveDetector(ionizsd);
+
+    G4OpticalSurface* tank_opsur =
+      new G4OpticalSurface("tank_opsur", unified, polished, dielectric_metal);
+    // tank_opsur->SetMaterialPropertiesTable(opticalprops::GlassEpoxy());
+    tank_opsur->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
+    new G4LogicalSkinSurface("tank_opsur", tank_logic, tank_opsur);
 
 
     G4ThreeVector tank_pos = G4ThreeVector(x, y, z);
