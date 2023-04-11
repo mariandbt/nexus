@@ -346,7 +346,7 @@ void Fib_box_struct::Construct(){
 
     }
 
-    G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_);
+    G4ThreeVector sensor_pos = G4ThreeVector(sensor_x_pos, 0., box_z_ + sensor_width_/2.);
 
     G4RotationMatrix* sensor_rot_ = new G4RotationMatrix();
     rot_angle_ = -pi/2.;
