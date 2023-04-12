@@ -72,16 +72,22 @@ Fib_box_struct::Fib_box_struct():
     length_cmd.SetRange("length>0.");
 
     G4GenericMessenger::Command& sensor_width_cmd =
-            msg_->DeclareProperty("sensor_width",sensor_width_,"Width of rectangular fiber sensors");
+            msg_->DeclareProperty("sensor_width",sensor_width_,"Width of rectangular sensor");
     sensor_width_cmd.SetUnitCategory("Length");
     sensor_width_cmd.SetParameterName("sensor_width",false);
     sensor_width_cmd.SetRange("sensor_width>0.");
 
     G4GenericMessenger::Command& sensor_height_cmd =
-            msg_->DeclareProperty("sensor_height",sensor_height_,"Height of rectangular fiber sensors");
+            msg_->DeclareProperty("sensor_height",sensor_height_,"Height of rectangular sensor");
     sensor_height_cmd.SetUnitCategory("Length");
     sensor_height_cmd.SetParameterName("sensor_height",false);
     sensor_height_cmd.SetRange("sensor_height>0.");
+
+    G4GenericMessenger::Command& sensor_thickness_cmd =
+            msg_->DeclareProperty("sensor_thickness",sensor_thickness_,"Thickness of rectangular sensor");
+    sensor_thickness_cmd.SetUnitCategory("Length");
+    sensor_thickness_cmd.SetParameterName("sensor_thickness",false);
+    sensor_thickness_cmd.SetRange("sensor_thickness>0.");
 
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
                           "Sensors visibility");
@@ -304,7 +310,7 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // Sensor placement
-    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + sensor_distance_;
+    G4double sensor_x_pos = -0.1*mm + x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + sensor_distance_;
 
     if (sensor_type_ == "SiPM_FBK") {
 
@@ -330,7 +336,8 @@ void Fib_box_struct::Construct(){
         window_opsur->SetMaterialPropertiesTable(opticalprops::PMMA());
       new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
 
-      G4double window_x_pos = x + length_/2. + opt_gel_thickness/2. + window_thickness/2. + 1. * mm;
+      // G4double window_x_pos = x + length_/2. + opt_gel_thickness/2. + window_thickness/2. + 1. * mm;
+      G4double window_x_pos = x + length_/2.+ opt_gel_thickness + window_thickness/2. + 1. * mm;
       G4ThreeVector window_pos = G4ThreeVector(window_x_pos, 0., box_z_);
 
       G4RotationMatrix* window_rot_ = new G4RotationMatrix();
@@ -342,7 +349,8 @@ void Fib_box_struct::Construct(){
                         false, 0, false);
 
 
-      sensor_x_pos = sensor_x_pos + window_thickness + 1. * mm;
+      // sensor_x_pos = sensor_x_pos + window_thickness + 1. * mm;
+      sensor_x_pos = -0.1*mm + window_x_pos + window_thickness/2. +  sensor_thickness_/2. + 1. * mm;
 
     }
 
@@ -465,7 +473,7 @@ void Fib_box_struct::Construct(){
 
       // fiber
 
-      x = length_/2 - box_xy_/2 - 1*mm;
+      // x = length_/2 - box_xy_/2 - 1*mm;
       // y = i*diameter_ - box_xy_/2;
       y = (box_xy_/n_fibers)*i - box_xy_/2 + diameter_/2.;
       z = box_z_ + diameter_/2;

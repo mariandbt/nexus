@@ -16,14 +16,16 @@
 #/Geometry/Fib_box_struct/sensor_type SiPM_Hamamatsu
 /Geometry/Fib_box_struct/sensor_type PMT
 
-#/Geometry/Fib_box_struct/sensor_width 1.6 mm
-/Geometry/Fib_box_struct/sensor_width 1.25 mm
+/Geometry/Fib_box_struct/sensor_width 3.75 mm # PMT
+#/Geometry/Fib_box_struct/sensor_width 1.65 mm # FBK
+#/Geometry/Fib_box_struct/sensor_width 1.25 mm # Hamamatsu
 /Geometry/Fib_box_struct/sensor_height 40. mm
 #/Geometry/Fib_box_struct/sensor_height 70. mm
+/Geometry/Fib_box_struct/sensor_thickness 1. mm
 
-/Geometry/Fib_box_struct/sensor_distance 1. mm
+#/Geometry/Fib_box_struct/sensor_distance 1. mm
 #/Geometry/Fib_box_struct/sensor_distance 0.5 mm
-#/Geometry/Fib_box_struct/sensor_distance 0.1 mm
+/Geometry/Fib_box_struct/sensor_distance 0.1 mm
 #/Geometry/Fib_box_struct/sensor_distance 0. mm
 
 /Geometry/Fib_box_struct/sensor_visibility true
