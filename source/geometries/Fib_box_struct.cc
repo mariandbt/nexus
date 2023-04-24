@@ -310,7 +310,7 @@ void Fib_box_struct::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
     // Sensor placement
-    G4double sensor_x_pos = -0.1*mm + x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + sensor_distance_;
+    G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + sensor_distance_;
 
     if (sensor_type_ == "SiPM_FBK") {
 
@@ -337,7 +337,7 @@ void Fib_box_struct::Construct(){
       new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
 
       // G4double window_x_pos = x + length_/2. + opt_gel_thickness/2. + window_thickness/2. + 1. * mm;
-      G4double window_x_pos = -0.1*mm + x + length_/2.+ opt_gel_thickness + window_thickness/2. + 1. * mm;
+      G4double window_x_pos = x + length_/2.+ opt_gel_thickness + window_thickness/2. + 1. * mm;
       G4ThreeVector window_pos = G4ThreeVector(window_x_pos, 0., box_z_);
 
       G4RotationMatrix* window_rot_ = new G4RotationMatrix();
