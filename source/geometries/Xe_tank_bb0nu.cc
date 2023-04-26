@@ -28,6 +28,7 @@
 #include <G4VisAttributes.hh>
 #include <G4SDManager.hh>
 #include <G4VUserDetectorConstruction.hh>
+#include <G4UserLimits.hh>
 
 #include <CLHEP/Units/SystemOfUnits.h>
 
@@ -149,6 +150,10 @@ namespace nexus {
     IonizationSD* ionizsd = new IonizationSD("/Xe_tank");
     G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
     tank_logic->SetSensitiveDetector(ionizsd);
+    // Fix the length of the maximum step an electron can make
+    // when depositing energy.
+    // The smaller the limit the narrower the trace
+    tank_logic->SetUserLimits(new G4UserLimits(1.*mm));
 
     G4OpticalSurface* tank_opsur =
       new G4OpticalSurface("tank_opsur", unified, polished, dielectric_metal);
