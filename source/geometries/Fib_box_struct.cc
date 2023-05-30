@@ -312,7 +312,7 @@ void Fib_box_struct::Construct(){
     // Sensor placement
     G4double sensor_x_pos = x + length_/2. + opt_gel_thickness + sensor_thickness_/2. + sensor_distance_;
 
-    if (sensor_type_ == "SiPM_FBK") {
+    if (sensor_type_ == "SiPM_FBK_window") {
 
       // Metacrilate window
 
