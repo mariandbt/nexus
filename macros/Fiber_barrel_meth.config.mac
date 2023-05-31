@@ -9,10 +9,28 @@
 /Geometry/Fiber_barrel_meth/radius 1. mm
 /Geometry/Fiber_barrel_meth/radius_cyl 1. cm
 
+# sensor______________________________________________________
+#/Geometry/Fiber_barrel_meth/sensor_type PERFECT
+/Geometry/Fiber_barrel_meth/sensor_type SiPM_FBK
+#/Geometry/Fiber_barrel_meth/sensor_type SiPM_Hamamatsu
+#/Geometry/Fiber_barrel_meth/sensor_type PMT
+
+
 /Generator/SingleParticle/particle opticalphoton
 /Generator/SingleParticle/region WHOLE_VOL
-/Generator/SingleParticle/min_energy 7 eV
-/Generator/SingleParticle/max_energy 7 eV
+
+/Generator/SingleParticle/max_energy 7 eV # Y11 with TPB
+/Generator/SingleParticle/min_energy 7 eV # Y11 with TPB
+
+#/Geometry/Fiber_barrel_meth/fiber_type Y11
+#/Generator/SingleParticle/min_energy 2.88 eV # Y11
+#/Generator/SingleParticle/max_energy 2.88 eV # Y11
+
+#/Geometry/Fiber_barrel_meth/fiber_type B2
+#/Generator/SingleParticle/min_energy 3.35 eV # B2
+#/Generator/SingleParticle/max_energy 3.35 eV # B2
+
+
 #/Generator/SingleParticle/min_costheta 0
 #/Generator/SingleParticle/max_costheta 0
 #/Generator/SingleParticle/min_phi 0

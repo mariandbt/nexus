@@ -4,6 +4,7 @@
 #include "GeometryBase.h"
 #include <G4MaterialPropertyVector.hh>
 #include "GenericWLSFiber.h"
+#include "GenericPhotosensor.h"
 
 class G4Material;
 class G4GenericMessenger;
@@ -22,11 +23,19 @@ namespace nexus
         G4ThreeVector GenerateVertex(const G4String& region) const;
 
         private:
-        G4double radius_;     //radius of the cylindrical optical fibre
+        G4double radius_;     //diameter of the cylindrical optical fibre
         G4double length_;     //length of the cylindrical optical fibre
         G4double radius_cyl_; //radius of the cylinder
+
+        // sensor
+        GenericPhotosensor* photo_sensor_;
+        G4String sensor_type_;        // SiPM, PMT, PERFECT, ...
+        G4bool sensor_visibility_;
+
         CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
         G4GenericMessenger*   msg_;
+
+
     };
 } // namespace nexus
 #endif
