@@ -311,8 +311,8 @@ void Fiber_barrel_meth::Construct(){
 
     // Fibers _____________________________________________________________________
 
-    G4double n_fibers = radius_cyl_*pi/radius_;
-    G4double dif_theta = .5*2*pi/n_fibers; // angular separation between fibers
+    G4double n_fibers = floor(2*radius_cyl_*pi/radius_);
+    G4double dif_theta = 2*pi/n_fibers; // angular separation between fibers
     G4double theta;
 
 
@@ -329,7 +329,7 @@ void Fiber_barrel_meth::Construct(){
 
     // Loop to place elements
 
-    for (int i=0; i<=2*n_fibers; i++){
+    for (int i=0; i < n_fibers; i++){
 
       theta = dif_theta*i;
       x = radius_cyl_ * cos(theta);
@@ -344,7 +344,10 @@ void Fiber_barrel_meth::Construct(){
                         disk_logic_vol, disk_name,lab_logic,true,0,true);
 
       // sensor
-      G4ThreeVector sensor_pos = G4ThreeVector(x, y, z + length_/2. + sensor_thickness/2.);
+      // to avoid overlap among SiPMs intercalate them in Z
+      // G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2. + (.85 * mm)*(i%2);
+      G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.*(1 + (i%3));
+      G4ThreeVector sensor_pos = G4ThreeVector(x, y, sensor_z_pos);
 
       G4RotationMatrix* sensor_rot = new G4RotationMatrix();
       // rot_angle = -pi/2.;
