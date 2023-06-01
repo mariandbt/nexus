@@ -29,7 +29,15 @@ using namespace CLHEP;
 
 REGISTER_CLASS(Fiber_barrel_meth,GeometryBase)
 
-Fiber_barrel_meth::Fiber_barrel_meth():GeometryBase(), radius_(1.*mm), length_(1.*cm),  radius_cyl_(1. *cm), cyl_vertex_gen_(0){
+Fiber_barrel_meth::Fiber_barrel_meth():
+GeometryBase(),
+radius_(1.*mm),
+length_(1.*cm),
+radius_cyl_(1. *cm),
+sensor_type_ ("PERFECT"),
+sensor_visibility_ (true),
+cyl_vertex_gen_(0)
+{
     msg_=new G4GenericMessenger(this,"/Geometry/Fiber_barrel_meth/","Control commands of geometry OpticalFibre");
 
     G4GenericMessenger::Command& radius_cmd =
@@ -50,11 +58,11 @@ Fiber_barrel_meth::Fiber_barrel_meth():GeometryBase(), radius_(1.*mm), length_(1
     radius_cyl_cmd.SetParameterName("radius_cyl",false);
     radius_cyl_cmd.SetRange("radius_cyl>0.");
 
+    msg_->DeclareProperty("sensor_type", sensor_type_,
+        "Sensors type");
+
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
                           "Sensors visibility");
-
-    msg_->DeclareProperty("sensor_type", sensor_type_,
-                          "Sensors type");
 
     cyl_vertex_gen_ = new CylinderPointSampler(0.5*radius_cyl_, 0.5*length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
 }
@@ -276,9 +284,11 @@ void Fiber_barrel_meth::Construct(){
     // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
     std::cout<<"HERE!"<<std::endl;
 
+    G4Material* fiber_mat = materials::Y11();
+    fiber_mat->SetMaterialPropertiesTable(opticalprops::Y11());
+
     G4MaterialPropertyVector* fibers_rindex =
-      ps->GetMaterialPropertiesTable()->GetProperty("RINDEX");
-      std::cout<<"HERE!"<<std::endl;
+    fiber_mat->GetMaterialPropertiesTable()->GetProperty("RINDEX");
 
     photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
 
@@ -327,18 +337,19 @@ void Fiber_barrel_meth::Construct(){
 
       // fibers
       new G4PVPlacement(0,G4ThreeVector(x, y, z),fiber_logic,
-                              fiber_logic->GetName(),lab_logic,true,0,true);
+                        fiber_logic->GetName(),lab_logic,true,0,true);
 
       // aluminization
-      new G4PVPlacement(0,G4ThreeVector(x, y, z - length_/2.),disk_logic_vol,
-                              disk_name,lab_logic,true,0,true);
+      new G4PVPlacement(0,G4ThreeVector(x, y, z - length_/2. - disk_thickness/2.),
+                        disk_logic_vol, disk_name,lab_logic,true,0,true);
 
       // sensor
       G4ThreeVector sensor_pos = G4ThreeVector(x, y, z + length_/2. + sensor_thickness/2.);
 
       G4RotationMatrix* sensor_rot = new G4RotationMatrix();
-      rot_angle = -pi/2.;
+      // rot_angle = -pi/2.;
       // rot_angle = 0.;
+      rot_angle = pi;
       sensor_rot->rotateY(rot_angle);
       new G4PVPlacement(G4Transform3D(*sensor_rot, sensor_pos), photo_sensor_logic,
                         photo_sensor_logic->GetName(),lab_logic,true,0,true);

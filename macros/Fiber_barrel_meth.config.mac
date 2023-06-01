@@ -15,6 +15,7 @@
 #/Geometry/Fiber_barrel_meth/sensor_type SiPM_Hamamatsu
 #/Geometry/Fiber_barrel_meth/sensor_type PMT
 
+/Geometry/Fiber_barrel_meth/sensor_visibility true
 
 /Generator/SingleParticle/particle opticalphoton
 /Generator/SingleParticle/region WHOLE_VOL

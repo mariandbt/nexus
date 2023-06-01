@@ -15,5 +15,6 @@
 /nexus/RegisterEventAction DefaultEventAction
 /nexus/RegisterTrackingAction OpticalTrackingAction
 /nexus/RegisterSteppingAction SaveAllSteppingAction
+/nexus/RegisterSteppingAction AnalysisSteppingAction
 
 /nexus/RegisterMacro macros/Fiber_barrel_meth.config.mac
