@@ -18,9 +18,12 @@
 
 /Geometry/Fiber_barrel_meth/sensor_visibility true
 
+/Geometry/Fiber_barrel_meth/window_thickness 5. mm
+
 /Generator/SingleParticle/particle opticalphoton
 /Generator/SingleParticle/region WHOLE_VOL
 
+/Geometry/Fiber_barrel_meth/fiber_type Y11
 /Generator/SingleParticle/max_energy 7 eV # Y11 with TPB
 /Generator/SingleParticle/min_energy 7 eV # Y11 with TPB
 

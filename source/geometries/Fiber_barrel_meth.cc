@@ -31,14 +31,19 @@ REGISTER_CLASS(Fiber_barrel_meth,GeometryBase)
 
 Fiber_barrel_meth::Fiber_barrel_meth():
 GeometryBase(),
+fiber_type_ ("Y11"),
 diameter_(1.*mm),
 length_(1.*cm),
 radius_cyl_(1. *cm),
+window_thickness_ (5. * mm),
 sensor_type_ ("PERFECT"),
 sensor_visibility_ (true),
 cyl_vertex_gen_(0)
 {
     msg_=new G4GenericMessenger(this,"/Geometry/Fiber_barrel_meth/","Control commands of geometry OpticalFibre");
+
+    msg_->DeclareProperty("fiber_type", fiber_type_,
+            "Fiber type");
 
     G4GenericMessenger::Command& diameter_cmd =
             msg_->DeclareProperty("diameter",diameter_,"diameter of the cylindrical optical fibre");
@@ -58,6 +63,12 @@ cyl_vertex_gen_(0)
     radius_cyl_cmd.SetParameterName("radius_cyl",false);
     radius_cyl_cmd.SetRange("radius_cyl>0.");
 
+    G4GenericMessenger::Command& window_thickness_cmd =
+            msg_->DeclareProperty("window_thickness",window_thickness_,"Thickness of cylindrical window");
+    window_thickness_cmd.SetUnitCategory("Length");
+    window_thickness_cmd.SetParameterName("window_thickness",false);
+    window_thickness_cmd.SetRange("window_thickness>0.");
+
     msg_->DeclareProperty("sensor_type", sensor_type_,
         "Sensors type");
 
@@ -71,8 +82,13 @@ Fiber_barrel_meth::~Fiber_barrel_meth() {
     delete msg_;
 }
 void Fiber_barrel_meth::Construct(){
+
+    // LAB CREATION___________________________________________________
+
     // G4Box* lab_solid = new G4Box("LAB", 2 * mm,2 * mm,1.1*cm);
-    G4Box* lab_solid = new G4Box("LAB", 20 * mm,20 * mm,10.1*cm);
+    G4double lab_z_ = radius_cyl_ * 2;
+    G4double lab_xy_ = length_ * 2;
+    G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
 
     G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     air->SetMaterialPropertiesTable(opticalprops::Vacuum());
@@ -132,13 +148,13 @@ void Fiber_barrel_meth::Construct(){
 
     G4String window_name = "Methacrylate window";
 
-    G4double window_thickness = 1.5 * mm;
+    // G4double window_thickness = 5. * mm;
 
     G4Material* window_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
     window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
 
     G4Tubs* window_solid_vol =
-    new G4Tubs(window_name, radius_cyl_ - diameter_/2. - window_thickness, radius_cyl_ - diameter_/2., length_/2., 0., 360.*deg);
+    new G4Tubs(window_name, radius_cyl_ - diameter_/2. - window_thickness_, radius_cyl_ - diameter_/2., length_/2., 0., 360.*deg);
 
     G4LogicalVolume* window_logic_vol =
       new G4LogicalVolume(window_solid_vol, window_mat, window_name);
@@ -148,7 +164,8 @@ void Fiber_barrel_meth::Construct(){
     G4OpticalSurface* window_opsur =
       new G4OpticalSurface("window_OPSURF", unified, polished, dielectric_dielectric);
       // window_opsur->SetMaterialPropertiesTable(opticalprops::PMMA());
-      window_opsur->SetMaterialPropertiesTable(opticalprops::TPB());
+      if (fiber_type_ == "Y11") window_opsur->SetMaterialPropertiesTable(opticalprops::TPB());
+      if (fiber_type_ == "B2") window_opsur->SetMaterialPropertiesTable(opticalprops::TPH());
     new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
 
     G4ThreeVector window_pos = G4ThreeVector(0., 0., 0.);
@@ -309,19 +326,59 @@ void Fiber_barrel_meth::Construct(){
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
 
+    // Teflon caps
+
+    G4String caps_name = "Teflon_caps";
+
+    G4double caps_thickness = 1. * mm;
+
+    G4Material* caps_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
+    caps_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
+
+    G4Tubs* caps_solid_vol =
+      new G4Tubs(caps_name, 0., radius_cyl_ + diameter_/2. + teflon_thickness, caps_thickness/2., 0., 360.*deg);
+
+    G4LogicalVolume* caps_logic_vol =
+      new G4LogicalVolume(caps_solid_vol, caps_mat, caps_name);
+
+    G4OpticalSurface* caps_opsur =
+    new G4OpticalSurface("caps_OPSURF", unified, polished, dielectric_metal);
+    caps_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
+    new G4LogicalSkinSurface("caps_OPSURF", caps_logic_vol, caps_opsur);
+
+    G4VisAttributes caps_col = nexus::Lilla();
+    caps_logic_vol->SetVisAttributes(caps_col);
+    // caps_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    // G4ThreeVector caps_pos = G4ThreeVector(0., 0., (length_/2. + 2*sensor_thickness + caps_thickness/2.));
+    G4RotationMatrix* caps_rot = new G4RotationMatrix();
+    // rot_angle = pi/2.;
+    rot_angle = 0.;
+    caps_rot->rotateY(rot_angle);
+    new G4PVPlacement(G4Transform3D(*caps_rot, G4ThreeVector(0., 0., (length_/2. + 2*sensor_thickness + caps_thickness/2.))),
+                      caps_logic_vol, caps_name, lab_logic,
+                      false, 0, false);
+    new G4PVPlacement(G4Transform3D(*caps_rot, G4ThreeVector(0., 0., -(length_/2. + disk_thickness + caps_thickness/2.))),
+                      caps_logic_vol, caps_name, lab_logic,
+                      false, 0, false);
+
+
+
     // Fibers _____________________________________________________________________
 
     G4double n_fibers = floor(2*radius_cyl_*pi/diameter_);
     G4double dif_theta = 2*pi/n_fibers; // angular separation between fibers
     G4double theta;
+    std::cout<<"n_fibers = "<<n_fibers<<std::endl;
 
 
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
 
     // fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, true, tpb, ps, true); // coated
-    fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, false, tpb, ps, true); // uncoated
-    fiber_->SetCoreOpticalProperties(opticalprops::Y11());
+    fiber_ = new GenericWLSFiber("Fiber", true, diameter_, length_, true, false, tpb, ps, true); // uncoated
+    if (fiber_type_ == "Y11") fiber_->SetCoreOpticalProperties(opticalprops::Y11());
+    if (fiber_type_ == "B2") fiber_->SetCoreOpticalProperties(opticalprops::B2());
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
     fiber_->Construct();
     fiber_logic = fiber_->GetLogicalVolume();
@@ -346,7 +403,7 @@ void Fiber_barrel_meth::Construct(){
       // sensor
       // to avoid overlap among SiPMs intercalate them in Z
       // G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2. + (.85 * mm)*(i%2);
-      G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.*(1 + (i%3));
+      G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.*(1 + 2*(i%2));
       G4ThreeVector sensor_pos = G4ThreeVector(x, y, sensor_z_pos);
 
       G4RotationMatrix* sensor_rot = new G4RotationMatrix();
