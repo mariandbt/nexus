@@ -23,7 +23,7 @@ namespace nexus
         G4ThreeVector GenerateVertex(const G4String& region) const;
 
         private:
-        G4double radius_;     //diameter of the cylindrical optical fibre
+        G4double diameter_;     //diameter of the cylindrical optical fibre
         G4double length_;     //length of the cylindrical optical fibre
         G4double radius_cyl_; //radius of the cylinder
 

@@ -4,10 +4,11 @@
 
 /process/em/verbose 0
 
-/Geometry/Fiber_barrel_meth/length 3. cm
-#/Geometry/Fiber_barrel_meth/radius .5 mm
-/Geometry/Fiber_barrel_meth/radius 1. mm
-/Geometry/Fiber_barrel_meth/radius_cyl 1. cm
+/Geometry/Fiber_barrel_meth/length 228. cm
+#/Geometry/Fiber_barrel_meth/length 3. cm
+#/Geometry/Fiber_barrel_meth/diameter .5 mm
+/Geometry/Fiber_barrel_meth/diameter 1. mm
+/Geometry/Fiber_barrel_meth/radius_cyl 69 cm # NEXT100 diam = 138cm
 
 # sensor______________________________________________________
 #/Geometry/Fiber_barrel_meth/sensor_type PERFECT

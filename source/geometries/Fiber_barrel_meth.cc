@@ -31,7 +31,7 @@ REGISTER_CLASS(Fiber_barrel_meth,GeometryBase)
 
 Fiber_barrel_meth::Fiber_barrel_meth():
 GeometryBase(),
-radius_(1.*mm),
+diameter_(1.*mm),
 length_(1.*cm),
 radius_cyl_(1. *cm),
 sensor_type_ ("PERFECT"),
@@ -40,11 +40,11 @@ cyl_vertex_gen_(0)
 {
     msg_=new G4GenericMessenger(this,"/Geometry/Fiber_barrel_meth/","Control commands of geometry OpticalFibre");
 
-    G4GenericMessenger::Command& radius_cmd =
-            msg_->DeclareProperty("radius",radius_,"Radius of the cylindrical optical fibre");
-    radius_cmd.SetUnitCategory("Length");
-    radius_cmd.SetParameterName("radius",false);
-    radius_cmd.SetRange("radius>0.");
+    G4GenericMessenger::Command& diameter_cmd =
+            msg_->DeclareProperty("diameter",diameter_,"diameter of the cylindrical optical fibre");
+    diameter_cmd.SetUnitCategory("Length");
+    diameter_cmd.SetParameterName("diameter",false);
+    diameter_cmd.SetRange("diameter>0.");
 
     G4GenericMessenger::Command& length_cmd =
             msg_->DeclareProperty("length",length_,"Length of the cylindrical optical fibre");
@@ -103,7 +103,7 @@ void Fiber_barrel_meth::Construct(){
     teflon_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
 
     G4Tubs* teflon_solid_vol =
-      new G4Tubs(teflon_name, radius_cyl_ + radius_/2., radius_cyl_ + radius_/2. + teflon_thickness, length_/2., 0., 360.*deg);
+      new G4Tubs(teflon_name, radius_cyl_ + diameter_/2., radius_cyl_ + diameter_/2. + teflon_thickness, length_/2., 0., 360.*deg);
 
     G4LogicalVolume* teflon_logic_vol =
       new G4LogicalVolume(teflon_solid_vol, teflon_mat, teflon_name);
@@ -138,7 +138,7 @@ void Fiber_barrel_meth::Construct(){
     window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
 
     G4Tubs* window_solid_vol =
-    new G4Tubs(window_name, radius_cyl_ - radius_/2. - window_thickness, radius_cyl_ - radius_/2., length_/2., 0., 360.*deg);
+    new G4Tubs(window_name, radius_cyl_ - diameter_/2. - window_thickness, radius_cyl_ - diameter_/2., length_/2., 0., 360.*deg);
 
     G4LogicalVolume* window_logic_vol =
       new G4LogicalVolume(window_solid_vol, window_mat, window_name);
@@ -171,7 +171,7 @@ void Fiber_barrel_meth::Construct(){
    G4double disk_thickness = .1 * mm;
 
    G4Tubs* disk_solid_vol =
-     new G4Tubs(disk_name, 0., radius_/2., disk_thickness/2., 0., 360.*deg);
+     new G4Tubs(disk_name, 0., diameter_/2., disk_thickness/2., 0., 360.*deg);
 
    G4LogicalVolume* disk_logic_vol =
      new G4LogicalVolume(disk_solid_vol, disk_mat, disk_name);
@@ -194,8 +194,8 @@ void Fiber_barrel_meth::Construct(){
    G4double sensor_thickness = 1. * mm;
 
     /// Build the sensor
-    photo_sensor_  = new GenericPhotosensor("F_SENSOR", radius_,
-                                            radius_, sensor_thickness);
+    photo_sensor_  = new GenericPhotosensor("F_SENSOR", diameter_,
+                                            diameter_, sensor_thickness);
     /// Constructing the sensors
     // Optical Properties of the sensor
     G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
@@ -311,7 +311,7 @@ void Fiber_barrel_meth::Construct(){
 
     // Fibers _____________________________________________________________________
 
-    G4double n_fibers = floor(2*radius_cyl_*pi/radius_);
+    G4double n_fibers = floor(2*radius_cyl_*pi/diameter_);
     G4double dif_theta = 2*pi/n_fibers; // angular separation between fibers
     G4double theta;
 
@@ -319,8 +319,8 @@ void Fiber_barrel_meth::Construct(){
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
 
-    // fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, true, tpb, ps, true); // coated
-    fiber_ = new GenericWLSFiber("Y11", true, radius_, length_, true, false, tpb, ps, true); // uncoated
+    // fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, true, tpb, ps, true); // coated
+    fiber_ = new GenericWLSFiber("Y11", true, diameter_, length_, true, false, tpb, ps, true); // uncoated
     fiber_->SetCoreOpticalProperties(opticalprops::Y11());
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
     fiber_->Construct();
