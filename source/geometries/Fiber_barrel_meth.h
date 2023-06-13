@@ -29,6 +29,7 @@ namespace nexus
         G4double length_;     //length of the cylindrical optical fibre
 
         // methacrylate
+        G4bool methacrylate_;
         G4double window_thickness_;
 
         // cylinder

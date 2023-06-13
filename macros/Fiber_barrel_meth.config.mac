@@ -18,6 +18,7 @@
 
 /Geometry/Fiber_barrel_meth/sensor_visibility true
 
+/Geometry/Fiber_barrel_meth/methacrylate false
 /Geometry/Fiber_barrel_meth/window_thickness 5. mm
 
 /Generator/SingleParticle/particle opticalphoton

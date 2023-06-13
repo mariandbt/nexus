@@ -35,6 +35,7 @@ fiber_type_ ("Y11"),
 diameter_(1.*mm),
 length_(1.*cm),
 radius_cyl_(1. *cm),
+methacrylate_ (true),
 window_thickness_ (5. * mm),
 sensor_type_ ("PERFECT"),
 sensor_visibility_ (true),
@@ -62,6 +63,9 @@ cyl_vertex_gen_(0)
     radius_cyl_cmd.SetUnitCategory("Length");
     radius_cyl_cmd.SetParameterName("radius_cyl",false);
     radius_cyl_cmd.SetRange("radius_cyl>0.");
+
+    msg_->DeclareProperty("methacrylate", methacrylate_,
+                          "Methacrylate window");
 
     G4GenericMessenger::Command& window_thickness_cmd =
             msg_->DeclareProperty("window_thickness",window_thickness_,"Thickness of cylindrical window");
@@ -146,38 +150,38 @@ void Fiber_barrel_meth::Construct(){
 
     // Inner methacrylate cilynder
 
-    G4String window_name = "Methacrylate window";
+    if (methacrylate_) {
 
-    // G4double window_thickness = 5. * mm;
+          G4String window_name = "Methacrylate window";
 
-    G4Material* window_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
-    window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
+          G4Material* window_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
+          window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
 
-    G4Tubs* window_solid_vol =
-    new G4Tubs(window_name, radius_cyl_ - diameter_/2. - window_thickness_, radius_cyl_ - diameter_/2., length_/2., 0., 360.*deg);
+          G4Tubs* window_solid_vol =
+          new G4Tubs(window_name, radius_cyl_ - diameter_/2. - window_thickness_, radius_cyl_ - diameter_/2., length_/2., 0., 360.*deg);
 
-    G4LogicalVolume* window_logic_vol =
-      new G4LogicalVolume(window_solid_vol, window_mat, window_name);
-    G4VisAttributes window_col = nexus::LightBlue();
-    window_logic_vol->SetVisAttributes(window_col);
+          G4LogicalVolume* window_logic_vol =
+            new G4LogicalVolume(window_solid_vol, window_mat, window_name);
+          G4VisAttributes window_col = nexus::LightBlue();
+          window_logic_vol->SetVisAttributes(window_col);
 
-    G4OpticalSurface* window_opsur =
-      new G4OpticalSurface("window_OPSURF", unified, polished, dielectric_dielectric);
-      // window_opsur->SetMaterialPropertiesTable(opticalprops::PMMA());
-      if (fiber_type_ == "Y11") window_opsur->SetMaterialPropertiesTable(opticalprops::TPB());
-      if (fiber_type_ == "B2") window_opsur->SetMaterialPropertiesTable(opticalprops::TPH());
-    new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
+          G4OpticalSurface* window_opsur =
+            new G4OpticalSurface("window_OPSURF", unified, polished, dielectric_dielectric);
+            // window_opsur->SetMaterialPropertiesTable(opticalprops::PMMA());
+            if (fiber_type_ == "Y11") window_opsur->SetMaterialPropertiesTable(opticalprops::TPB());
+            if (fiber_type_ == "B2") window_opsur->SetMaterialPropertiesTable(opticalprops::TPH());
+          new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
 
-    G4ThreeVector window_pos = G4ThreeVector(0., 0., 0.);
+          G4ThreeVector window_pos = G4ThreeVector(0., 0., 0.);
 
-    G4RotationMatrix* window_rot_ = new G4RotationMatrix();
-    // rot_angle = pi/2.;
-    rot_angle = 0.;
-    window_rot_->rotateY(rot_angle);
-    new G4PVPlacement(G4Transform3D(*window_rot_, window_pos),
-                      window_logic_vol, window_name, lab_logic,
-                      false, 0, false);
-
+          G4RotationMatrix* window_rot_ = new G4RotationMatrix();
+          // rot_angle = pi/2.;
+          rot_angle = 0.;
+          window_rot_->rotateY(rot_angle);
+          new G4PVPlacement(G4Transform3D(*window_rot_, window_pos),
+                            window_logic_vol, window_name, lab_logic,
+                            false, 0, false);
+    }
     // Al disk to aluminize fibers _____________________________________________________________________
 
    G4String disk_name = "Al disk";
@@ -379,7 +383,15 @@ void Fiber_barrel_meth::Construct(){
     fiber_ = new GenericWLSFiber("Fiber", true, diameter_, length_, true, false, tpb, ps, true); // uncoated
     if (fiber_type_ == "Y11") fiber_->SetCoreOpticalProperties(opticalprops::Y11());
     if (fiber_type_ == "B2") fiber_->SetCoreOpticalProperties(opticalprops::B2());
+
+    if (~methacrylate_) {
+      
+      if (fiber_type_ == "Y11") fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
+      if (fiber_type_ == "B2") fiber_->SetCoatingOpticalProperties(opticalprops::TPH());
+
+    }
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
+
     fiber_->Construct();
     fiber_logic = fiber_->GetLogicalVolume();
 
