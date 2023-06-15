@@ -9,11 +9,11 @@
 class G4Material;
 class G4GenericMessenger;
 class G4MaterialPropertiesTable;
-class CylinderPointSampler;
+class CylinderPointSampler2020;
 
 namespace nexus
 {
-    class CylinderPointSampler;
+    class CylinderPointSampler2020;
     class Fiber_barrel_meth: public GeometryBase
     {
         public:
@@ -34,13 +34,14 @@ namespace nexus
 
         // cylinder
         G4double radius_cyl_; //radius of the cylinder
+        G4bool caps_visibility_;
 
         // sensor
         GenericPhotosensor* photo_sensor_;
         G4String sensor_type_;        // SiPM, PMT, PERFECT, ...
         G4bool sensor_visibility_;
 
-        CylinderPointSampler* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
+        CylinderPointSampler2020* cyl_vertex_gen_; // this creates photons homogeneously in a cylinder
         G4GenericMessenger*   msg_;
 
 

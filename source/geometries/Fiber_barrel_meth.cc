@@ -4,7 +4,7 @@
 #include "MaterialsList.h"
 #include "OpticalMaterialProperties.h"
 #include "Visibilities.h"
-#include "CylinderPointSampler.h"
+#include "CylinderPointSampler2020.h"
 #include "FactoryBase.h"
 
 #include <G4Tubs.hh>
@@ -39,6 +39,7 @@ methacrylate_ (true),
 window_thickness_ (5. * mm),
 sensor_type_ ("PERFECT"),
 sensor_visibility_ (true),
+caps_visibility_ (false),
 cyl_vertex_gen_(0)
 {
     msg_=new G4GenericMessenger(this,"/Geometry/Fiber_barrel_meth/","Control commands of geometry OpticalFibre");
@@ -79,17 +80,25 @@ cyl_vertex_gen_(0)
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_,
                           "Sensors visibility");
 
-    cyl_vertex_gen_ = new CylinderPointSampler(0.5*radius_cyl_, 0.5*length_, 0.,  0., G4ThreeVector(0., 0., 0.), 0);
+    msg_->DeclareProperty("caps_visibility", caps_visibility_,
+                          "Caps visibility");
+
 }
 Fiber_barrel_meth::~Fiber_barrel_meth() {
-    delete cyl_vertex_gen_;
     delete msg_;
 }
 void Fiber_barrel_meth::Construct(){
 
     // LAB CREATION___________________________________________________
 
-    // G4Box* lab_solid = new G4Box("LAB", 2 * mm,2 * mm,1.1*cm);
+    if (methacrylate_) {
+    cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_ - window_thickness_, length_/2, 0, 2*pi);
+    }
+    else if (~methacrylate_){
+    cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_, length_/2, 0, 2*pi);
+    }
+
+
     G4double lab_z_ = radius_cyl_ * 2;
     G4double lab_xy_ = length_ * 2;
     G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
@@ -351,8 +360,13 @@ void Fiber_barrel_meth::Construct(){
     new G4LogicalSkinSurface("caps_OPSURF", caps_logic_vol, caps_opsur);
 
     G4VisAttributes caps_col = nexus::Lilla();
-    caps_logic_vol->SetVisAttributes(caps_col);
-    // caps_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (caps_visibility_) {
+      caps_logic_vol->SetVisAttributes(caps_col);
+    }
+
+    else if (~caps_visibility_) {
+      caps_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    }
 
     // G4ThreeVector caps_pos = G4ThreeVector(0., 0., (length_/2. + 2*sensor_thickness + caps_thickness/2.));
     G4RotationMatrix* caps_rot = new G4RotationMatrix();
@@ -385,7 +399,7 @@ void Fiber_barrel_meth::Construct(){
     if (fiber_type_ == "B2") fiber_->SetCoreOpticalProperties(opticalprops::B2());
 
     if (~methacrylate_) {
-      
+
       if (fiber_type_ == "Y11") fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
       if (fiber_type_ == "B2") fiber_->SetCoatingOpticalProperties(opticalprops::TPH());
 

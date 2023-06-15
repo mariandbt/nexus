@@ -4,11 +4,14 @@
 
 /process/em/verbose 0
 
-/Geometry/Fiber_barrel_meth/length 228. cm
-#/Geometry/Fiber_barrel_meth/length 3. cm
-#/Geometry/Fiber_barrel_meth/diameter .5 mm
+# barrel______________________________________________________
+#/Geometry/Fiber_barrel_meth/length 228. cm
+#/Geometry/Fiber_barrel_meth/radius_cyl 69 cm # NEXT100 diam = 138cm
+#/Geometry/Fiber_barrel_meth/diameter 1. mm
+
+/Geometry/Fiber_barrel_meth/length 6. cm
+/Geometry/Fiber_barrel_meth/radius_cyl 2. cm
 /Geometry/Fiber_barrel_meth/diameter 1. mm
-/Geometry/Fiber_barrel_meth/radius_cyl 69 cm # NEXT100 diam = 138cm
 
 # sensor______________________________________________________
 #/Geometry/Fiber_barrel_meth/sensor_type PERFECT
@@ -16,13 +19,16 @@
 #/Geometry/Fiber_barrel_meth/sensor_type SiPM_Hamamatsu
 #/Geometry/Fiber_barrel_meth/sensor_type PMT
 
-/Geometry/Fiber_barrel_meth/sensor_visibility true
+/Geometry/Fiber_barrel_meth/sensor_visibility false
+/Geometry/Fiber_barrel_meth/caps_visibility false
 
-/Geometry/Fiber_barrel_meth/methacrylate false
+# methacrylate______________________________________________________
+/Geometry/Fiber_barrel_meth/methacrylate true
 /Geometry/Fiber_barrel_meth/window_thickness 5. mm
+#/Geometry/Fiber_barrel_meth/window_thickness 1. mm
 
 /Generator/SingleParticle/particle opticalphoton
-/Generator/SingleParticle/region WHOLE_VOL
+/Generator/SingleParticle/region VOLUME
 
 /Geometry/Fiber_barrel_meth/fiber_type Y11
 /Generator/SingleParticle/max_energy 7 eV # Y11 with TPB
