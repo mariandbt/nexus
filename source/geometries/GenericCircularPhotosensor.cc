@@ -56,7 +56,8 @@ GenericCircularPhotosensor::~GenericCircularPhotosensor()
 void GenericCircularPhotosensor::ComputeDimensions()
 {
   // Reduced size for components inside the case except the WLS
-  reduced_size_  = diameter_  - 1. * micrometer;
+  // reduced_size_  = diameter_  - 1. * micrometer;
+  reduced_size_  = diameter_  - .1 * micrometer;
 
   if (!with_wls_coating_) wls_thickness_ = 0.;
 
