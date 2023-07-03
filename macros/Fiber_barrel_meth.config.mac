@@ -19,7 +19,7 @@
 #/Geometry/Fiber_barrel_meth/sensor_type SiPM_Hamamatsu
 #/Geometry/Fiber_barrel_meth/sensor_type PMT
 
-/Geometry/Fiber_barrel_meth/sensor_visibility false
+/Geometry/Fiber_barrel_meth/sensor_visibility true
 /Geometry/Fiber_barrel_meth/caps_visibility false
 
 # methacrylate______________________________________________________
@@ -31,8 +31,9 @@
 /Generator/SingleParticle/region VOLUME
 
 /Geometry/Fiber_barrel_meth/fiber_type Y11
-/Generator/SingleParticle/max_energy 7 eV # Y11 with TPB
-/Generator/SingleParticle/min_energy 7 eV # Y11 with TPB
+#/Geometry/Fiber_barrel_meth/fiber_type B2
+/Generator/SingleParticle/max_energy 7 eV # Y11 with TPB or B2 with TPH (Xe scintillation)
+/Generator/SingleParticle/min_energy 7 eV # Y11 with TPB or B2 with TPH (Xe scintillation)
 
 #/Geometry/Fiber_barrel_meth/fiber_type Y11
 #/Generator/SingleParticle/min_energy 2.88 eV # Y11

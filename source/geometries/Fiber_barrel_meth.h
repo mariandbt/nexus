@@ -4,7 +4,7 @@
 #include "GeometryBase.h"
 #include <G4MaterialPropertyVector.hh>
 #include "GenericWLSFiber.h"
-#include "GenericPhotosensor.h"
+#include "GenericCircularPhotosensor.h"
 
 class G4Material;
 class G4GenericMessenger;
@@ -37,7 +37,7 @@ namespace nexus
         G4bool caps_visibility_;
 
         // sensor
-        GenericPhotosensor* photo_sensor_;
+        GenericCircularPhotosensor* photo_sensor_;
         G4String sensor_type_;        // SiPM, PMT, PERFECT, ...
         G4bool sensor_visibility_;
 

@@ -1,6 +1,6 @@
 #include "Fiber_barrel_meth.h"
 #include "GenericWLSFiber.h"
-#include "GenericPhotosensor.h"
+#include "GenericCircularPhotosensor.h"
 #include "MaterialsList.h"
 #include "OpticalMaterialProperties.h"
 #include "Visibilities.h"
@@ -133,7 +133,8 @@ void Fiber_barrel_meth::Construct(){
           window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
 
           G4Tubs* window_solid_vol =
-          new G4Tubs(window_name, radius_cyl_ - diameter_/2. - window_thickness_, radius_cyl_ - diameter_/2., length_/2., 0., 360.*deg);
+          new G4Tubs(window_name, radius_cyl_ - diameter_/2. - window_thickness_,
+                    radius_cyl_ - diameter_/2., length_/2., 0., 360.*deg);
 
           G4LogicalVolume* window_logic_vol =
             new G4LogicalVolume(window_solid_vol, window_mat, window_name);
@@ -190,67 +191,63 @@ void Fiber_barrel_meth::Construct(){
    G4double sensor_thickness = 1. * mm;
    G4String sensor_name = "F_SENSOR";
 
-    /// Build the sensor
-    // photo_sensor_  = new GenericPhotosensor(sensor_name, diameter_,
-    //                                         diameter_, sensor_thickness);
-
-  G4Tubs* sensor_solid_vol =
-    new G4Tubs(sensor_name, 0., diameter_/2., sensor_thickness/2., 0., 360.*deg);
+  /// Build the sensor
+  photo_sensor_  = new GenericCircularPhotosensor(sensor_name, diameter_, sensor_thickness);
 
 
-    /// Constructing the sensors
-    // Optical Properties of the sensor
-    G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
+  /// Constructing the sensors
+  // Optical Properties of the sensor
+  G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
 
-    if (sensor_type_ == "PERFECT") {
-      // perfect detector
-      G4int entries = 4;
-      G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
-      G4double efficiency[entries]   = {1.      , 1.      , 1.      , 1.       };
+  if (sensor_type_ == "PERFECT") {
+    // perfect detector
+    G4int entries = 4;
+    G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+    G4double efficiency[entries]   = {1.      , 1.      , 1.      , 1.       };
 
-      photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
-    }
+    photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+  }
 
-    else if (sensor_type_ == "PMT") {
-      // PMT
-      G4int entries = 9;
-      G4double energy[entries]       = {
-        h_Planck * c_light / (903.715 * nm), h_Planck * c_light / (895.975 * nm),
-        h_Planck * c_light / (866.563 * nm), h_Planck * c_light / (826.316 * nm),
-        h_Planck * c_light / (628.173 * nm), h_Planck * c_light / (490.402 * nm),
-        h_Planck * c_light / (389.783 * nm), h_Planck * c_light / (330.96 * nm),
-        h_Planck * c_light / (296.904 * nm)
-      };
-      G4double efficiency[entries]   = {0.00041, 0.00107, 0.01248, 0.06181,
-                                        0.12887, 0.19246, 0.09477, 0.06040,
-                                        0.00826};
+  else if (sensor_type_ == "PMT") {
+   // PMT
+   G4int entries = 9;
+   G4double energy[entries]       = {
+     h_Planck * c_light / (903.715 * nm), h_Planck * c_light / (895.975 * nm),
+     h_Planck * c_light / (866.563 * nm), h_Planck * c_light / (826.316 * nm),
+     h_Planck * c_light / (628.173 * nm), h_Planck * c_light / (490.402 * nm),
+     h_Planck * c_light / (389.783 * nm), h_Planck * c_light / (330.96 * nm),
+     h_Planck * c_light / (296.904 * nm)
+   };
+   G4double efficiency[entries]   = {0.00041, 0.00107, 0.01248, 0.06181,
+                                     0.12887, 0.19246, 0.09477, 0.06040,
+                                     0.00826};
 
-      photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
-    }
+   photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+   }
 
-    else if (sensor_type_ == "SiPM_FBK") {
-      // SiPM_FBK
-      G4int entries = 13;
-      G4double energy[entries]       = {
-        h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
-        h_Planck * c_light / (590.43 * nm), h_Planck * c_light / (544.78 * nm),
-        h_Planck * c_light / (524.78 * nm), h_Planck * c_light / (499.57 * nm),
-        h_Planck * c_light / (449.57 * nm), h_Planck * c_light / (435.22 * nm),
-        h_Planck * c_light / (420.00 * nm), h_Planck * c_light / (409.57 * nm),
-        h_Planck * c_light / (399.57 * nm), h_Planck * c_light / (389.57 * nm),
-        h_Planck * c_light / (364.78 * nm)
-      };
-      G4double efficiency[entries]   = {.2137, .2743,
-                                        .3189, .3634,
-                                        .3829, .4434,
-                                        .4971, .5440,
-                                        .5657, .5829,
-                                        .5886, .5657,
-                                        .4743
-                                        };
+  else if (sensor_type_ == "SiPM_FBK") {
+    // SiPM_FBK
+    G4int entries = 13;
+    G4double energy[entries]       = {
+h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
+      h_Planck * c_light / (590.43 * nm), h_Planck * c_light / (544.78 * nm),
+      h_Planck * c_light / (524.78 * nm), h_Planck * c_light / (499.57 * nm),
+      h_Planck * c_light / (449.57 * nm), h_Planck * c_light / (435.22 * nm),
+      h_Planck * c_light / (420.00 * nm), h_Planck * c_light / (409.57 * nm),
+      h_Planck * c_light / (399.57 * nm), h_Planck * c_light / (389.57 * nm),
+      h_Planck * c_light / (364.78 * nm)
+    };
+    G4double efficiency[entries]   = {.2137, .2743,
+                                      .3189, .3634,
+                                      .3829, .4434,
+                                      .4971, .5440,
+                                      .5657, .5829,
+                                      .5886, .5657,
+                                      .4743
+                                      };
 
-      photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
-    }
+    photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+  }
 
     else if (sensor_type_ == "SiPM_Hamamatsu") {
       // SiPM_Hamamatsu
@@ -289,38 +286,29 @@ void Fiber_barrel_meth::Construct(){
     fiber_mat->GetMaterialPropertiesTable()->GetProperty("RINDEX");
 
 
-    G4Material* sensor_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
-    sensor_mat->SetMaterialPropertiesTable(photosensor_mpt);
+    photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
 
-    G4LogicalVolume* photo_sensor_logic =
-      new G4LogicalVolume(sensor_solid_vol, sensor_mat, sensor_name);
+    // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
+    std::cout<<"HERE!"<<std::endl;
 
-    G4VisAttributes sensor_col = nexus::Lilla();
-    photo_sensor_logic->SetVisAttributes(sensor_col);
 
-    // photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
-    //
-    // // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
-    // std::cout<<"HERE!"<<std::endl;
-    //
-    //
-    // photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
-    //
-    // // Setting the time binning
-    // // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
-    //
-    // // Set mother depth & naming order
-    // photo_sensor_ ->SetSensorDepth(1);
-    // photo_sensor_ ->SetMotherDepth(2);
-    // photo_sensor_ ->SetNamingOrder(1);
-    //
-    // // Set visibilities
-    // photo_sensor_ ->SetVisibility(sensor_visibility_);
-    //
-    // // Construct
-    // photo_sensor_ ->Construct();
-    //
-    // G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
+    photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
+
+    // Setting the time binning
+    // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
+
+    // Set mother depth & naming order
+    photo_sensor_ ->SetSensorDepth(1);
+    photo_sensor_ ->SetMotherDepth(2);
+    photo_sensor_ ->SetNamingOrder(1);
+
+    // Set visibilities
+    photo_sensor_ ->SetVisibility(sensor_visibility_);
+
+    // Construct
+    photo_sensor_ ->Construct();
+
+    G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
 
     // Outer teflon cilynder thickness
