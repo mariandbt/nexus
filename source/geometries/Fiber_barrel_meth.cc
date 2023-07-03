@@ -94,13 +94,13 @@ void Fiber_barrel_meth::Construct(){
     if (methacrylate_) {
     cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_ - window_thickness_, length_/2, 0, 2*pi);
     }
-    else if (~methacrylate_){
+    else if (methacrylate_ == false){
     cyl_vertex_gen_ = new CylinderPointSampler2020(0., radius_cyl_, length_/2, 0, 2*pi);
     }
 
 
-    G4double lab_z_ = radius_cyl_ * 2;
-    G4double lab_xy_ = length_ * 2;
+    G4double lab_z_ = radius_cyl_ * 4;
+    G4double lab_xy_ = length_ * 4;
     G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
 
     G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
@@ -120,40 +120,6 @@ void Fiber_barrel_meth::Construct(){
 
     G4Material* ps = materials::PS();
     G4Material* tpb = materials::TPB();
-
-
-    // Outer teflon cilynder
-
-    G4String teflon_name = "Teflon_panel";
-
-    G4double teflon_thickness = .1 * mm;
-
-    G4Material* teflon_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
-    teflon_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
-
-    G4Tubs* teflon_solid_vol =
-      new G4Tubs(teflon_name, radius_cyl_ + diameter_/2., radius_cyl_ + diameter_/2. + teflon_thickness, length_/2., 0., 360.*deg);
-
-    G4LogicalVolume* teflon_logic_vol =
-      new G4LogicalVolume(teflon_solid_vol, teflon_mat, teflon_name);
-
-    G4OpticalSurface* teflon_opsur =
-    new G4OpticalSurface("teflon_OPSURF", unified, polished, dielectric_metal);
-    teflon_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
-    new G4LogicalSkinSurface("teflon_OPSURF", teflon_logic_vol, teflon_opsur);
-
-    G4VisAttributes teflon_col = nexus::Lilla();
-    teflon_logic_vol->SetVisAttributes(teflon_col);
-    // teflon_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-    G4ThreeVector teflon_pos = G4ThreeVector(0., 0., 0.);
-    G4RotationMatrix* teflon_rot = new G4RotationMatrix();
-    // rot_angle = pi/2.;
-    rot_angle = 0.;
-    teflon_rot->rotateY(rot_angle);
-    new G4PVPlacement(G4Transform3D(*teflon_rot, teflon_pos),
-                      teflon_logic_vol, teflon_name, lab_logic,
-                      false, 0, false);
 
 
 
@@ -222,10 +188,16 @@ void Fiber_barrel_meth::Construct(){
    // Sensors at the not aluminized end of the fibers _____________________________________________________________________
 
    G4double sensor_thickness = 1. * mm;
+   G4String sensor_name = "F_SENSOR";
 
     /// Build the sensor
-    photo_sensor_  = new GenericPhotosensor("F_SENSOR", diameter_,
-                                            diameter_, sensor_thickness);
+    // photo_sensor_  = new GenericPhotosensor(sensor_name, diameter_,
+    //                                         diameter_, sensor_thickness);
+
+  G4Tubs* sensor_solid_vol =
+    new G4Tubs(sensor_name, 0., diameter_/2., sensor_thickness/2., 0., 360.*deg);
+
+
     /// Constructing the sensors
     // Optical Properties of the sensor
     G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
@@ -309,10 +281,6 @@ void Fiber_barrel_meth::Construct(){
     G4double reflectivity[] = {0., 0.};
     photosensor_mpt->AddProperty("REFLECTIVITY", MinE_MaxE, reflectivity, 2);
 
-    photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
-
-    // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
-    std::cout<<"HERE!"<<std::endl;
 
     G4Material* fiber_mat = materials::Y11();
     fiber_mat->SetMaterialPropertiesTable(opticalprops::Y11());
@@ -320,24 +288,43 @@ void Fiber_barrel_meth::Construct(){
     G4MaterialPropertyVector* fibers_rindex =
     fiber_mat->GetMaterialPropertiesTable()->GetProperty("RINDEX");
 
-    photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
 
-    // Setting the time binning
-    // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
+    G4Material* sensor_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
+    sensor_mat->SetMaterialPropertiesTable(photosensor_mpt);
 
-    // Set mother depth & naming order
-    photo_sensor_ ->SetSensorDepth(1);
-    photo_sensor_ ->SetMotherDepth(2);
-    photo_sensor_ ->SetNamingOrder(1);
+    G4LogicalVolume* photo_sensor_logic =
+      new G4LogicalVolume(sensor_solid_vol, sensor_mat, sensor_name);
 
-    // Set visibilities
-    photo_sensor_ ->SetVisibility(sensor_visibility_);
+    G4VisAttributes sensor_col = nexus::Lilla();
+    photo_sensor_logic->SetVisAttributes(sensor_col);
 
-    // Construct
-    photo_sensor_ ->Construct();
+    // photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
+    //
+    // // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
+    // std::cout<<"HERE!"<<std::endl;
+    //
+    //
+    // photo_sensor_ ->SetWindowRefractiveIndex(fibers_rindex);
+    //
+    // // Setting the time binning
+    // // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
+    //
+    // // Set mother depth & naming order
+    // photo_sensor_ ->SetSensorDepth(1);
+    // photo_sensor_ ->SetMotherDepth(2);
+    // photo_sensor_ ->SetNamingOrder(1);
+    //
+    // // Set visibilities
+    // photo_sensor_ ->SetVisibility(sensor_visibility_);
+    //
+    // // Construct
+    // photo_sensor_ ->Construct();
+    //
+    // G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
-    G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
+    // Outer teflon cilynder thickness
+    G4double teflon_thickness = .1 * mm;
 
     // Teflon caps
 
@@ -373,11 +360,44 @@ void Fiber_barrel_meth::Construct(){
     // rot_angle = pi/2.;
     rot_angle = 0.;
     caps_rot->rotateY(rot_angle);
-    new G4PVPlacement(G4Transform3D(*caps_rot, G4ThreeVector(0., 0., (length_/2. + 2*sensor_thickness + caps_thickness/2.))),
+    new G4PVPlacement(G4Transform3D(*caps_rot, G4ThreeVector(0., 0., (length_/2. + sensor_thickness + caps_thickness/2.))),
                       caps_logic_vol, caps_name, lab_logic,
                       false, 0, false);
     new G4PVPlacement(G4Transform3D(*caps_rot, G4ThreeVector(0., 0., -(length_/2. + disk_thickness + caps_thickness/2.))),
                       caps_logic_vol, caps_name, lab_logic,
+                      false, 0, false);
+
+
+    // Outer teflon cilynder
+
+    G4String teflon_name = "Teflon_panel";
+
+    G4Material* teflon_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
+    teflon_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
+
+    G4Tubs* teflon_solid_vol =
+      new G4Tubs(teflon_name, radius_cyl_ + diameter_/2., radius_cyl_ + diameter_/2. + teflon_thickness,
+                 (length_ + sensor_thickness + 2*caps_thickness + disk_thickness)/2., 0., 360.*deg);
+
+    G4LogicalVolume* teflon_logic_vol =
+      new G4LogicalVolume(teflon_solid_vol, teflon_mat, teflon_name);
+
+    G4OpticalSurface* teflon_opsur =
+    new G4OpticalSurface("teflon_OPSURF", unified, polished, dielectric_metal);
+    teflon_opsur->SetMaterialPropertiesTable(opticalprops::PTFE());
+    new G4LogicalSkinSurface("teflon_OPSURF", teflon_logic_vol, teflon_opsur);
+
+    G4VisAttributes teflon_col = nexus::Lilla();
+    teflon_logic_vol->SetVisAttributes(teflon_col);
+    // teflon_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    G4ThreeVector teflon_pos = G4ThreeVector(0., 0., 0.);
+    G4RotationMatrix* teflon_rot = new G4RotationMatrix();
+    // rot_angle = pi/2.;
+    rot_angle = 0.;
+    teflon_rot->rotateY(rot_angle);
+    new G4PVPlacement(G4Transform3D(*teflon_rot, teflon_pos),
+                      teflon_logic_vol, teflon_name, lab_logic,
                       false, 0, false);
 
 
@@ -398,10 +418,11 @@ void Fiber_barrel_meth::Construct(){
     if (fiber_type_ == "Y11") fiber_->SetCoreOpticalProperties(opticalprops::Y11());
     if (fiber_type_ == "B2") fiber_->SetCoreOpticalProperties(opticalprops::B2());
 
-    if (~methacrylate_) {
+    if (methacrylate_ == false) {
 
       if (fiber_type_ == "Y11") fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
       if (fiber_type_ == "B2") fiber_->SetCoatingOpticalProperties(opticalprops::TPH());
+      std::cout<<"fiber_type_ = "<<fiber_type_<<std::endl;
 
     }
     // fiber_->SetCoatingOpticalProperties(opticalprops::TPB());
@@ -429,7 +450,8 @@ void Fiber_barrel_meth::Construct(){
       // sensor
       // to avoid overlap among SiPMs intercalate them in Z
       // G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2. + (.85 * mm)*(i%2);
-      G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.*(1 + 2*(i%2));
+      // G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.*(1 + 2*(i%2));
+      G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.;
       G4ThreeVector sensor_pos = G4ThreeVector(x, y, sensor_z_pos);
 
       G4RotationMatrix* sensor_rot = new G4RotationMatrix();

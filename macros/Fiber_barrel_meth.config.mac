@@ -9,13 +9,13 @@
 #/Geometry/Fiber_barrel_meth/radius_cyl 69 cm # NEXT100 diam = 138cm
 #/Geometry/Fiber_barrel_meth/diameter 1. mm
 
-/Geometry/Fiber_barrel_meth/length 6. cm
-/Geometry/Fiber_barrel_meth/radius_cyl 2. cm
+/Geometry/Fiber_barrel_meth/length 3. cm
+/Geometry/Fiber_barrel_meth/radius_cyl .5 cm
 /Geometry/Fiber_barrel_meth/diameter 1. mm
 
 # sensor______________________________________________________
-#/Geometry/Fiber_barrel_meth/sensor_type PERFECT
-/Geometry/Fiber_barrel_meth/sensor_type SiPM_FBK
+/Geometry/Fiber_barrel_meth/sensor_type PERFECT
+#/Geometry/Fiber_barrel_meth/sensor_type SiPM_FBK
 #/Geometry/Fiber_barrel_meth/sensor_type SiPM_Hamamatsu
 #/Geometry/Fiber_barrel_meth/sensor_type PMT
 
@@ -23,9 +23,9 @@
 /Geometry/Fiber_barrel_meth/caps_visibility false
 
 # methacrylate______________________________________________________
-/Geometry/Fiber_barrel_meth/methacrylate true
-/Geometry/Fiber_barrel_meth/window_thickness 5. mm
-#/Geometry/Fiber_barrel_meth/window_thickness 1. mm
+/Geometry/Fiber_barrel_meth/methacrylate false
+#/Geometry/Fiber_barrel_meth/window_thickness 5. mm
+/Geometry/Fiber_barrel_meth/window_thickness 1. mm
 
 /Generator/SingleParticle/particle opticalphoton
 /Generator/SingleParticle/region VOLUME
@@ -55,4 +55,4 @@
 /PhysicsList/Nexus/drift                true
 /PhysicsList/Nexus/electroluminescence  true
 
-/nexus/persistency/outputFile Fiber_barrel_meth.next
+/nexus/persistency/output_file Fiber_barrel_meth.next
