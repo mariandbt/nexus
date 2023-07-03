@@ -24,17 +24,19 @@ namespace nexus
 
         private:
         // fiber
-        G4String fiber_type_; // Y11 or B2
+        G4String fiber_type_;   // Y11 or B2
         G4double diameter_;     //diameter of the cylindrical optical fibre
-        G4double length_;     //length of the cylindrical optical fibre
+        G4double length_;       //length of the cylindrical optical fibre
 
         // methacrylate
         G4bool methacrylate_;
         G4double window_thickness_;
 
         // cylinder
-        G4double radius_cyl_; //radius of the cylinder
+        G4double radius_cyl_;         //radius of the cylinder
+        G4double teflon_thickness_;   // thickness of the outer teflon cover
         G4bool caps_visibility_;
+        G4bool teflon_visibility_;
 
         // sensor
         GenericCircularPhotosensor* photo_sensor_;

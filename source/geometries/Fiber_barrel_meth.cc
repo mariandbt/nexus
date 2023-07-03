@@ -35,11 +35,13 @@ fiber_type_ ("Y11"),
 diameter_(1.*mm),
 length_(1.*cm),
 radius_cyl_(1. *cm),
+teflon_thickness_ (1. *mm),
 methacrylate_ (true),
 window_thickness_ (5. * mm),
 sensor_type_ ("PERFECT"),
 sensor_visibility_ (true),
 caps_visibility_ (false),
+teflon_visibility_ (false),
 cyl_vertex_gen_(0)
 {
     msg_=new G4GenericMessenger(this,"/Geometry/Fiber_barrel_meth/","Control commands of geometry OpticalFibre");
@@ -65,6 +67,12 @@ cyl_vertex_gen_(0)
     radius_cyl_cmd.SetParameterName("radius_cyl",false);
     radius_cyl_cmd.SetRange("radius_cyl>0.");
 
+    G4GenericMessenger::Command& teflon_thickness_cmd =
+        msg_->DeclareProperty("teflon_thickness",teflon_thickness_,"Thickness of the cylindrical teflon cover");
+    teflon_thickness_cmd.SetUnitCategory("Length");
+    teflon_thickness_cmd.SetParameterName("teflon_thickness",false);
+    teflon_thickness_cmd.SetRange("teflon_thickness>0.");
+
     msg_->DeclareProperty("methacrylate", methacrylate_,
                           "Methacrylate window");
 
@@ -83,6 +91,9 @@ cyl_vertex_gen_(0)
     msg_->DeclareProperty("caps_visibility", caps_visibility_,
                           "Caps visibility");
 
+    msg_->DeclareProperty("teflon_visibility", teflon_visibility_,
+                          "Teflon visibility");
+
 }
 Fiber_barrel_meth::~Fiber_barrel_meth() {
     delete msg_;
@@ -99,8 +110,8 @@ void Fiber_barrel_meth::Construct(){
     }
 
 
-    G4double lab_z_ = radius_cyl_ * 4;
-    G4double lab_xy_ = length_ * 4;
+    G4double lab_z_ = (radius_cyl_ + diameter_/2. + teflon_thickness_)*2 ;
+    G4double lab_xy_ = (length_ + 2*teflon_thickness_ + 2*mm) * 2;
     G4Box* lab_solid = new G4Box("LAB", lab_xy_, lab_xy_, lab_z_);
 
     G4Material* air=G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
@@ -311,20 +322,17 @@ h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
     G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
 
-    // Outer teflon cilynder thickness
-    G4double teflon_thickness = .1 * mm;
-
     // Teflon caps
 
     G4String caps_name = "Teflon_caps";
 
-    G4double caps_thickness = 1. * mm;
+    G4double caps_thickness = teflon_thickness_;
 
     G4Material* caps_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
     caps_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
 
     G4Tubs* caps_solid_vol =
-      new G4Tubs(caps_name, 0., radius_cyl_ + diameter_/2. + teflon_thickness, caps_thickness/2., 0., 360.*deg);
+      new G4Tubs(caps_name, 0., radius_cyl_ + diameter_/2. + teflon_thickness_, caps_thickness/2., 0., 360.*deg);
 
     G4LogicalVolume* caps_logic_vol =
       new G4LogicalVolume(caps_solid_vol, caps_mat, caps_name);
@@ -364,7 +372,7 @@ h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
     teflon_mat->SetMaterialPropertiesTable(opticalprops::PTFE());
 
     G4Tubs* teflon_solid_vol =
-      new G4Tubs(teflon_name, radius_cyl_ + diameter_/2., radius_cyl_ + diameter_/2. + teflon_thickness,
+      new G4Tubs(teflon_name, radius_cyl_ + diameter_/2., radius_cyl_ + diameter_/2. + teflon_thickness_,
                  (length_ + sensor_thickness + 2*caps_thickness + disk_thickness)/2., 0., 360.*deg);
 
     G4LogicalVolume* teflon_logic_vol =
@@ -376,8 +384,13 @@ h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
     new G4LogicalSkinSurface("teflon_OPSURF", teflon_logic_vol, teflon_opsur);
 
     G4VisAttributes teflon_col = nexus::Lilla();
-    teflon_logic_vol->SetVisAttributes(teflon_col);
-    // teflon_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    if (teflon_visibility_) {
+      teflon_logic_vol->SetVisAttributes(teflon_col);
+    }
+
+    else if (~teflon_visibility_) {
+      teflon_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    }
 
     G4ThreeVector teflon_pos = G4ThreeVector(0., 0., 0.);
     G4RotationMatrix* teflon_rot = new G4RotationMatrix();
@@ -436,9 +449,6 @@ h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
                         disk_logic_vol, disk_name,lab_logic,true,0,true);
 
       // sensor
-      // to avoid overlap among SiPMs intercalate them in Z
-      // G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2. + (.85 * mm)*(i%2);
-      // G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.*(1 + 2*(i%2));
       G4double sensor_z_pos =  z + length_/2. + sensor_thickness/2.;
       G4ThreeVector sensor_pos = G4ThreeVector(x, y, sensor_z_pos);
 
