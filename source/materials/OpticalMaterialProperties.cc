@@ -461,7 +461,7 @@ namespace opticalprops {
   {
     // An argon gas proportional scintillation counter with UV avalanche photodiode scintillation
     // readout C.M.B. Monteiro, J.A.M. Lopes, P.C.P.S. Simoes, J.M.F. dos Santos, C.A.N. Conde
-    // 
+    //
     // May 2023:
     // Updated scintillation decay and yields from:
     // Triplet Lifetime in Gaseous Argon. Michael Akashi-Ronquest et al.
@@ -1050,6 +1050,27 @@ namespace opticalprops {
     // WLS Quantum Efficiency
     // This is set to QE at the Xenon peak, which the paper claims to be >90%
     mpt->AddConstProperty("WLSMEANNUMBERPHOTONS", 0.9);
+
+    return mpt;
+  }
+
+
+   /// Perfect absorber (for efficiency tests) ///
+  G4MaterialPropertiesTable* PerfectAbsorber()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    std::vector<G4double> energies = {
+      optPhotMinE_, optPhotMaxE_
+    };
+    std::vector<G4double> efficiency = {
+      1., 1.
+    };
+    std::vector<G4double> reflectivity = {
+      0., 0.
+    };
+    mpt->AddProperty("EFFICIENCY", energies, efficiency);
+    mpt->AddProperty("REFLECTIVITY", energies, reflectivity);
 
     return mpt;
   }
