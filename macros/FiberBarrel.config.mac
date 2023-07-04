@@ -1,0 +1,24 @@
+/Generator/SingleParticle/particle opticalphoton
+/Generator/SingleParticle/min_energy 7 eV
+/Generator/SingleParticle/max_energy 7 eV
+/Generator/SingleParticle/region INSIDE_BARREL
+
+#/Geometry/FiberBarrel/length 228. cm
+#/Geometry/FiberBarrel/radius 69 cm # NEXT100 diam = 138cm
+
+/Geometry/FiberBarrel/length 2.28 cm
+/Geometry/FiberBarrel/radius .69 cm
+
+/Geometry/FiberBarrel/fiber_diameter 1 mm
+/Geometry/FiberBarrel/coating TPH
+/Geometry/FiberBarrel/fiber_type B2
+
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+/process/em/verbose 0
+
+### JOB CONTROL
+/nexus/random_seed            -1
+/nexus/persistency/start_id   0
+/nexus/persistency/output_file FiberBarrel.next
