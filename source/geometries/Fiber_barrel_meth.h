@@ -1,10 +1,23 @@
+// ----------------------------------------------------------------------------
+// nexus | Fiber_barrel_meth.cc
+//
+// Cylinder containing optical fibers with a methacrylate window
+//
+// The NEXT Collaboration
+// ----------------------------------------------------------------------------
+
+
 #ifndef FIBER_BARREL_METH_H
 #define FIBER_BARREL_METH_H
 
 #include "GeometryBase.h"
-#include <G4MaterialPropertyVector.hh>
 #include "GenericWLSFiber.h"
 #include "GenericCircularPhotosensor.h"
+#include "CylinderPointSampler2020.h"
+#include "MaterialsList.h"
+
+#include <G4MaterialPropertyVector.hh>
+
 
 class G4Material;
 class G4GenericMessenger;
@@ -25,8 +38,9 @@ namespace nexus
         private:
         // fiber
         G4String fiber_type_;   // Y11 or B2
-        G4double diameter_;     //diameter of the cylindrical optical fibre
-        G4double length_;       //length of the cylindrical optical fibre
+        G4bool coated_;         // true or false for the fibers to be coated
+        G4double diameter_;     // diameter of the cylindrical optical fibre
+        G4double length_;       // length of the cylindrical optical fibre
 
         // methacrylate
         G4bool methacrylate_;
