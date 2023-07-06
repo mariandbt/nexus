@@ -1,0 +1,43 @@
+
+
+# barrel______________________________________________________
+#/Geometry/FibBarrMeth/length 200. cm
+#/Geometry/FibBarrMeth/radius_cyl 50 cm # NEXT100 iner_diam ~= 100cm
+
+/Geometry/FibBarrMeth/length 2. cm
+/Geometry/FibBarrMeth/radius_cyl .5 cm
+
+# sensor______________________________________________________
+#/Geometry/FibBarrMeth/sensor_visibility true
+
+# vertex______________________________________________________
+/Generator/SingleParticle/particle opticalphoton
+/Generator/SingleParticle/region VOLUME
+
+# fibers______________________________________________________
+/Geometry/FibBarrMeth/diameter 1. mm
+
+/Geometry/FibBarrMeth/coated true
+
+#/Geometry/FibBarrMeth/fiber_type Y11
+/Geometry/FibBarrMeth/fiber_type B2
+/Generator/SingleParticle/max_energy 7 eV # Y11 with TPB or B2 with TPH (Xe scintillation)
+/Generator/SingleParticle/min_energy 7 eV # Y11 with TPB or B2 with TPH (Xe scintillation)
+
+
+/process/optical/processActivation Cerenkov false
+
+### PHYSICS
+/PhysicsList/Nexus/clustering           true
+/PhysicsList/Nexus/drift                true
+/PhysicsList/Nexus/electroluminescence  true
+
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+/process/em/verbose 0
+
+### JOB CONTROL
+/nexus/random_seed            -1
+/nexus/persistency/start_id   0
+/nexus/persistency/output_file FibBarrMeth.next
