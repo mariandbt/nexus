@@ -447,7 +447,6 @@ h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
     GenericWLSFiber* fiber_;
     G4LogicalVolume* fiber_logic;
 
-    // Coating parameter = ~methacrylate_ ---> so when there's no methacrylate the fibers ARE coated
     fiber_ = new GenericWLSFiber(fiber_type_, true, diameter_, length_,
                                  true, coated_, this_coating, this_fiber, true);
 

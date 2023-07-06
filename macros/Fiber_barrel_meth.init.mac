@@ -1,20 +1,30 @@
-/PhysicsList/RegisterPhysics G4EmStandardPhysics_option4
-/PhysicsList/RegisterPhysics G4DecayPhysics
-/PhysicsList/RegisterPhysics G4OpticalPhysics
-/PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics
-/PhysicsList/RegisterPhysics NexusPhysics
-/PhysicsList/RegisterPhysics G4StepLimiterPhysics
+### --------------------------------------------------------
+### This init macro simulates the response of a fiber barrel
+### with SiPMs at one end.
+### --------------------------------------------------------
 
+/control/execute macros/physics/DefaultPhysicsList.mac
+/tracking/verbose 1
 /nexus/RegisterGeometry Fiber_barrel_meth
-
 /nexus/RegisterGenerator SingleParticleGenerator
-
 /nexus/RegisterPersistencyManager PersistencyManager
 
+/PhysicsList/RegisterPhysics G4OpticalPhysics
+
+#/PhysicsList/RegisterPhysics G4EmStandardPhysics_option4
+#/PhysicsList/RegisterPhysics G4DecayPhysics
+#/PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics
+#/PhysicsList/RegisterPhysics NexusPhysics
+#/PhysicsList/RegisterPhysics G4StepLimiterPhysics
+
+
+
+### ACTIONS
+
 /nexus/RegisterRunAction DefaultRunAction
-/nexus/RegisterEventAction DefaultEventAction
 /nexus/RegisterTrackingAction OpticalTrackingAction
-/nexus/RegisterSteppingAction SaveAllSteppingAction
 /nexus/RegisterSteppingAction AnalysisSteppingAction
+#/nexus/RegisterEventAction DefaultEventAction
+#/nexus/RegisterSteppingAction SaveAllSteppingAction
 
 /nexus/RegisterMacro macros/Fiber_barrel_meth.config.mac
