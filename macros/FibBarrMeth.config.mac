@@ -1,36 +1,39 @@
-
+/Generator/SingleParticle/particle opticalphoton
+/Generator/SingleParticle/min_energy 7 eV
+/Generator/SingleParticle/max_energy 7 eV
+/Generator/SingleParticle/region VOLUME
 
 # barrel______________________________________________________
 #/Geometry/FibBarrMeth/length 200. cm
-#/Geometry/FibBarrMeth/radius_cyl 50 cm # NEXT100 iner_diam ~= 100cm
+#/Geometry/FibBarrMeth/radius 50 cm # NEXT100 diam = 138cm
 
 /Geometry/FibBarrMeth/length 2. cm
-/Geometry/FibBarrMeth/radius_cyl .5 cm
+/Geometry/FibBarrMeth/radius .5 cm
+
+# teflon______________________________________________________
+/Geometry/FibBarrMeth/teflon_thickness 5. mm
+
+/Geometry/FibBarrMeth/caps_visibility false
+/Geometry/FibBarrMeth/teflon_visibility false
 
 # sensor______________________________________________________
-#/Geometry/FibBarrMeth/sensor_visibility true
+/Geometry/FibBarrMeth/sensor_type PERFECT
+#/Geometry/FibBarrMeth/sensor_type SiPM_FBK
+#/Geometry/FibBarrMeth/sensor_type SiPM_Hamamatsu
+#/Geometry/FibBarrMeth/sensor_type PMT
 
-# vertex______________________________________________________
-/Generator/SingleParticle/particle opticalphoton
-/Generator/SingleParticle/region VOLUME
+/Geometry/FibBarrMeth/sensor_visibility true
 
 # fibers______________________________________________________
-/Geometry/FibBarrMeth/diameter 1. mm
-
+/Geometry/FibBarrMeth/fiber_diameter 1 mm
 /Geometry/FibBarrMeth/coated true
-
-#/Geometry/FibBarrMeth/fiber_type Y11
+/Geometry/FibBarrMeth/coating TPH
 /Geometry/FibBarrMeth/fiber_type B2
-/Generator/SingleParticle/max_energy 7 eV # Y11 with TPB or B2 with TPH (Xe scintillation)
-/Generator/SingleParticle/min_energy 7 eV # Y11 with TPB or B2 with TPH (Xe scintillation)
 
-
-/process/optical/processActivation Cerenkov false
-
-### PHYSICS
-/PhysicsList/Nexus/clustering           true
-/PhysicsList/Nexus/drift                true
-/PhysicsList/Nexus/electroluminescence  true
+# methacrylate______________________________________________________
+/Geometry/FibBarrMeth/methacrylate false
+#/Geometry/FibBarrMeth/window_thickness 5. mm
+/Geometry/FibBarrMeth/window_thickness 1. mm
 
 /run/verbose 1
 /event/verbose 0

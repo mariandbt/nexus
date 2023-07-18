@@ -40,10 +40,10 @@ GeometryBase(),
 fiber_type_ ("Y11"),
 diameter_(1.*mm),
 length_(1.*cm),
+coated_ (true),
 radius_cyl_(1. *cm),
 teflon_thickness_ (1. *mm),
 methacrylate_ (false),
-coated_ (true),
 window_thickness_ (5. * mm),
 sensor_type_ ("PERFECT"),
 sensor_visibility_ (true),
@@ -491,7 +491,7 @@ h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
       sensor_rot->rotateY(rot_angle);
       new G4PVPlacement(G4Transform3D(*sensor_rot, sensor_pos), photo_sensor_logic,
                         photo_sensor_logic->GetName() + "_" + label,lab_logic,
-                        true, 2*n_fibers + i, false);
+                        false, 2*n_fibers + i, false);
 
 
 

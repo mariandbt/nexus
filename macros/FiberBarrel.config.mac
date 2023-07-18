@@ -3,11 +3,11 @@
 /Generator/SingleParticle/max_energy 7 eV
 /Generator/SingleParticle/region INSIDE_BARREL
 
-#/Geometry/FiberBarrel/length 200. cm
-#/Geometry/FiberBarrel/radius 50 cm # NEXT100 diam = 138cm
+/Geometry/FiberBarrel/length 200. cm
+/Geometry/FiberBarrel/radius 50 cm # NEXT100 diam = 138cm
 
-/Geometry/FiberBarrel/length 2. cm
-/Geometry/FiberBarrel/radius .5 cm
+#/Geometry/FiberBarrel/length 2. cm
+#/Geometry/FiberBarrel/radius .5 cm
 
 /Geometry/FiberBarrel/fiber_diameter 1 mm
 /Geometry/FiberBarrel/coating TPH
