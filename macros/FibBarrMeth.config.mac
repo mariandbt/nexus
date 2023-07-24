@@ -4,22 +4,22 @@
 /Generator/SingleParticle/region VOLUME
 
 # barrel______________________________________________________
-#/Geometry/FibBarrMeth/length 200. cm
-#/Geometry/FibBarrMeth/radius 50 cm # NEXT100 diam = 138cm
+/Geometry/FibBarrMeth/length 150. cm
+/Geometry/FibBarrMeth/radius 50 cm # NEXT100 diam = 100cm
 
-/Geometry/FibBarrMeth/length 2. cm
-/Geometry/FibBarrMeth/radius .5 cm
+#/Geometry/FibBarrMeth/length 1.5 cm
+#/Geometry/FibBarrMeth/radius .5 cm
 
 # teflon______________________________________________________
 /Geometry/FibBarrMeth/teflon_thickness 5. mm
 
-/Geometry/FibBarrMeth/caps_visibility false
-/Geometry/FibBarrMeth/teflon_visibility false
+/Geometry/FibBarrMeth/caps_visibility true
+/Geometry/FibBarrMeth/teflon_visibility true
 
 # sensor______________________________________________________
-/Geometry/FibBarrMeth/sensor_type PERFECT
+#/Geometry/FibBarrMeth/sensor_type PERFECT
 #/Geometry/FibBarrMeth/sensor_type SiPM_FBK
-#/Geometry/FibBarrMeth/sensor_type SiPM_Hamamatsu
+/Geometry/FibBarrMeth/sensor_type SiPM_Hamamatsu
 #/Geometry/FibBarrMeth/sensor_type PMT
 
 /Geometry/FibBarrMeth/sensor_visibility true
@@ -27,7 +27,6 @@
 # fibers______________________________________________________
 /Geometry/FibBarrMeth/fiber_diameter 1 mm
 /Geometry/FibBarrMeth/coated true
-/Geometry/FibBarrMeth/coating TPH
 /Geometry/FibBarrMeth/fiber_type B2
 
 # methacrylate______________________________________________________

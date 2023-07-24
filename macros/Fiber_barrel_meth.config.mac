@@ -1,10 +1,10 @@
 
 # barrel______________________________________________________
-/Geometry/Fiber_barrel_meth/length 200. cm
-/Geometry/Fiber_barrel_meth/radius_cyl 50 cm # NEXT100 iner_diam ~= 100cm
+#/Geometry/Fiber_barrel_meth/length 150. cm
+#/Geometry/Fiber_barrel_meth/radius_cyl 50 cm # NEXT100 iner_diam ~= 100cm
 
-#/Geometry/Fiber_barrel_meth/length 2. cm
-#/Geometry/Fiber_barrel_meth/radius_cyl .5 cm
+/Geometry/Fiber_barrel_meth/length 1.5 cm
+/Geometry/Fiber_barrel_meth/radius_cyl .5 cm
 
 # teflon______________________________________________________
 /Geometry/Fiber_barrel_meth/teflon_thickness 5. mm
@@ -66,7 +66,7 @@
 /process/em/verbose 0
 
 ### JOB CONTROL
-/nexus/random_seed            -1
+#/nexus/random_seed            -1
 /nexus/persistency/start_id   0
 
 /nexus/persistency/output_file Fiber_barrel_meth.next

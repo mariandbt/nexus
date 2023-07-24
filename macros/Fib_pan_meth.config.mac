@@ -1,0 +1,46 @@
+/Generator/SingleParticle/particle opticalphoton
+/Generator/SingleParticle/min_energy 7 eV
+/Generator/SingleParticle/max_energy 7 eV
+/Generator/SingleParticle/region VOLUME
+
+# barrel______________________________________________________
+#/Geometry/Fib_pan_meth/length 150. cm
+#/Geometry/Fib_pan_meth/radius 50 cm # NEXT100 diam = 138cm
+
+/Geometry/Fib_pan_meth/length 1.5 cm
+/Geometry/Fib_pan_meth/radius .5 cm
+
+# teflon______________________________________________________
+/Geometry/Fib_pan_meth/teflon_thickness 5. mm
+
+/Geometry/Fib_pan_meth/caps_visibility true
+/Geometry/Fib_pan_meth/teflon_visibility true
+
+# sensor______________________________________________________
+/Geometry/Fib_pan_meth/sensor_type PERFECT
+#/Geometry/Fib_pan_meth/sensor_type SiPM_FBK
+#/Geometry/Fib_pan_meth/sensor_type SiPM_Hamamatsu
+#/Geometry/Fib_pan_meth/sensor_type PMT
+
+/Geometry/Fib_pan_meth/sensor_visibility true
+
+# fibers______________________________________________________
+/Geometry/Fib_pan_meth/fiber_diameter 1 mm
+/Geometry/Fib_pan_meth/coated true
+#/Geometry/Fib_pan_meth/coating TPH
+/Geometry/Fib_pan_meth/fiber_type B2
+
+# methacrylate______________________________________________________
+/Geometry/Fib_pan_meth/methacrylate false
+#/Geometry/Fib_pan_meth/window_thickness 5. mm
+/Geometry/Fib_pan_meth/window_thickness 1. mm
+
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+/process/em/verbose 0
+
+### JOB CONTROL
+/nexus/random_seed            -1
+/nexus/persistency/start_id   0
+/nexus/persistency/output_file Fib_pan_meth.next

@@ -1,13 +1,13 @@
 // ----------------------------------------------------------------------------
-// nexus | FibBarrMeth.h
+// nexus | Fib_pan_meth.h
 //
 // Box-shaped box of material with a coating.
 //
 // The NEXT Collaboration
 // ----------------------------------------------------------------------------
 
-#ifndef FibBarrMeth_H
-#define FibBarrMeth_H
+#ifndef Fib_pan_meth_H
+#define Fib_pan_meth_H
 
 #include "GeometryBase.h"
 #include "GenericWLSFiber.h"
@@ -24,13 +24,13 @@ namespace nexus {
 
   /// Fiber Barrel
 
-  class FibBarrMeth: public GeometryBase
+  class Fib_pan_meth: public GeometryBase
   {
   public:
     /// Constructor
-    FibBarrMeth();
+    Fib_pan_meth();
     /// Destructor
-    ~FibBarrMeth();
+    ~Fib_pan_meth();
 
     /// Return vertex within region <region> of the chamber
     G4ThreeVector GenerateVertex(const G4String& region) const;
@@ -51,6 +51,8 @@ namespace nexus {
     G4double teflon_thickness_;   // thickness of the outer teflon cover
     G4bool caps_visibility_;
     G4bool teflon_visibility_;
+
+    G4double panel_width_;
 
     // methacrylate
     G4bool methacrylate_;

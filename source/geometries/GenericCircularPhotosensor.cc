@@ -33,7 +33,7 @@ GenericCircularPhotosensor::GenericCircularPhotosensor(G4String name,
   name_               (name),
   diameter_           (diameter),        // Diameter of the Sensitive Area
   thickness_          (thickness),       // Thickness of the whole sensor
-  window_thickness_   (0.2 * mm),        // Window thickness    (similar to Sensl SiPMs)
+  window_thickness_   (0.3 * mm),        // Window thickness    (similar to Sensl SiPMs)
   sensarea_thickness_ (0.2 * mm),        // Sensitive thickness (similar to Sensl SiPMs)
   wls_thickness_      (1. * micrometer), // WLS thickness = 1 micron by definition)
   with_wls_coating_   (false),
@@ -57,7 +57,7 @@ void GenericCircularPhotosensor::ComputeDimensions()
 {
   // Reduced size for components inside the case except the WLS
   // reduced_size_  = diameter_  - 1. * micrometer;
-  reduced_size_  = diameter_  - .1 * micrometer;
+  reduced_size_  = diameter_ ;
 
   if (!with_wls_coating_) wls_thickness_ = 0.;
 

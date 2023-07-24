@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// nexus | FibBarrMeth.cc
+// nexus | Fib_pan_meth.cc
 //
 // Box containing optical fibers
 //
 // The NEXT Collaboration
 // ----------------------------------------------------------------------------
 
-#include "FibBarrMeth.h"
+#include "Fib_pan_meth.h"
 
 #include "FactoryBase.h"
 #include "OpticalMaterialProperties.h"
@@ -24,28 +24,28 @@
 
 using namespace nexus;
 
-REGISTER_CLASS(FibBarrMeth, GeometryBase)
+REGISTER_CLASS(Fib_pan_meth, GeometryBase)
 
 namespace nexus {
 
-  FibBarrMeth::FibBarrMeth():
+  Fib_pan_meth::Fib_pan_meth():
     GeometryBase(),
     radius_ (1 * cm),
     methacrylate_ (false),
     window_thickness_ (5. * mm),
     fiber_diameter_(1 * mm),
     length_ (2 * cm),
-    // coating_ ("TPB"),
     fiber_type_ ("Y11"),
     sensor_type_ ("PERFECT"),
     sensor_visibility_ (true),
     teflon_thickness_ (1. *mm),
+    panel_width_ (170. * mm),
     caps_visibility_ (false),
     teflon_visibility_ (false),
     coated_(true)
   {
-    msg_ = new G4GenericMessenger(this, "/Geometry/FibBarrMeth/",
-      "Control commands of geometry FibBarrMeth.");
+    msg_ = new G4GenericMessenger(this, "/Geometry/Fib_pan_meth/",
+      "Control commands of geometry Fib_pan_meth.");
 
     G4GenericMessenger::Command&  radius_cmd =
       msg_->DeclareProperty("radius", radius_,
@@ -72,8 +72,12 @@ namespace nexus {
                             "Teflon coat thickness");
     teflon_thickness_cmd.SetUnitCategory("Length");
 
+    G4GenericMessenger::Command&  panel_width_cmd =
+      msg_->DeclareProperty("panel_width", panel_width_,
+                            "Teflon panel width");
+    panel_width_cmd.SetUnitCategory("Length");
+
     msg_->DeclareProperty("methacrylate", methacrylate_, "Inner methacrylate window (true or false)");
-    // msg_->DeclareProperty("coating", coating_, "Fiber coating (TPB or PTH)");
     msg_->DeclareProperty("fiber_type", fiber_type_, "Fiber type (Y11 or B2)");
     msg_->DeclareProperty("sensor_type", sensor_type_, "Sensors type");
     msg_->DeclareProperty("sensor_visibility", sensor_visibility_, "Sensors visibility");
@@ -85,22 +89,18 @@ namespace nexus {
 
 
 
-  FibBarrMeth::~FibBarrMeth()
+  Fib_pan_meth::~Fib_pan_meth()
   {
     delete msg_;
   }
 
 
 
-  void FibBarrMeth::Construct()
+  void Fib_pan_meth::Construct()
   {
 
-    G4cout << "[FibBarrMeth] *** Barrel Fiber prototype ***" << G4endl;
-    G4cout << "[FibBarrMeth] Using " << fiber_type_ << " fibers"<< G4endl;
-    G4cout << "[FibBarrMeth] Using " << sensor_type_ << " sensor"<< G4endl;
-    // if (coated_)
-    //   G4cout << " with " << coating_ << " coating";
-    // G4cout << G4endl;
+    G4cout << "[Fib_pan_meth] *** Barrel Fiber prototype ***" << G4endl;
+    G4cout << "[Fib_pan_meth] Using " << fiber_type_ << " fibers";
 
     if (methacrylate_)
     {
@@ -144,9 +144,6 @@ namespace nexus {
                   FatalException, "Invalid fiber type, must be Y11 or B2");
     }
 
-    if (coated_) {
-      G4cout << "[FibBarrMeth] Using coating: " << this_coating << G4endl;
-    }
 
     fiber_ = new GenericWLSFiber(fiber_type_, true, fiber_diameter_, length_, true, coated_, this_coating, this_fiber, true);
 
@@ -166,13 +163,13 @@ namespace nexus {
     world_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
     GeometryBase::SetLogicalVolume(world_logic_vol);
 
-    // TEFLON PANELS ////////////////////////////////////////////
-    G4Tubs* teflon_panel =
-      new G4Tubs("TEFLON_PANEL", 0, radius_ - fiber_diameter_ / 2, teflon_thickness_/2., 0, twopi);
+    // TEFLON END-CAPS ////////////////////////////////////////////
+    G4Tubs* teflon_cap =
+      new G4Tubs("TEFLON_CAP", 0, radius_ - fiber_diameter_ / 2, teflon_thickness_/2., 0, twopi);
     G4Material* teflon = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
     teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
     G4LogicalVolume* teflon_logic =
-      new G4LogicalVolume(teflon_panel, teflon, "TEFLON");
+      new G4LogicalVolume(teflon_cap, teflon, "TEFLON");
 
     G4OpticalSurface* opsur_teflon =
       new G4OpticalSurface("TEFLON_OPSURF", unified, polished, dielectric_metal);
@@ -193,23 +190,21 @@ namespace nexus {
                       teflon_logic, "TEFLON2", world_logic_vol,
                       true, 1, false);
 
-    // TEFLON CYLINDER
+    // TEFLON PANEL /////////////////////////////////////////////////
 
-    G4Tubs* teflon_cylinder =
-      new G4Tubs("TEFLON_CYLINDER", radius_ + fiber_diameter_ / 2, radius_ + fiber_diameter_ / 2 + teflon_thickness_, length_/2, 0, twopi);
-    G4LogicalVolume* teflon_cylinder_logic =
-      new G4LogicalVolume(teflon_cylinder, teflon, "TEFLON");
+    G4Box* teflon_panel =
+      new G4Box("TEFLON_PANEL", panel_width_/2., length_/2., teflon_thickness_/2.);
+    G4LogicalVolume* teflon_panel_logic =
+      new G4LogicalVolume(teflon_panel, teflon, "TEFLON_PANEL");
 
-    new G4LogicalSkinSurface("TEFLON_CYLINDER_OPSURF", teflon_cylinder_logic, opsur_teflon);
+    new G4LogicalSkinSurface("TEFLON_PANEL_OPSURF", teflon_panel_logic, opsur_teflon);
+
+    teflon_panel_logic->SetVisAttributes(nexus::White());
 
     if (teflon_visibility_ == false)
     {
-      teflon_cylinder_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+      teflon_panel_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     }
-
-    new G4PVPlacement(0, G4ThreeVector(0, 0),
-                      teflon_cylinder_logic, "TEFLON_CYLINDER", world_logic_vol,
-                      false, 0, false);
 
     // FIBER ////////////////////////////////////////////////////
 
@@ -224,7 +219,7 @@ namespace nexus {
       fiber_logic->SetVisAttributes(nexus::LightBlueAlpha());
 
     G4int n_fibers = floor((radius_ * 2 * M_PI) / fiber_diameter_);
-    G4cout << "[FibBarrMeth] Barrel with " << n_fibers << " fibers" << G4endl;
+    G4cout << "[Fib_pan_meth] Barrel with " << n_fibers << " fibers" << G4endl;
 
     // DETECTOR /////////////////////////////////////////////////
     G4double sensor_thickness = 1. * mm;
@@ -346,6 +341,7 @@ namespace nexus {
       G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
 
 
+
     // ALUMINIZED ENDCAP//////////////////////////////////////////////////
 
     G4Material* fiber_end_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
@@ -358,10 +354,8 @@ namespace nexus {
     G4LogicalVolume* fiber_end_logic_vol =
       new G4LogicalVolume(fiber_end_solid_vol, fiber_end_mat, "FIBER_END");
     G4OpticalSurface* opsur_al =
-      new G4OpticalSurface("AL_OPSURF", glisur, ground, dielectric_metal);
-      // new G4OpticalSurface("BARE_AL_OPSURF", unified, polished, dielectric_metal);
-    opsur_al->SetMaterialPropertiesTable(opticalprops::BareAluminium());
-    opsur_al->SetPolish(0.75);
+      new G4OpticalSurface("POLISHED_AL_OPSURF", unified, polished, dielectric_metal);
+    opsur_al->SetMaterialPropertiesTable(opticalprops::PolishedAl());
 
     new G4LogicalSkinSurface("POLISHED_AL_OPSURF", fiber_end_logic_vol, opsur_al);
 
@@ -403,34 +397,52 @@ namespace nexus {
 
     // PLACEMENT /////////////////////////////////////////////
 
-    for (G4int itheta=0; itheta < n_fibers; itheta++) {
+    G4double dif_theta = 2*std::asin(panel_width_/(2.*radius_));
+    G4cout << "panel_width_ = " << panel_width_ << G4endl;
+    G4cout << "dif_theta = " << dif_theta << G4endl;
+    G4int n_panels = floor(( 2 * M_PI) / dif_theta);
+    G4double h = std::sqrt( std::pow(radius_ + fiber_diameter_/2., 2) - (std::pow(panel_width_, 2)) );
+    G4cout << "n_panels = " << n_panels << G4endl;
 
-      G4double theta = 2 * M_PI / n_fibers * itheta;
-      G4double x = radius_ * std::cos(theta) * mm;
-      G4double y = radius_ * std::sin(theta) * mm;
+    // for (G4int itheta=0; itheta < n_panels; itheta++) {
+    for (G4int itheta=0; itheta < 3; itheta++) {
+
+      // G4double theta = dif_theta * itheta;
+      G4double theta = (360/3) * itheta;
+      G4double x = h * std::cos(theta) * mm;
+      G4double y = h * std::sin(theta) * mm;
       std::string label = std::to_string(itheta);
 
-      new G4PVPlacement(0, G4ThreeVector(x,y),
-                        fiber_logic, "B2-"+label, world_logic_vol,
-                        false, itheta, false);
+      new G4PVPlacement(0, G4ThreeVector(x,y, 0.),
+                        teflon_panel_logic, "PANEL-"+label, world_logic_vol,
+                        false, itheta, true);
 
-      G4RotationMatrix* sensor_rot = new G4RotationMatrix();
-      // rot_angle = 0.;
-      rot_angle = M_PI;
-      sensor_rot->rotateY(rot_angle);
-      new G4PVPlacement(sensor_rot, G4ThreeVector(x,y,(length_ + sensor_thickness)/2.),
-                        photo_sensor_logic, "SENS-" + label, world_logic_vol,
-                        true, n_fibers+itheta, false);
-      new G4PVPlacement(0, G4ThreeVector(x,y,-(length_ + fiber_end_z)/2.),
-                        fiber_end_logic_vol, "ALUMINIUMR-" + label, world_logic_vol,
-                        false, 2*n_fibers+itheta, false);
+      // for (G4int ii=0; ii < n_fibers; ii++) {
+      //
+      //     std::string label2 = std::to_string(ii);
+      //
+      //     new G4PVPlacement(0, G4ThreeVector(x,y),
+      //                       fiber_logic, "B2-"+label+label2, world_logic_vol,
+      //                       false, itheta, false);
+      //
+      //     G4RotationMatrix* sensor_rot = new G4RotationMatrix();
+      //     // rot_angle = 0.;
+      //     rot_angle = M_PI;
+      //     sensor_rot->rotateY(rot_angle);
+      //     new G4PVPlacement(sensor_rot, G4ThreeVector(x,y,(length_ + sensor_thickness)/2.),
+      //                       photo_sensor_logic, "SENS-" + label+label2, world_logic_vol,
+      //                       true, n_fibers+itheta, false);
+      //     new G4PVPlacement(0, G4ThreeVector(x,y,-(length_ + fiber_end_z)/2.),
+      //                       fiber_end_logic_vol, "ALUMINIUMR-" + labe+label2l, world_logic_vol,
+      //                       false, 2*n_fibers+itheta, false);
+      //   }
     }
 
   }
 
 
 
-  G4ThreeVector FibBarrMeth::GenerateVertex(const G4String& region) const
+  G4ThreeVector Fib_pan_meth::GenerateVertex(const G4String& region) const
   {
     return cyl_vertex_gen_->GenerateVertex(region);
   }

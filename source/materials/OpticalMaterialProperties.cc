@@ -739,6 +739,75 @@ namespace opticalprops {
     return mpt;
   }
 
+  /// BareAluminium ///
+  G4MaterialPropertiesTable* BareAluminium()
+  {
+    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
+    std::vector<G4double> ENERGIES = {
+      h_Planck * c_light / (20000 * nm), h_Planck * c_light / (15000 * nm),
+      h_Planck * c_light / (10000 * nm), h_Planck * c_light / (9000 * nm),
+      h_Planck * c_light / (8000 * nm), h_Planck * c_light / (7000 * nm),
+      h_Planck * c_light / (6000 * nm), h_Planck * c_light / (5000 * nm),
+      h_Planck * c_light / (4000 * nm), h_Planck * c_light / (3000 * nm),
+      h_Planck * c_light / (2000 * nm), h_Planck * c_light / (1500 * nm),
+      h_Planck * c_light / (1000 * nm), h_Planck * c_light / (950 * nm),
+      h_Planck * c_light / (900 * nm), h_Planck * c_light / (850 * nm),
+      h_Planck * c_light / (800 * nm), h_Planck * c_light / (750 * nm),
+      h_Planck * c_light / (700 * nm), h_Planck * c_light / (650 * nm),
+      h_Planck * c_light / (600 * nm), h_Planck * c_light / (550 * nm),
+      h_Planck * c_light / (500 * nm), h_Planck * c_light / (450 * nm),
+      h_Planck * c_light / (400 * nm), h_Planck * c_light / (340 * nm),
+      h_Planck * c_light / (380 * nm), h_Planck * c_light / (300 * nm),
+      h_Planck * c_light / (260 * nm), h_Planck * c_light / (220 * nm)
+    };
+    std::vector<G4double> REFLECTIVITY = {
+      0.987, 0.987, 0.987, 0.987, 0.987,
+      0.986, 0.985, 0.984, 0.982, 0.98,
+      0.978, 0.974, 0.94, 0.924, 0.891,
+      0.867, 0.867, 0.886, 0.897, 0.905,
+      0.911, 0.915, 0.918, 0.922, 0.924,
+      0.925, 0.925, 0.923, 0.922, 0.915
+    };
+    // https://rmico.com/bare-aluminum
+    mpt->AddProperty("REFLECTIVITY", ENERGIES, REFLECTIVITY);
+
+    // REFLEXION BEHAVIOR
+    std::vector<G4double> ENERGIES_2    = {optPhotMinE_, optPhotMaxE_};
+    // Specular reflection about the normal to a microfacet.
+    // Such a vector is chosen according to a gaussian distribution with
+    // sigma = SigmaAlhpa (in rad) and centered in the average normal.
+    std::vector<G4double> specularlobe  = {0., 0.};
+    // specular reflection about the average normal
+    std::vector<G4double> specularspike = {0., 0.};
+    // 180 degrees reflection.
+    std::vector<G4double> backscatter   = {0., 0.};
+    // 1 - the sum of these three last parameters is the percentage of Lambertian reflection
+
+    mpt->AddProperty("SPECULARLOBECONSTANT", ENERGIES_2, specularlobe);
+    mpt->AddProperty("SPECULARSPIKECONSTANT",ENERGIES_2, specularspike);
+    mpt->AddProperty("BACKSCATTERCONSTANT",  ENERGIES_2, backscatter);
+
+    // REFRACTIVE INDEX
+    std::vector<G4double> ENERGIES_3    = {
+      0.005 * eV, 0.19581 * eV, 0.43227 * eV,
+      0.84211 * eV, 1.2254 * eV, 1.4477 * eV,
+      1.7831 * eV, 2.8203 * eV, 3.6216 * eV,
+      5.0548 * eV, 7.0554 * eV, 9.4450 * eV,
+      12.645 * eV, 14.939 * eV, 16.238 * eV,
+      18.4 * eV, 20. * eV
+    };
+    std::vector<G4double> rIndex = {
+      473.49, 12.843, 3.8841, 1.437, 1.4821, 2.4465, 1.6203, 0.58336, 0.32634, 0.1686,
+      0.089866, 0.051461, 0.039232, 0.11588, 0.39013, 0.58276, 0.66415
+    };
+    // from https://refractiveindex.info/?shelf=3d&book=metals&page=aluminium
+    mpt->AddProperty("RINDEX", ENERGIES_3, rIndex);
+
+    return mpt;
+  }
+
+
   /// PolishedAl ///
   G4MaterialPropertiesTable* PolishedAl()
   {

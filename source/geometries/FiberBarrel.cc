@@ -81,8 +81,9 @@ namespace nexus {
 
     inside_cylinder_ = new CylinderPointSampler2020(0, radius_, length_/2, 0, 2 * M_PI);
 
-    world_z_ = length_ * 2;
-    world_xy_ = radius_ * 2;
+    world_z_ = length_ * 5;
+    world_xy_ = radius_ * 5;
+    G4cout << "world =  " << world_z_<<" x "<<world_xy_ << " fibers";
 
 
     G4Material *this_fiber = nullptr;
@@ -132,8 +133,10 @@ namespace nexus {
     GeometryBase::SetLogicalVolume(world_logic_vol);
 
     // TEFLON PANELS ////////////////////////////////////////////
+    G4double teflon_thickness = 5. * mm;
+
     G4Tubs* teflon_panel =
-      new G4Tubs("TEFLON_PANEL", 0, radius_ - fiber_diameter_ / 2, 5 * mm, 0, twopi);
+      new G4Tubs("TEFLON_PANEL", 0, radius_ - fiber_diameter_ /2., teflon_thickness/2., 0, twopi);
     G4Material* teflon = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
     teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
     G4LogicalVolume* teflon_logic =
@@ -145,24 +148,24 @@ namespace nexus {
 
     new G4LogicalSkinSurface("TEFLON_OPSURF", teflon_logic, opsur_teflon);
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0, -length_/2 - 5 * mm),
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -length_/2 - teflon_thickness/2.),
                       teflon_logic, "TEFLON1", world_logic_vol,
                       true, 0, false);
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0, length_/2 + 5 * mm),
+    new G4PVPlacement(0, G4ThreeVector(0, 0, length_/2 + teflon_thickness/2.),
                       teflon_logic, "TEFLON2", world_logic_vol,
                       true, 1, false);
 
     // TEFLON CYLINDER
 
     G4Tubs* teflon_cylinder =
-      new G4Tubs("TEFLON_CYLINDER", radius_ + fiber_diameter_ / 2, radius_ + fiber_diameter_ / 2 + 1 * cm, length_/2, 0, twopi);
+      new G4Tubs("TEFLON_CYLINDER", radius_ + fiber_diameter_ / 2, radius_ + fiber_diameter_ / 2 + teflon_thickness, length_/2, 0, twopi);
     G4LogicalVolume* teflon_cylinder_logic =
       new G4LogicalVolume(teflon_cylinder, teflon, "TEFLON");
 
     new G4LogicalSkinSurface("TEFLON_CYLINDER_OPSURF", teflon_cylinder_logic, opsur_teflon);
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0),
+    new G4PVPlacement(0, G4ThreeVector(0, 0, 0),
                       teflon_cylinder_logic, "TEFLON_CYLINDER", world_logic_vol,
                       false, 0, false);
 
@@ -188,7 +191,7 @@ namespace nexus {
     G4double disk_z = 0.1 * mm;
 
     G4Tubs* disk_solid_vol =
-      new G4Tubs("disk", 0, fiber_diameter_/2, disk_z, 0, 2 * M_PI);
+      new G4Tubs("disk", 0, fiber_diameter_/2, disk_z/2., 0, 2 * M_PI);
 
     G4LogicalVolume* disk_logic_vol =
       new G4LogicalVolume(disk_solid_vol, disk_mat, "DISK");
@@ -206,7 +209,7 @@ namespace nexus {
     G4double fiber_end_z = 0.1 * mm;
 
     G4Tubs* fiber_end_solid_vol =
-      new G4Tubs("fiber_end", 0, fiber_diameter_ / 2, fiber_end_z, 0, 2 * M_PI);
+      new G4Tubs("fiber_end", 0, fiber_diameter_ / 2, fiber_end_z/2., 0, 2 * M_PI);
 
     G4LogicalVolume* fiber_end_logic_vol =
       new G4LogicalVolume(fiber_end_solid_vol, fiber_end_mat, "FIBER_END");
@@ -220,18 +223,18 @@ namespace nexus {
 
     for (G4int itheta=0; itheta < n_fibers; itheta++) {
 
-      G4float theta = 2 * M_PI / n_fibers * itheta;
+      G4double theta = 2 * M_PI / n_fibers * itheta;
       G4double x = radius_ * std::cos(theta) * mm;
       G4double y = radius_ * std::sin(theta) * mm;
       std::string label = std::to_string(itheta);
 
-      new G4PVPlacement(0, G4ThreeVector(x,y),
+      new G4PVPlacement(0, G4ThreeVector(x, y, 0.),
                         fiber_logic, "B2-"+label, world_logic_vol,
                         false, itheta, false);
-      new G4PVPlacement(0, G4ThreeVector(x,y,length_/2 + disk_z),
+      new G4PVPlacement(0, G4ThreeVector(x,y,(length_ + disk_z)/2.),
                         disk_logic_vol, "DISKL-" + label, world_logic_vol,
                         false, itheta, false);
-      new G4PVPlacement(0, G4ThreeVector(x,y,-(length_/2 + disk_z)),
+      new G4PVPlacement(0, G4ThreeVector(x,y,-(length_ + fiber_end_z)/2.),
                         fiber_end_logic_vol, "ALUMINIUMR-" + label, world_logic_vol,
                         false, n_fibers+itheta, false);
     }
