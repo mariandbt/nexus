@@ -218,8 +218,8 @@ namespace nexus {
     else if (fiber_type_ == "B2")
       fiber_logic->SetVisAttributes(nexus::LightBlueAlpha());
 
-    G4int n_fibers = floor((radius_ * 2 * M_PI) / fiber_diameter_);
-    G4cout << "[Fib_pan_meth] Barrel with " << n_fibers << " fibers" << G4endl;
+    // G4int n_fibers = floor((radius_ * 2 * M_PI) / fiber_diameter_);
+    // G4cout << "[Fib_pan_meth] Barrel with " << n_fibers << " fibers" << G4endl;
 
     // DETECTOR /////////////////////////////////////////////////
     G4double sensor_thickness = 1. * mm;
@@ -396,34 +396,44 @@ namespace nexus {
     }
 
     // PLACEMENT /////////////////////////////////////////////
+    G4double h = radius_ + fiber_diameter_/2. + teflon_thickness_/2.;
+    G4double dif_theta = 2*std::atan(panel_width_/(2.*h));
+    G4int n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
+    dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
 
-    G4double dif_theta = 2*std::asin(panel_width_/(2.*radius_));
-    G4cout << "panel_width_ = " << panel_width_ << G4endl;
-    G4cout << "dif_theta = " << dif_theta << G4endl;
-    G4int n_panels = floor(( 2 * M_PI) / dif_theta);
-    G4double h = std::sqrt( std::pow(radius_ + fiber_diameter_/2., 2) - (std::pow(panel_width_, 2)) );
-    G4cout << "n_panels = " << n_panels << G4endl;
+    G4int n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
+    G4double dif_l = panel_width_/n_fibers;
 
     // for (G4int itheta=0; itheta < n_panels; itheta++) {
-    for (G4int itheta=0; itheta < 3; itheta++) {
+    for (G4int itheta=0; itheta < 1; itheta++) {
 
-      // G4double theta = dif_theta * itheta;
-      G4double theta = (360/3) * itheta;
+      G4double theta = dif_theta * itheta;
       G4double x = h * std::cos(theta) * mm;
       G4double y = h * std::sin(theta) * mm;
+      G4double phi = pi/2. + std::atan2(y, x);
       std::string label = std::to_string(itheta);
 
-      new G4PVPlacement(0, G4ThreeVector(x,y, 0.),
+      G4RotationMatrix* panel_rot = new G4RotationMatrix();
+      rot_angle = pi/2.;
+      panel_rot->rotateX(rot_angle);
+      panel_rot->rotateY(phi);
+      new G4PVPlacement(panel_rot, G4ThreeVector(x,y, 0.),
                         teflon_panel_logic, "PANEL-"+label, world_logic_vol,
                         false, itheta, true);
 
-      // for (G4int ii=0; ii < n_fibers; ii++) {
-      //
-      //     std::string label2 = std::to_string(ii);
-      //
-      //     new G4PVPlacement(0, G4ThreeVector(x,y),
-      //                       fiber_logic, "B2-"+label+label2, world_logic_vol,
-      //                       false, itheta, false);
+      for (G4int ii=0; ii < n_fibers; ii++) {
+
+          G4double x0 = x - (panel_width_/2.)*std::cos(phi);
+          G4double y0 = y + (panel_width_/2.)*std::sin(phi);
+
+          G4double xx = x0 + dif_l*ii*std::cos(phi);
+          G4double yy = y0 - dif_l*ii*std::sin(phi);
+
+          std::string label2 = std::to_string(ii);
+
+          new G4PVPlacement(0, G4ThreeVector(xx,yy),
+                            fiber_logic, "FIBER-"+label+label2, world_logic_vol,
+                            false, ii, true);
       //
       //     G4RotationMatrix* sensor_rot = new G4RotationMatrix();
       //     // rot_angle = 0.;
@@ -435,7 +445,7 @@ namespace nexus {
       //     new G4PVPlacement(0, G4ThreeVector(x,y,-(length_ + fiber_end_z)/2.),
       //                       fiber_end_logic_vol, "ALUMINIUMR-" + labe+label2l, world_logic_vol,
       //                       false, 2*n_fibers+itheta, false);
-      //   }
+        }
     }
 
   }

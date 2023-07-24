@@ -5,15 +5,17 @@
 
 # barrel______________________________________________________
 #/Geometry/Fib_pan_meth/length 150. cm
-#/Geometry/Fib_pan_meth/radius 50 cm # NEXT100 diam = 138cm
+#/Geometry/Fib_pan_meth/radius 50 cm
+#/Geometry/Fib_pan_meth/panel_width 17 cm
 
 /Geometry/Fib_pan_meth/length 1.5 cm
 /Geometry/Fib_pan_meth/radius .5 cm
+/Geometry/Fib_pan_meth/panel_width 1.7 cm 
 
 # teflon______________________________________________________
 /Geometry/Fib_pan_meth/teflon_thickness 5. mm
 
-/Geometry/Fib_pan_meth/caps_visibility true
+/Geometry/Fib_pan_meth/caps_visibility false
 /Geometry/Fib_pan_meth/teflon_visibility true
 
 # sensor______________________________________________________
