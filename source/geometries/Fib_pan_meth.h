@@ -11,7 +11,7 @@
 
 #include "GeometryBase.h"
 #include "GenericWLSFiber.h"
-#include "GenericCircularPhotosensor.h"
+#include "GenericPhotosensor.h"
 #include "CylinderPointSampler2020.h"
 #include "MaterialsList.h"
 
@@ -59,7 +59,7 @@ namespace nexus {
     G4double window_thickness_;
 
     // sensor
-    GenericCircularPhotosensor* photo_sensor_;
+    GenericPhotosensor* photo_sensor_;
     G4String sensor_type_;        // SiPM, PMT, PERFECT, ...
     G4bool sensor_visibility_;
 

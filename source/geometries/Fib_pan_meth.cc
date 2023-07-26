@@ -165,7 +165,7 @@ namespace nexus {
 
     // TEFLON END-CAPS ////////////////////////////////////////////
     G4Tubs* teflon_cap =
-      new G4Tubs("TEFLON_CAP", 0, radius_ - fiber_diameter_ / 2, teflon_thickness_/2., 0, twopi);
+      new G4Tubs("TEFLON_CAP", 0, radius_ - (fiber_diameter_ + teflon_thickness_) , teflon_thickness_/2., 0, twopi);
     G4Material* teflon = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
     teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
     G4LogicalVolume* teflon_logic =
@@ -222,11 +222,13 @@ namespace nexus {
     // G4cout << "[Fib_pan_meth] Barrel with " << n_fibers << " fibers" << G4endl;
 
     // DETECTOR /////////////////////////////////////////////////
+    G4int n_sensors = 5; // number of sensors per panel
+    G4double sensor_width = panel_width_/n_sensors;
     G4double sensor_thickness = 1. * mm;
     G4String sensor_name = "F_SENSOR";
 
     /// Build the sensor
-    photo_sensor_  = new GenericCircularPhotosensor(sensor_name, fiber_diameter_, sensor_thickness);
+    photo_sensor_  = new GenericPhotosensor(sensor_name, sensor_width, fiber_diameter_, sensor_thickness);
 
 
     // Optical Properties of the sensor
@@ -359,53 +361,26 @@ namespace nexus {
 
     new G4LogicalSkinSurface("POLISHED_AL_OPSURF", fiber_end_logic_vol, opsur_al);
 
-    // INNER METHACRYLATE CILYNDER/////////////////////////////////////////////
+    fiber_end_logic_vol  ->SetVisAttributes(nexus::Blue());
 
-    if (methacrylate_) {
-
-          G4String window_name = "METHACRYLATE_WINDOW";
-
-          G4Material* window_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
-          window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
-
-          G4Tubs* window_solid_vol =
-          new G4Tubs(window_name, radius_ - fiber_diameter_/2. - window_thickness_,
-                    radius_ - fiber_diameter_/2., length_/2., 0., 360.*deg);
-
-          G4LogicalVolume* window_logic_vol =
-            new G4LogicalVolume(window_solid_vol, window_mat, window_name);
-          G4VisAttributes window_col = nexus::Lilla();
-          window_logic_vol->SetVisAttributes(window_col);
-
-          G4OpticalSurface* window_opsur =
-            new G4OpticalSurface("window_OPSURF", unified, polished, dielectric_dielectric);
-            // window_opsur->SetMaterialPropertiesTable(opticalprops::PMMA());
-            if (fiber_type_ == "Y11") window_opsur->SetMaterialPropertiesTable(opticalprops::TPB());
-            if (fiber_type_ == "B2") window_opsur->SetMaterialPropertiesTable(opticalprops::TPH());
-          new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
-
-          G4ThreeVector window_pos = G4ThreeVector(0., 0., 0.);
-
-          G4RotationMatrix* window_rot_ = new G4RotationMatrix();
-          // rot_angle = pi/2.;
-          rot_angle = 0.;
-          window_rot_->rotateY(rot_angle);
-          new G4PVPlacement(G4Transform3D(*window_rot_, window_pos),
-                            window_logic_vol, window_name, world_logic_vol,
-                            false, 0, false);
-    }
 
     // PLACEMENT /////////////////////////////////////////////
-    G4double h = radius_ + fiber_diameter_/2. + teflon_thickness_/2.;
+    // G4double h = radius_ + fiber_diameter_/2. + teflon_thickness_/2.;
+    G4double h = radius_ - teflon_thickness_/2.;
     G4double dif_theta = 2*std::atan(panel_width_/(2.*h));
     G4int n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
     dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
+    G4cout << "[Fib_pan_meth] Using " << n_panels << " panels" << G4endl;
 
     G4int n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
-    G4double dif_l = panel_width_/n_fibers;
+    G4double dl_fib = panel_width_/n_fibers;
 
-    // for (G4int itheta=0; itheta < n_panels; itheta++) {
-    for (G4int itheta=0; itheta < 1; itheta++) {
+    G4double dl_sens = panel_width_/n_sensors;
+
+
+
+    for (G4int itheta=0; itheta < n_panels; itheta++) {
+    // for (G4int itheta=0; itheta < 3; itheta++) {
 
       G4double theta = dif_theta * itheta;
       G4double x = h * std::cos(theta) * mm;
@@ -419,33 +394,82 @@ namespace nexus {
       panel_rot->rotateY(phi);
       new G4PVPlacement(panel_rot, G4ThreeVector(x,y, 0.),
                         teflon_panel_logic, "PANEL-"+label, world_logic_vol,
-                        false, itheta, true);
+                        false, itheta, false);
+
+      // INNER METHACRYLATE PANELS/////////////////////////////////////////////
+      if (methacrylate_) {
+
+        G4String window_name = "METHACRYLATE_WINDOW";
+
+        G4Material* window_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_GLASS_PLATE");
+        window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
+
+        G4Box* window_solid_vol =
+          new G4Box(window_name, panel_width_/2., length_/2., window_thickness_/2.);
+
+        G4LogicalVolume* window_logic_vol =
+          new G4LogicalVolume(window_solid_vol, window_mat, window_name);
+        G4VisAttributes window_col = nexus::Lilla();
+        window_logic_vol->SetVisAttributes(window_col);
+
+        G4OpticalSurface* window_opsur =
+          new G4OpticalSurface("window_OPSURF", unified, polished, dielectric_dielectric);
+          // window_opsur->SetMaterialPropertiesTable(opticalprops::PMMA());
+          if (fiber_type_ == "Y11") window_opsur->SetMaterialPropertiesTable(opticalprops::TPB());
+          if (fiber_type_ == "B2") window_opsur->SetMaterialPropertiesTable(opticalprops::TPH());
+        new G4LogicalSkinSurface("window_OPSURF", window_logic_vol, window_opsur);
+
+        G4double hw = h - (window_thickness_/2. + fiber_diameter_ + teflon_thickness_/2.);
+
+        new G4PVPlacement(panel_rot, G4ThreeVector(x*hw/h,y*hw/h, 0.),
+                          window_logic_vol, window_name + label, world_logic_vol,
+                          false, 0, false);
+      }
+
+      // Relative positions of the fibers wrt the panel
+      G4double hh = h - (fiber_diameter_/2. + teflon_thickness_/2.);
+      G4double x0_f = x*hh/h + (panel_width_/2. - fiber_diameter_/2.)*std::cos(phi);
+      G4double y0_f = y*hh/h + (panel_width_/2. - fiber_diameter_/2.)*std::sin(phi);
+
+      // Relative positions of the sensors wrt the panel
+      G4double x0_s = x*hh/h + (panel_width_/2. - sensor_width/2.)*std::cos(phi);
+      G4double y0_s = y*hh/h + (panel_width_/2. - sensor_width/2.)*std::sin(phi);
+
 
       for (G4int ii=0; ii < n_fibers; ii++) {
+      // for (G4int ii=0; ii < 1; ii++) {
 
-          G4double x0 = x - (panel_width_/2.)*std::cos(phi);
-          G4double y0 = y + (panel_width_/2.)*std::sin(phi);
-
-          G4double xx = x0 + dif_l*ii*std::cos(phi);
-          G4double yy = y0 - dif_l*ii*std::sin(phi);
+          G4double xx_f = x0_f - dl_fib*ii*std::cos(phi);
+          G4double yy_f = y0_f - dl_fib*ii*std::sin(phi);
 
           std::string label2 = std::to_string(ii);
 
-          new G4PVPlacement(0, G4ThreeVector(xx,yy),
+          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f),
                             fiber_logic, "FIBER-"+label+label2, world_logic_vol,
-                            false, ii, true);
-      //
-      //     G4RotationMatrix* sensor_rot = new G4RotationMatrix();
-      //     // rot_angle = 0.;
-      //     rot_angle = M_PI;
-      //     sensor_rot->rotateY(rot_angle);
-      //     new G4PVPlacement(sensor_rot, G4ThreeVector(x,y,(length_ + sensor_thickness)/2.),
-      //                       photo_sensor_logic, "SENS-" + label+label2, world_logic_vol,
-      //                       true, n_fibers+itheta, false);
-      //     new G4PVPlacement(0, G4ThreeVector(x,y,-(length_ + fiber_end_z)/2.),
-      //                       fiber_end_logic_vol, "ALUMINIUMR-" + labe+label2l, world_logic_vol,
-      //                       false, 2*n_fibers+itheta, false);
+                            false, n_panels + ii, false);
+          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, -(length_ + fiber_end_z)/2.),
+                            fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, world_logic_vol,
+                            false, 2*n_panels + ii, false);
         }
+      for (G4int jj=0; jj < n_sensors; jj++) {
+      // for (G4int jj=0; jj < 3; jj++) {
+
+            G4double xx_s = x0_s - dl_sens*jj*std::cos(phi);
+            G4double yy_s = y0_s - dl_sens*jj*std::sin(phi);
+
+            std::string label2 = std::to_string(jj);
+
+            G4RotationMatrix* sensor_rot = new G4RotationMatrix();
+            // rot_angle = 0.;
+            rot_angle = M_PI;
+            sensor_rot->rotateY(rot_angle);
+            sensor_rot->rotateZ(phi);
+            new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, (length_ + sensor_thickness)/2.),
+                              photo_sensor_logic, "SENS-" + label+label2, world_logic_vol,
+                              true, 3*n_panels + jj, false);
+
+      }
+
     }
 
   }

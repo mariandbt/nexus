@@ -209,8 +209,8 @@ void GenericPhotosensor::Construct()
     red.SetForceSolid(true);
     sensarea_logic_vol->SetVisAttributes(red);
     window_logic_vol  ->SetVisAttributes(nexus::White());
-    case_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
-    // case_logic_vol->SetVisAttributes(nexus::Yellow());
+    // case_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
+    case_logic_vol->SetVisAttributes(nexus::Yellow());
   }
   else {
     window_logic_vol  ->SetVisAttributes(G4VisAttributes::GetInvisible());
