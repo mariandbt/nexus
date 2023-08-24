@@ -6,7 +6,10 @@
 /control/execute macros/physics/DefaultPhysicsList.mac
 /tracking/verbose 1
 /nexus/RegisterGeometry Fib_pan_meth
-/nexus/RegisterGenerator SingleParticleGenerator
+
+#/nexus/RegisterGenerator SingleParticleGenerator
+/nexus/RegisterGenerator Kr83mGenerator
+
 /nexus/RegisterPersistencyManager PersistencyManager
 
 /PhysicsList/RegisterPhysics G4OpticalPhysics

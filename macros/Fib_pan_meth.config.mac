@@ -1,7 +1,15 @@
-/Generator/SingleParticle/particle opticalphoton
-/Generator/SingleParticle/min_energy 7 eV
-/Generator/SingleParticle/max_energy 7 eV
-/Generator/SingleParticle/region VOLUME
+
+# Generator______________________________________________________
+#/Generator/SingleParticle/particle opticalphoton
+#/Generator/SingleParticle/min_energy 7 eV
+#/Generator/SingleParticle/max_energy 7 eV
+#/Generator/SingleParticle/region VOLUME
+
+/Generator/Kr83mGenerator/region VOLUME
+
+# Xenon______________________________________________________
+/Geometry/Fib_pan_meth/LXe false
+/Geometry/Fib_pan_meth/pressure 15. bar
 
 # barrel______________________________________________________
 /Geometry/Fib_pan_meth/length 150. cm
@@ -15,7 +23,7 @@
 # teflon______________________________________________________
 /Geometry/Fib_pan_meth/teflon_thickness 1. mm
 
-/Geometry/Fib_pan_meth/caps_visibility true
+/Geometry/Fib_pan_meth/caps_visibility false
 /Geometry/Fib_pan_meth/teflon_visibility true
 
 # sensor______________________________________________________

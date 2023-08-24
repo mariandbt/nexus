@@ -40,10 +40,13 @@ namespace nexus {
   private:
     G4double world_z_;             // World dimensions
     G4double world_xy_;
-    G4double radius_;
+
+    G4bool liquid_;               // Whether xenon is liquid or not
+    G4double pressure_;           // Pressure (if gaseous state was selected)
+
+    G4double radius_;             // Cylinder radius
     G4double fiber_diameter_;
-    G4double length_;
-    // G4String coating_;
+    G4double length_;             // Cylinder length
     G4String fiber_type_;
     G4bool coated_;
 
