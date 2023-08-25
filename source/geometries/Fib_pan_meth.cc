@@ -54,7 +54,7 @@ namespace nexus {
       "Control commands of geometry Fib_pan_meth.");
 
     msg_->DeclareProperty("LXe", liquid_,
-      "Build the tank with liquid xenon.");
+      "Fill the inside of the detector with liquid xenon.");
 
     G4GenericMessenger::Command& pressure_cmd =
       msg_->DeclareProperty("pressure", pressure_,
@@ -118,12 +118,6 @@ namespace nexus {
     G4cout << "[Fib_pan_meth] *** Barrel Fiber prototype ***" << G4endl;
     G4cout << "[Fib_pan_meth] Using " << fiber_type_ << " fibers";
 
-    if (methacrylate_)
-    {
-      cyl_vertex_gen_ = new CylinderPointSampler2020(0, radius_ - fiber_diameter_/2. - window_thickness_, length_/2, 0, 2 * M_PI);
-    } else if (methacrylate_ == false){
-      cyl_vertex_gen_ = new CylinderPointSampler2020(0, radius_ - fiber_diameter_/2., length_/2, 0, 2 * M_PI);
-    }
 
     world_z_ = (length_ + teflon_thickness_) * 3;
     world_xy_ = (radius_ + teflon_thickness_) * 3;
@@ -165,11 +159,21 @@ namespace nexus {
 
     // WORLD /////////////////////////////////////////////////
 
+    // Define the material (LXe or GXe) for the tank.
+    // We use for this the NIST manager or the nexus materials list.
+    G4Material* xenon = 0;
+    if (liquid_)
+      xenon = G4NistManager::Instance()->FindOrBuildMaterial("G4_lXe");
+    else
+      xenon = materials::GXe(pressure_);
+
     G4String world_name = "WORLD";
 
-    G4Material* world_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+    // G4Material* world_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+    G4Material* world_mat = xenon;
 
-    world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
+    // world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
+    world_mat->SetMaterialPropertiesTable(opticalprops::GXe());
 
     G4Box* world_solid_vol =
      new G4Box(world_name, world_xy_/2., world_xy_/2., world_z_/2.);
@@ -179,53 +183,19 @@ namespace nexus {
     world_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
     GeometryBase::SetLogicalVolume(world_logic_vol);
 
-    // Xe FILLING /////////////////////////////////////////////
-    G4String name = "Xe";
-
-    // Define solid volume as a cylinder
-    G4Tubs* xe_solid =
-     new G4Tubs(name, 0., radius_, length_/2., 0., 360.*deg);
-
-    // Define the material (LXe or GXe) for the tank.
-    // We use for this the NIST manager or the nexus materials list.
-    G4Material* xenon = 0;
-    if (liquid_)
-      xenon = G4NistManager::Instance()->FindOrBuildMaterial("G4_lXe");
-    else
-      xenon = materials::GXe(pressure_);
+    // // Set the logical volume of the lab as an ionization
+    // // sensitive detector, i.e. position, time and energy deposition
+    // // will be stored for each step of any charged particle crossing
+    // // the volume.
+    // IonizationSD* ionizsd = new IonizationSD("/Fib_pan_meth");
+    // G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
+    // world_logic_vol->SetSensitiveDetector(ionizsd);
+    // // Fix the length of the maximum step an electron can make
+    // // when depositing energy.
+    // // The smaller the limit the narrower the trace
+    // world_logic_vol->SetUserLimits(new G4UserLimits(1.*mm));
 
 
-    // Define the logical volume of the tank using the material
-    // and the solid volume defined above
-    G4LogicalVolume* xe_logic =
-    new G4LogicalVolume(xe_solid, xenon, name);
-
-    G4VisAttributes xe_col = nexus::Lilla();
-    xe_logic->SetVisAttributes(xe_col);
-    // xe_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-    // Set the logical volume of the tank as an ionization
-    // sensitive detector, i.e. position, time and energy deposition
-    // will be stored for each step of any charged particle crossing
-    // the volume.
-    IonizationSD* ionizsd = new IonizationSD("/Fib_pan_meth");
-    G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
-    xe_logic->SetSensitiveDetector(ionizsd);
-    // Fix the length of the maximum step an electron can make
-    // when depositing energy.
-    // The smaller the limit the narrower the trace
-    xe_logic->SetUserLimits(new G4UserLimits(1.*mm));
-
-    G4ThreeVector xe_pos = G4ThreeVector(0., 0., 0.);
-
-    G4RotationMatrix* xe_rot_ = new G4RotationMatrix();
-    // rot_angle = pi;
-    rot_angle = 0.;
-    xe_rot_->rotateY(rot_angle);
-
-    new G4PVPlacement(G4Transform3D(*xe_rot_, xe_pos),
-                      xe_logic, name, world_logic_vol,
-                      false, 0, false);
 
     // GEOMETRY PARAMETERS /////////////////////////////////////////////
 
@@ -253,10 +223,21 @@ namespace nexus {
     G4double hh = h - (fiber_diameter_/2. + teflon_thickness_/2.);
 
 
+    // volume where the vertex will be created
+    if (methacrylate_)
+    {
+      cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2. - window_thickness_, length_/2, 0, 2 * M_PI);
+    } else if (methacrylate_ == false){
+      cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2., length_/2, 0, 2 * M_PI,
+                                                     nullptr, G4ThreeVector(0,0,0));
+      // cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh/2., length_/2, 0, 2 * M_PI);
+    }
+
+
     // TEFLON END-CAPS ////////////////////////////////////////////
     G4Tubs* teflon_cap =
     // new G4Tubs("TEFLON_CAP", 0, radius_ - (fiber_diameter_ + teflon_thickness_) , teflon_thickness_/2., 0, twopi);
-      new G4Tubs("TEFLON_CAP", 0, hh - fiber_diameter_/2., teflon_thickness_/2., 0, twopi);
+    new G4Tubs("TEFLON_CAP", 0, hh - fiber_diameter_/2., teflon_thickness_/2., 0, twopi);
     G4Material* teflon = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
     teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
     G4LogicalVolume* teflon_logic =
@@ -459,6 +440,7 @@ namespace nexus {
     for (G4int itheta=0; itheta < n_panels; itheta++) {
     // for (G4int itheta=0; itheta < 3; itheta++) {
 
+      // panels
       G4double theta = dif_theta * itheta;
       G4double x = h * std::cos(theta) * mm;
       G4double y = h * std::sin(theta) * mm;

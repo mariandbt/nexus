@@ -3,7 +3,6 @@
 ### with SiPMs at one end.
 ### --------------------------------------------------------
 
-/control/execute macros/physics/DefaultPhysicsList.mac
 /tracking/verbose 1
 /nexus/RegisterGeometry Fib_pan_meth
 
@@ -12,6 +11,7 @@
 
 /nexus/RegisterPersistencyManager PersistencyManager
 
+/control/execute macros/physics/DefaultPhysicsList.mac
 /PhysicsList/RegisterPhysics G4OpticalPhysics
 
 
