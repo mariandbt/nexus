@@ -398,7 +398,9 @@ namespace nexus {
       photo_sensor_ ->SetWindowRefractiveIndex(window_rindex);
 
       // Setting the time binning
+      photo_sensor_ ->SetTimeBinning(1. * ns); // Size of fiber sensors time binning
       // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
+      // photo_sensor_ ->SetTimeBinning(1. * us); // Size of fiber sensors time binning
 
       // Set mother depth & naming order
       photo_sensor_ ->SetSensorDepth(1);
@@ -503,11 +505,11 @@ namespace nexus {
           std::string label2 = std::to_string(ii);
 
           new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f),
-                            fiber_logic, "FIBER-"+label+label2, world_logic_vol,
+                            fiber_logic, "FIBER-" + label + label2, world_logic_vol,
                             false, n_panels + ii, false);
           new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, -(length_ + fiber_end_z)/2.),
                             fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, world_logic_vol,
-                            false, 2*n_panels + ii, false);
+                            false, n_panels + n_fibers*itheta + ii, false);
         }
       for (G4int jj=0; jj < n_sensors; jj++) {
       // for (G4int jj=0; jj < 3; jj++) {
@@ -515,7 +517,7 @@ namespace nexus {
             G4double xx_s = x0_s - dl_sens*jj*std::cos(phi);
             G4double yy_s = y0_s - dl_sens*jj*std::sin(phi);
 
-            std::string label2 = std::to_string(jj);
+            std::string label3 = std::to_string(jj);
 
             G4RotationMatrix* sensor_rot = new G4RotationMatrix();
             // rot_angle = 0.;
@@ -523,8 +525,8 @@ namespace nexus {
             sensor_rot->rotateY(rot_angle);
             sensor_rot->rotateZ(phi);
             new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, (length_ + sensor_thickness)/2.),
-                              photo_sensor_logic, "SENS-" + label+label2, world_logic_vol,
-                              true, 3*n_panels + jj, false);
+                              photo_sensor_logic, "SENS-" + label + label3, world_logic_vol,
+                              true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
 
       }
 
