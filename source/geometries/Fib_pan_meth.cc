@@ -398,7 +398,7 @@ namespace nexus {
       photo_sensor_ ->SetWindowRefractiveIndex(window_rindex);
 
       // Setting the time binning
-      photo_sensor_ ->SetTimeBinning(1. * ns); // Size of fiber sensors time binning
+      photo_sensor_ ->SetTimeBinning(.1 * ns); // Size of fiber sensors time binning
       // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
       // photo_sensor_ ->SetTimeBinning(1. * us); // Size of fiber sensors time binning
 
