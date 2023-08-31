@@ -116,7 +116,7 @@ namespace nexus {
   {
 
     G4cout << "[Fib_pan_meth] *** Barrel Fiber prototype ***" << G4endl;
-    G4cout << "[Fib_pan_meth] Using " << fiber_type_ << " fibers";
+    G4cout << "[Fib_pan_meth] Using " << fiber_type_ << " fibers"<< G4endl;
 
 
     world_z_ = (length_ + teflon_thickness_) * 3;
@@ -211,8 +211,14 @@ namespace nexus {
     G4int n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
     G4double dl_fib = panel_width_/n_fibers; // distance between fibers
 
+    G4cout << "[Fib_pan_meth] Using " << n_fibers << " fibers per panel"<< G4endl;
+
+
     G4int n_sensors = 5; // number of sensors per panel
     G4double dl_sens = panel_width_/n_sensors; // distance between sensors
+
+    G4cout << "[Fib_pan_meth] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
+
 
     // Re-calculation of parameters for optimization
     dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
