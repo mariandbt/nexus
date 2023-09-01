@@ -404,9 +404,14 @@ namespace nexus {
       photo_sensor_ ->SetWindowRefractiveIndex(window_rindex);
 
       // Setting the time binning
-      photo_sensor_ ->SetTimeBinning(.1 * ns); // Size of fiber sensors time binning
-      // photo_sensor_ ->SetTimeBinning(100. * ns); // Size of fiber sensors time binning
-      // photo_sensor_ ->SetTimeBinning(1. * us); // Size of fiber sensors time binning
+      G4double t_binning = .1 * ns;
+      // G4double t_binning = 100. * ns;
+      // G4double t_binning = 1. * ns;
+
+      photo_sensor_ ->SetTimeBinning(t_binning); // Size of fiber sensors time binning
+
+      G4cout << "[Fib_pan_meth] Using " << t_binning << " [ns] binning"<< G4endl;
+
 
       // Set mother depth & naming order
       photo_sensor_ ->SetSensorDepth(1);
@@ -444,6 +449,7 @@ namespace nexus {
 
 
     // PLACEMENT /////////////////////////////////////////////
+    // n_panels = 1;
 
     for (G4int itheta=0; itheta < n_panels; itheta++) {
     // for (G4int itheta=0; itheta < 3; itheta++) {
