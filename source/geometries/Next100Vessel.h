@@ -42,6 +42,9 @@ namespace nexus {
     // get Z position of calibration ports
     G4double* GetPortZpositions();
 
+    // get vessel inner radius
+    G4double GetInnerRadius();
+
     /// Builder
     void Construct();
 

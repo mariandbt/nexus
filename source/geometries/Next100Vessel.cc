@@ -524,4 +524,8 @@ namespace nexus {
     return port_positions;
   }
 
+  G4double Next100Vessel::GetInnerRadius(){
+    return vessel_in_rad_;
+  }
+
 } //end namespace nexus
