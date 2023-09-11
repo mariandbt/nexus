@@ -25,6 +25,14 @@
 #include <G4NistManager.hh>
 #include <G4UserLimits.hh>
 
+// Marian's adenda
+#include "OpticalMaterialProperties.h"
+#include "Visibilities.h"
+
+#include <G4OpticalSurface.hh>
+#include <G4LogicalSkinSurface.hh>
+//
+
 
 namespace nexus {
 
@@ -89,6 +97,7 @@ namespace nexus {
 
   void Next100::Construct()
   {
+     G4cout << "[Next100] *** Full Next100 simulation with fibers ***" << G4endl;
     // LAB /////////////////////////////////////////////////////////////
     // This is just a volume of air surrounding the detector so that
     // events (from calibration sources or cosmic rays) can be generated
@@ -125,6 +134,9 @@ namespace nexus {
     G4ThreeVector vessel_displacement = shielding_->GetAirDisplacement(); // explained below
     gate_zpos_in_vessel_ = vessel_->GetELzCoord();
 
+    G4double inner_rad = vessel_ -> GetInnerRadius();
+    G4cout << "[Next100] Vessel inner radius " << inner_rad/10 << " cm radius" << G4endl;
+
     // SHIELDING
     shielding_->Construct();
     shielding_->SetELzCoord(gate_zpos_in_vessel_);
@@ -151,6 +163,52 @@ namespace nexus {
     ics_->SetELtoTPdistance         (gate_tracking_plane_distance_);
     ics_->SetPortZpositions(vessel_->GetPortZpositions());
     ics_->Construct();
+
+    // INNER TEFLON PANELS WITH FIBERS
+    G4double vess_length = vessel_ -> GetLength();
+    G4cout << "[Next100] Vessel length " << vess_length/1000 << " m " << G4endl;
+
+    // teflon panel /////////////////////////////////////////////////
+    // materials
+    G4Material* teflon = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
+    teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
+
+    G4OpticalSurface* opsur_teflon =
+      new G4OpticalSurface("TEFLON_OPSURF", unified, polished, dielectric_metal);
+    opsur_teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
+
+    // dimensions
+
+    G4double panel_width_ = 170. * mm;
+    G4double panel_thickness_ = 1. * mm;
+
+    G4Box* teflon_panel =
+      new G4Box("TEFLON_PANEL", panel_width_/2., vess_length/2., panel_thickness_/2.);
+    G4LogicalVolume* teflon_panel_logic =
+      new G4LogicalVolume(teflon_panel, teflon, "TEFLON_PANEL");
+
+    new G4LogicalSkinSurface("TEFLON_PANEL_OPSURF", teflon_panel_logic, opsur_teflon);
+
+    teflon_panel_logic->SetVisAttributes(nexus::White());
+
+    // if (teflon_visibility_ == false)
+    // {
+    //   teflon_panel_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+    // }
+    //
+    // // fiber ////////////////////////////////////////////////////
+    // fiber_->SetCoreOpticalProperties(this_fiber_optical);
+    // fiber_->SetCoatingOpticalProperties(this_coating_optical);
+    //
+    // fiber_->Construct();
+    // G4LogicalVolume* fiber_logic = fiber_->GetLogicalVolume();
+    // if (fiber_type_ == "Y11")
+    //   fiber_logic->SetVisAttributes(nexus::LightGreenAlpha());
+    // else if (fiber_type_ == "B2")
+    //   fiber_logic->SetVisAttributes(nexus::LightBlueAlpha());
+
+
+    // PLACEMENT
 
     G4ThreeVector gate_pos(0., 0., -gate_zpos_in_vessel_);
     if (lab_walls_){
