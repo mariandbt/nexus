@@ -528,4 +528,8 @@ namespace nexus {
     return vessel_in_rad_;
   }
 
+  G4double Next100Vessel::GetLength(){
+    return body_length_;
+  }
+
 } //end namespace nexus
