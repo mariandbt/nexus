@@ -52,7 +52,8 @@ namespace nexus {
     gate_sapphire_wdw_distance_  ((1458.2 - 0.1) * mm),
 
     specific_vertex_{},
-    lab_walls_(false)
+    lab_walls_(false),
+    fiber_type_ ("Y11")
   {
 
     msg_ = new G4GenericMessenger(this, "/Geometry/Next100/",
@@ -62,6 +63,8 @@ namespace nexus {
       "Set generation vertex.");
 
     msg_->DeclareProperty("lab_walls", lab_walls_, "Placement of Hall A walls");
+
+    msg_->DeclareProperty("fiber_type", fiber_type_, "Fiber type (Y11 or B2)");
 
   // The following methods must be invoked in this particular
   // order since some of them depend on the previous ones
@@ -134,9 +137,6 @@ namespace nexus {
     G4ThreeVector vessel_displacement = shielding_->GetAirDisplacement(); // explained below
     gate_zpos_in_vessel_ = vessel_->GetELzCoord();
 
-    G4double inner_rad = vessel_ -> GetInnerRadius();
-    G4cout << "[Next100] Vessel inner radius " << inner_rad/10 << " cm radius" << G4endl;
-
     // SHIELDING
     shielding_->Construct();
     shielding_->SetELzCoord(gate_zpos_in_vessel_);
@@ -190,25 +190,126 @@ namespace nexus {
     new G4LogicalSkinSurface("TEFLON_PANEL_OPSURF", teflon_panel_logic, opsur_teflon);
 
     teflon_panel_logic->SetVisAttributes(nexus::White());
+    // teflon_panel_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
 
-    // if (teflon_visibility_ == false)
-    // {
-    //   teflon_panel_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-    // }
     //
-    // // fiber ////////////////////////////////////////////////////
-    // fiber_->SetCoreOpticalProperties(this_fiber_optical);
-    // fiber_->SetCoatingOpticalProperties(this_coating_optical);
-    //
-    // fiber_->Construct();
-    // G4LogicalVolume* fiber_logic = fiber_->GetLogicalVolume();
-    // if (fiber_type_ == "Y11")
-    //   fiber_logic->SetVisAttributes(nexus::LightGreenAlpha());
-    // else if (fiber_type_ == "B2")
-    //   fiber_logic->SetVisAttributes(nexus::LightBlueAlpha());
+    // fiber ////////////////////////////////////////////////////
+
+    G4double fiber_diameter_ = 1. * mm;
+    G4bool coated_ = true;
+
+    G4Material *this_fiber = nullptr;
+    G4MaterialPropertiesTable *this_fiber_optical = nullptr;
+    G4Material *this_coating = nullptr;
+    G4MaterialPropertiesTable *this_coating_optical = nullptr;
+
+    if (fiber_type_ == "Y11") {
+      this_fiber = materials::Y11();
+      this_fiber_optical = opticalprops::Y11();
+
+      if (coated_) {
+        this_coating = materials::TPB();
+        this_coating_optical = opticalprops::TPB();
+      }
+
+    } else if (fiber_type_ == "B2") {
+
+      this_fiber = materials::B2();
+      this_fiber_optical = opticalprops::B2();
+
+      if (coated_) {
+        this_coating = materials::TPH();
+        this_coating_optical = opticalprops::TPH();
+      }
+
+    } else {
+      G4Exception("[FiberBarrel]", "Construct()",
+                  FatalException, "Invalid fiber type, must be Y11 or B2");
+    }
 
 
-    // PLACEMENT
+    fiber_ = new GenericWLSFiber(fiber_type_, true, fiber_diameter_, vess_length, true, coated_, this_coating, this_fiber, true);
+
+    fiber_->SetCoreOpticalProperties(this_fiber_optical);
+    fiber_->SetCoatingOpticalProperties(this_coating_optical);
+
+    fiber_->Construct();
+    G4LogicalVolume* fiber_logic = fiber_->GetLogicalVolume();
+    if (fiber_type_ == "Y11")
+      fiber_logic->SetVisAttributes(nexus::LightGreenAlpha());
+    else if (fiber_type_ == "B2")
+      fiber_logic->SetVisAttributes(nexus::LightBlueAlpha());
+
+    // GEOMETRY PARAMETERS /////////////////////////////////////////////
+    G4double rot_angle;
+
+    G4double inner_rad = vessel_ -> GetInnerRadius();
+    G4cout << "[Next100] Vessel inner radius " << inner_rad/10 << " cm radius" << G4endl;
+
+    // Teflon panels distance to the center
+    G4double h = inner_rad - panel_thickness_/2.;
+
+    // Teflon panels angular separation
+    G4double dif_theta = 2*std::atan(panel_width_/(2.*h));
+
+    G4int n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
+
+    G4int n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
+    G4double dl_fib = panel_width_/n_fibers; // distance between fibers
+
+   G4cout << "[Next100] Using " << n_fibers << " fibers per panel"<< G4endl;
+
+   // Re-calculation of parameters for optimization
+   dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
+   h = (panel_width_/2.)/(std::tan(dif_theta/2.)) + panel_thickness_/2. + fiber_diameter_; // re-calculate distance to the center
+   G4cout << "[Next100] Using " << n_panels << " panels" << G4endl;
+
+    // Fibers distance to the center
+   G4double hh = h - (fiber_diameter_/2. + panel_thickness_/2.);
+
+   // PLACEMENT /////////////////////////////////////////////
+   // n_panels = 1;
+
+   for (G4int itheta=0; itheta < n_panels; itheta++) {
+   // for (G4int itheta=0; itheta < 3; itheta++) {
+
+     // panels
+     G4double theta = dif_theta * itheta;
+     G4double x = h * std::cos(theta) * mm;
+     G4double y = h * std::sin(theta) * mm;
+     G4double phi = pi/2. + std::atan2(y, x);
+     std::string label = std::to_string(itheta);
+
+     G4RotationMatrix* panel_rot = new G4RotationMatrix();
+     rot_angle = pi/2.;
+     panel_rot->rotateX(rot_angle);
+     panel_rot->rotateY(phi);
+     new G4PVPlacement(panel_rot, G4ThreeVector(x,y, 0.),
+                       teflon_panel_logic, "PANEL-"+label, lab_logic_,
+                       false, itheta, false);
+
+     // Relative positions of the fibers wrt the panel
+     G4double x0_f = x*hh/h + (panel_width_/2. - fiber_diameter_/2.)*std::cos(phi);
+     G4double y0_f = y*hh/h + (panel_width_/2. - fiber_diameter_/2.)*std::sin(phi);
+
+     for (G4int ii=0; ii < n_fibers; ii++) {
+     // for (G4int ii=0; ii < 1; ii++) {
+
+         G4double xx_f = x0_f - dl_fib*ii*std::cos(phi);
+         G4double yy_f = y0_f - dl_fib*ii*std::sin(phi);
+
+         std::string label2 = std::to_string(ii);
+
+         new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f),
+                           fiber_logic, "FIBER-" + label + label2, lab_logic_,
+                           false, n_panels + ii, false);
+       }
+
+   }
+
+
+
+    //// PLACEMENT
 
     G4ThreeVector gate_pos(0., 0., -gate_zpos_in_vessel_);
     if (lab_walls_){
