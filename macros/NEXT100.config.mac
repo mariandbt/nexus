@@ -17,6 +17,19 @@
 ##### GEOMETRY #####
 /Geometry/Next100/elfield false
 /Geometry/Next100/max_step_size 1. mm
+/Geometry/Next100/field_cage_vis false
+
+## fibers______________________________________________________
+/Geometry/Next100/fiber_type Y11 ### (Y11, B2)
+/Geometry/Next100/coated true
+
+## sensor______________________________________________________
+/Geometry/Next100/sensor_type SiPM_Hamamatsu ### (PERFECT, SiPM_FBK, SiPM_Hamamatsu, PMT)
+/Geometry/Next100/sensor_visibility true
+
+## teflon______________________________________________________
+/Geometry/Next100/cap_visibility true
+/Geometry/Next100/panels_visibility true
 
 ##### GENERATOR #####
 /Generator/IonGenerator/atomic_number 83
