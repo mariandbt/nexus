@@ -38,6 +38,9 @@
 #include <G4UnitsTable.hh>
 #include <G4TransportationManager.hh>
 
+// Marian's adenda
+//
+
 using namespace nexus;
 
 
@@ -96,7 +99,16 @@ Next100FieldCage::Next100FieldCage():
   // EL gap generation disk parameters
   el_gap_gen_disk_diam_(0.),
   el_gap_gen_disk_x_(0.), el_gap_gen_disk_y_(0.),
-  el_gap_gen_disk_zmin_(0.), el_gap_gen_disk_zmax_(1.)
+  el_gap_gen_disk_zmin_(0.), el_gap_gen_disk_zmax_(1.),
+  // Fiber Barrel
+  fiber_type_ ("Y11"), // type of fibers attached to the teflon panels (Y11 or B2)
+  sensor_type_ ("PERFECT"),
+  fiber_diameter_(1 * mm),
+  panel_width_ (170. * mm),
+  sensor_visibility_ (true),
+  cap_visibility_ (false),
+  panels_visibility_ (false),
+  coated_(true)
 {
   /// Define new categories
   new G4UnitDefinition("kilovolt/cm","kV/cm","Electric field", kilovolt/cm);
@@ -181,6 +193,26 @@ Next100FieldCage::Next100FieldCage():
                           "Maximum Z range of the EL gap vertex generation disk.");
   el_gap_gen_disk_zmax_cmd.SetParameterName("el_gap_gen_disk_zmax", false);
   el_gap_gen_disk_zmax_cmd.SetRange("el_gap_gen_disk_zmax>=0.0 && el_gap_gen_disk_zmax<=1.0");
+
+  // Fiber Barrel
+  G4GenericMessenger::Command&  fiber_diameter_cmd =
+      msg_->DeclareProperty("fiber_diameter", fiber_diameter_,
+                            "Fiber diameter");
+  fiber_diameter_cmd.SetUnitCategory("Length");
+
+  G4GenericMessenger::Command&  panel_width_cmd =
+    msg_->DeclareProperty("panel_width", panel_width_,
+                          "Teflon panel width");
+  panel_width_cmd.SetUnitCategory("Length");
+
+  msg_->DeclareProperty("fiber_type", fiber_type_, "Fiber type (Y11 or B2)");
+  msg_->DeclareProperty("sensor_type", sensor_type_, "Sensors type");
+  msg_->DeclareProperty("sensor_visibility", sensor_visibility_, "Sensors visibility");
+  msg_->DeclareProperty("cap_visibility", cap_visibility_, "Make teflon endcap visible (true or false)");
+  msg_->DeclareProperty("panels_visibility", panels_visibility_, "Make teflon panels visible (true or false)");
+  msg_->DeclareProperty("coated", coated_, "Coat fibers with WLS coating");
+
+
 }
 
 
@@ -233,7 +265,8 @@ void Next100FieldCage::Construct()
   BuildCathode();
   BuildBuffer();
   BuildELRegion();
-  BuildLightTube();
+  BuildFiberBarrel();
+  // BuildLightTube();
   BuildFieldCage();
 }
 
@@ -281,7 +314,9 @@ void Next100FieldCage::BuildActive()
   /// Inner radius
   G4double rinner[2] = {0., 0.};
   /// Outer radius
-  G4double router[2] = {active_diam_/2., active_diam_/2.};
+  // G4double router[2] = {active_diam_/2., active_diam_/2.};
+  G4double router[2] = {active_diam_/2. - (teflon_thickn_ + fiber_diameter_),
+                        active_diam_/2. - (teflon_thickn_ + fiber_diameter_)};
 
   G4Polyhedra* active_solid =
     new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels_, 2, zplane, rinner, router);
@@ -344,7 +379,7 @@ void Next100FieldCage::BuildActive()
 
   /// Visibilities
   active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-  
+
   /// Verbosity
   if (verbosity_) {
     G4cout << "Active starts in " << (active_zpos_ - active_length_/2.)/mm
@@ -515,7 +550,7 @@ void Next100FieldCage::BuildELRegion()
                     false, 0, false);
 
   if (elfield_) {
-    /// Define EL electric field
+    /// ma EL electric field
     UniformElectricDriftField* el_field = new UniformElectricDriftField();
     G4double global_el_gap_zpos = el_gap_zpos_ - GetELzCoord();
     el_field->SetCathodePosition(global_el_gap_zpos + el_gap_length_/2. + grid_thickn_);
@@ -598,6 +633,356 @@ void Next100FieldCage::BuildELRegion()
 }
 
 
+void Next100FieldCage::BuildFiberBarrel()
+{
+
+    // MATERIALS /////////////////////////////////////////////
+    G4OpticalSurface* opsur_teflon =
+      new G4OpticalSurface("TEFLON_OPSURF", unified, polished, dielectric_metal);
+    opsur_teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
+
+    G4Material *this_fiber = nullptr;
+    G4MaterialPropertiesTable *this_fiber_optical = nullptr;
+    G4Material *this_coating = nullptr;
+    G4MaterialPropertiesTable *this_coating_optical = nullptr;
+
+    if (fiber_type_ == "Y11") {
+      this_fiber = materials::Y11();
+      this_fiber_optical = opticalprops::Y11();
+
+      if (coated_) {
+        this_coating = materials::TPB();
+        this_coating_optical = opticalprops::TPB();
+      }
+
+    } else if (fiber_type_ == "B2") {
+
+      this_fiber = materials::B2();
+      this_fiber_optical = opticalprops::B2();
+
+      if (coated_) {
+        this_coating = materials::TPH();
+        this_coating_optical = opticalprops::TPH();
+      }
+
+    } else {
+      G4Exception("[FiberBarrel]", "Construct()",
+                  FatalException, "Invalid fiber type, must be Y11 or B2");
+    }
+
+
+    // DIMENSIONS PARAMETERS /////////////////////////////////////////////
+    G4double panel_thickness_ = teflon_thickn_;
+    G4double panel_length_ = teflon_drift_length_;
+
+    G4double sens_z = 1. * mm;
+    G4double fiber_end_z = 0.1 * mm;
+    G4double fiber_length = panel_length_ - (sens_z + fiber_end_z);
+
+
+    // GEOMETRY PARAMETERS /////////////////////////////////////////////
+    G4double rot_angle;
+
+    G4double z = active_zpos_; // z-position of the panels
+    G4double z_f = z + fiber_length/2. + sens_z - panel_length_/2.; // z-pos for the fibers
+    G4double z_fend = z_f - (fiber_length + fiber_end_z)/2.; // z-pos for the fibers' Al ends
+    G4double z_s = z_f + (fiber_length + sens_z)/2.; // z-pos for the sensors
+
+    // Teflon panels distance to the center
+    G4double h = active_diam_/2. - panel_thickness_/2.;
+
+    // Teflon panels angular separation
+    G4double dif_theta = 2*std::atan(panel_width_/(2.*h));
+
+    G4int n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
+
+    G4int n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
+    G4double dl_fib = panel_width_/n_fibers; // distance between fibers
+
+    G4cout << "[FiberBarrel] Using " << n_fibers << " fibers per panel"<< G4endl;
+
+
+    G4int n_sensors = 5; // number of sensors per panel
+    G4double dl_sens = panel_width_/n_sensors; // distance between sensors
+
+    G4cout << "[FiberBarrel] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
+
+
+    // Re-calculation of parameters for optimization
+    dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
+    // h = (panel_width_/2.)/(std::tan(dif_theta/2.)) + panel_thickness_/2. + fiber_diameter_; // re-calculate distance to the center
+    G4cout << "[FiberBarrel] Using " << n_panels << " panels" << G4endl;
+
+    // Fibers/sensors/aluminium distance to the center
+   G4double hh = h - (fiber_diameter_/2. + panel_thickness_/2.);
+
+
+   // TEFLON PANEL /////////////////////////////////////////////
+   G4Box* teflon_panel =
+     new G4Box("TEFLON_PANEL", panel_width_/2., panel_length_/2., panel_thickness_/2.);
+   G4LogicalVolume* teflon_panel_logic =
+     new G4LogicalVolume(teflon_panel, teflon_, "TEFLON_PANEL");
+
+   new G4LogicalSkinSurface("TEFLON_PANEL_OPSURF", teflon_panel_logic, opsur_teflon);
+
+   teflon_panel_logic->SetVisAttributes(nexus::White());
+   // teflon_panel_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+
+    // DETECTOR ////////////////////////////////////////////////////////////////
+    G4double sensor_width = panel_width_/n_sensors;
+    G4String sensor_name = "F_SENSOR";
+
+    /// Build the sensor
+    photo_sensor_  = new GenericPhotosensor(sensor_name, sensor_width, fiber_diameter_, sens_z);
+
+
+    // Optical Properties of the sensor
+    G4MaterialPropertiesTable* photosensor_mpt = new G4MaterialPropertiesTable();
+
+    if (sensor_type_ == "PERFECT") {
+      // perfect detector
+      G4int entries = 4;
+      G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
+      G4double efficiency[entries]   = {1.      , 1.      , 1.      , 1.       };
+
+      photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+    }
+
+    else if (sensor_type_ == "PMT") {
+     // PMT
+     G4int entries = 9;
+     G4double energy[entries]       = {
+       h_Planck * c_light / (903.715 * nm), h_Planck * c_light / (895.975 * nm),
+       h_Planck * c_light / (866.563 * nm), h_Planck * c_light / (826.316 * nm),
+       h_Planck * c_light / (628.173 * nm), h_Planck * c_light / (490.402 * nm),
+       h_Planck * c_light / (389.783 * nm), h_Planck * c_light / (330.96 * nm),
+       h_Planck * c_light / (296.904 * nm)
+     };
+     G4double efficiency[entries]   = {0.00041, 0.00107, 0.01248, 0.06181,
+                                       0.12887, 0.19246, 0.09477, 0.06040,
+                                       0.00826};
+
+     photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+     }
+
+    else if (sensor_type_ == "SiPM_FBK") {
+      // SiPM_FBK
+      G4int entries = 13;
+      G4double energy[entries]       = {
+    h_Planck * c_light / (699.57 * nm), h_Planck * c_light / (630.00 * nm),
+        h_Planck * c_light / (590.43 * nm), h_Planck * c_light / (544.78 * nm),
+        h_Planck * c_light / (524.78 * nm), h_Planck * c_light / (499.57 * nm),
+        h_Planck * c_light / (449.57 * nm), h_Planck * c_light / (435.22 * nm),
+        h_Planck * c_light / (420.00 * nm), h_Planck * c_light / (409.57 * nm),
+        h_Planck * c_light / (399.57 * nm), h_Planck * c_light / (389.57 * nm),
+        h_Planck * c_light / (364.78 * nm)
+      };
+      G4double efficiency[entries]   = {.2137, .2743,
+                                        .3189, .3634,
+                                        .3829, .4434,
+                                        .4971, .5440,
+                                        .5657, .5829,
+                                        .5886, .5657,
+                                        .4743
+                                        };
+
+      photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+    }
+
+      else if (sensor_type_ == "SiPM_Hamamatsu") {
+        // SiPM_Hamamatsu
+        G4int entries = 13;
+        G4double energy[entries]       = {
+          h_Planck * c_light / (831.818 * nm), h_Planck * c_light / (761.932 * nm),
+          h_Planck * c_light / (681.818 * nm), h_Planck * c_light / (620.455 * nm),
+          h_Planck * c_light / (572.727 * nm), h_Planck * c_light / (516.477 * nm),
+          h_Planck * c_light / (460.227 * nm), h_Planck * c_light / (400.568 * nm),
+          h_Planck * c_light / (357.955 * nm), h_Planck * c_light / (344.318 * nm),
+          h_Planck * c_light / (311.932 * nm), h_Planck * c_light / (289.773 * nm),
+          h_Planck * c_light / (282.955 * nm)
+        };
+        G4double efficiency[entries]   = {.07329, .12673,
+                                          .20254, .29851,
+                                          .36889, .45739,
+                                          .49695, .44929,
+                                          .35476, .35374,
+                                          .29960, .19862,
+                                          .12204
+                                          };
+
+        photosensor_mpt->AddProperty("EFFICIENCY",   energy, efficiency,   entries);
+      }
+
+
+      G4double MinE_MaxE[] = {0.2 * eV, 11.5 * eV};
+      G4double reflectivity[] = {0., 0.};
+      photosensor_mpt->AddProperty("REFLECTIVITY", MinE_MaxE, reflectivity, 2);
+
+
+      G4Material* window_mat = this_fiber;
+      window_mat->SetMaterialPropertiesTable(this_fiber_optical);
+
+      G4MaterialPropertyVector* window_rindex =
+      window_mat->GetMaterialPropertiesTable()->GetProperty("RINDEX");
+
+
+      photo_sensor_ ->SetOpticalProperties(photosensor_mpt);
+
+      // Adding to sensors encasing, the Refractive Index of fibers to avoid reflections
+      photo_sensor_ ->SetWindowRefractiveIndex(window_rindex);
+
+      // Setting the time binning
+      G4double t_binning = .1 * ns;
+      // G4double t_binning = 100. * ns;
+      // G4double t_binning = 1. * ns;
+
+      photo_sensor_ ->SetTimeBinning(t_binning); // Size of fiber sensors time binning
+
+      G4cout << "[FiberBarrel] Using " << t_binning << " [ns] binning"<< G4endl;
+
+
+      // Set mother depth & naming order
+      photo_sensor_ ->SetSensorDepth(1);
+      photo_sensor_ ->SetMotherDepth(2);
+      photo_sensor_ ->SetNamingOrder(1);
+
+      // Set visibilities
+      photo_sensor_ ->SetVisibility(sensor_visibility_);
+
+      // Construct
+      photo_sensor_ ->Construct();
+
+      G4LogicalVolume* photo_sensor_logic  = photo_sensor_ ->GetLogicalVolume();
+
+
+    // ALUMINIZED ENDCAP//////////////////////////////////////////////////
+
+    G4Material* fiber_end_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+
+    G4Tubs* fiber_end_solid_vol =
+      new G4Tubs("fiber_end", 0, fiber_diameter_ / 2, fiber_end_z/2., 0, 2 * M_PI);
+
+    G4LogicalVolume* fiber_end_logic_vol =
+      new G4LogicalVolume(fiber_end_solid_vol, fiber_end_mat, "FIBER_END");
+    G4OpticalSurface* opsur_al =
+      new G4OpticalSurface("POLISHED_AL_OPSURF", unified, polished, dielectric_metal);
+    opsur_al->SetMaterialPropertiesTable(opticalprops::PolishedAl());
+
+    new G4LogicalSkinSurface("POLISHED_AL_OPSURF", fiber_end_logic_vol, opsur_al);
+
+    fiber_end_logic_vol  ->SetVisAttributes(nexus::Blue());
+
+
+    // fiber ////////////////////////////////////////////////////
+
+    fiber_ = new GenericWLSFiber(fiber_type_, true, fiber_diameter_, fiber_length, true, coated_, this_coating, this_fiber, true);
+
+    fiber_->SetCoreOpticalProperties(this_fiber_optical);
+    fiber_->SetCoatingOpticalProperties(this_coating_optical);
+
+    fiber_->Construct();
+    G4LogicalVolume* fiber_logic = fiber_->GetLogicalVolume();
+    if (fiber_type_ == "Y11")
+      fiber_logic->SetVisAttributes(nexus::LightGreenAlpha());
+    else if (fiber_type_ == "B2")
+      fiber_logic->SetVisAttributes(nexus::LightBlueAlpha());
+
+
+   // teflon cap to cover EP ////////////////////////////////////////////
+   G4Tubs* teflon_cap =
+   new G4Tubs("TEFLON_CAP", 0, hh - fiber_diameter_/2., fiber_end_z/2., 0, twopi);
+   G4Material* teflon = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
+   teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
+   G4LogicalVolume* teflon_cap_logic =
+     new G4LogicalVolume(teflon_cap, teflon_, "TEFLON");
+
+  //  G4OpticalSurface* opsur_teflon =
+  //    new G4OpticalSurface("TEFLON_OPSURF", unified, polished, dielectric_metal);
+  //  opsur_teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
+
+   new G4LogicalSkinSurface("TEFLON_OPSURF", teflon_cap_logic, opsur_teflon);
+
+   if (cap_visibility_ == false)
+   {
+     teflon_cap_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+   }
+
+   new G4PVPlacement(0, G4ThreeVector(0, 0, z_fend),
+                     teflon_cap_logic, "TEFLON_CAP", mother_logic_,
+                     true, 0, false);
+
+
+   // PLACEMENT /////////////////////////////////////////////
+   // n_panels = 1;
+
+
+
+
+
+   for (G4int itheta=0; itheta < n_panels; itheta++) {
+   // for (G4int itheta=0; itheta < 3; itheta++) {
+
+     // panels
+     G4double theta = dif_theta * itheta;
+     G4double x = h * std::cos(theta) * mm;
+     G4double y = h * std::sin(theta) * mm;
+     G4double phi = pi/2. + std::atan2(y, x);
+     std::string label = std::to_string(itheta);
+
+     G4RotationMatrix* panel_rot = new G4RotationMatrix();
+     rot_angle = pi/2.;
+     panel_rot->rotateX(rot_angle);
+     panel_rot->rotateY(phi);
+     new G4PVPlacement(panel_rot, G4ThreeVector(x,y, z),
+                       teflon_panel_logic, "PANEL-"+label, mother_logic_,
+                       false, itheta, false);
+
+     // Relative positions of the fibers wrt the panel
+     G4double x0_f = x*hh/h + (panel_width_/2. - fiber_diameter_/2.)*std::cos(phi);
+     G4double y0_f = y*hh/h + (panel_width_/2. - fiber_diameter_/2.)*std::sin(phi);
+
+    // Relative positions of the sensors wrt the panel
+    G4double x0_s = x*hh/h + (panel_width_/2. - sensor_width/2.)*std::cos(phi);
+    G4double y0_s = y*hh/h + (panel_width_/2. - sensor_width/2.)*std::sin(phi);
+
+     for (G4int ii=0; ii < n_fibers; ii++) {
+     // for (G4int ii=0; ii < 1; ii++) {
+
+         G4double xx_f = x0_f - dl_fib*ii*std::cos(phi);
+         G4double yy_f = y0_f - dl_fib*ii*std::sin(phi);
+
+         std::string label2 = std::to_string(ii);
+
+         new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_f),
+                           fiber_logic, "FIBER-" + label + label2, mother_logic_,
+                           false, n_panels + ii, false);
+        new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_fend),
+                          fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, mother_logic_,
+                          false, n_panels + n_fibers*itheta + ii, false);
+       }
+     for (G4int jj=0; jj < n_sensors; jj++) {
+    // for (G4int jj=0; jj < 3; jj++) {
+
+          G4double xx_s = x0_s - dl_sens*jj*std::cos(phi);
+          G4double yy_s = y0_s - dl_sens*jj*std::sin(phi);
+
+          std::string label3 = std::to_string(jj);
+
+          G4RotationMatrix* sensor_rot = new G4RotationMatrix();
+          // rot_angle = 0.;
+          rot_angle = M_PI;
+          sensor_rot->rotateY(rot_angle);
+          sensor_rot->rotateZ(phi);
+          new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
+                            photo_sensor_logic, "SENS-" + label + label3, mother_logic_,
+                            true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
+
+    }
+
+   }
+
+}
 void Next100FieldCage::BuildLightTube()
 {
   /// DRIFT PART ///
@@ -710,6 +1095,7 @@ void Next100FieldCage::BuildLightTube()
     tpb_drift_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     tpb_buffer_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
   }
+
 }
 
 

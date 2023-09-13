@@ -11,10 +11,10 @@
 
 #include "GeometryBase.h"
 
-// Marian's adenda
-#include "GenericWLSFiber.h"
-#include "MaterialsList.h"
-//
+// // Marian's adenda
+// #include "GenericWLSFiber.h"
+// #include "MaterialsList.h"
+// //
 
 class G4LogicalVolume;
 class G4GenericMessenger;
@@ -80,9 +80,9 @@ namespace nexus {
     /// Whether or not to build LSC HallA.
     G4bool lab_walls_;
 
-    // WSL fibers (Y11 or B2)
-    GenericWLSFiber* fiber_;
-    G4String fiber_type_;
+    // // WSL fibers (Y11 or B2)
+    // GenericWLSFiber* fiber_;
+    // G4String fiber_type_;
   };
 
 } // end namespace nexus

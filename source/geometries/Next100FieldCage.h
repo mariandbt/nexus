@@ -12,6 +12,12 @@
 #include "GeometryBase.h"
 #include <vector>
 
+// Marian's adenda
+#include "GenericWLSFiber.h"
+#include "GenericPhotosensor.h"
+#include "MaterialsList.h"
+//
+
 class G4Material;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -43,6 +49,7 @@ namespace nexus {
     void BuildCathode();
     void BuildBuffer();
     void BuildELRegion();
+    void BuildFiberBarrel();
     void BuildLightTube();
     void BuildFieldCage();
 
@@ -58,6 +65,21 @@ namespace nexus {
     const G4double holder_x_, holder_long_y_, holder_short_y_;
     const G4double tpb_thickn_;
     const G4double overlap_;
+
+    // Fiber Barrel
+    //// fibers
+    GenericWLSFiber* fiber_; // WSL fibers (Y11 or B2)
+    G4String fiber_type_; // WSL fibers (Y11 or B2)
+    G4double fiber_diameter_;
+    G4bool coated_; // wheter the fibers have coating or not
+    /// sensor
+    GenericPhotosensor* photo_sensor_;
+    G4String sensor_type_;        // SiPM, PMT, PERFECT, ...
+    G4bool sensor_visibility_;
+    /// barrel
+    G4bool cap_visibility_;
+    G4bool panels_visibility_;
+    G4double panel_width_;
 
     // Diffusion constants
     G4double drift_transv_diff_, drift_long_diff_;
