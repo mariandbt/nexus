@@ -71,15 +71,29 @@ namespace nexus {
     GenericWLSFiber* fiber_; // WSL fibers (Y11 or B2)
     G4String fiber_type_; // WSL fibers (Y11 or B2)
     G4double fiber_diameter_;
+    G4double fiber_end_z;
+    G4double fiber_length;
     G4bool coated_; // wheter the fibers have coating or not
-    /// sensor
+    //// sensor
     GenericPhotosensor* photo_sensor_;
     G4String sensor_type_;        // SiPM, PMT, PERFECT, ...
     G4bool sensor_visibility_;
-    /// barrel
+    G4double sens_z;
+    //// barrel
     G4bool cap_visibility_;
     G4bool panels_visibility_;
     G4double panel_width_;
+    G4double panel_thickness_;
+    G4double panel_length_;
+    //// relative z-positions to the panels (reference z position)
+    G4double z, z_f, z_fend, z_s;
+    //// relative positions to the center
+    G4double h, hh;
+    //// space between elements
+    G4double dif_theta, dl_fib, dl_sens;
+    //// number of elements
+    G4int n_panels, n_fibers, n_sensors;
+
 
     // Diffusion constants
     G4double drift_transv_diff_, drift_long_diff_;
