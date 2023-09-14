@@ -242,6 +242,16 @@ void Next100FieldCage::Construct()
   active_length_ = gate_cathode_dist_;
   buffer_length_ = gate_sapphire_wdw_dist_ - gate_cathode_dist_ - grid_thickn_;
 
+  // FIBER BARREL ******************************************************
+  /// DIMENSIONS PARAMETERS /////////////////////////////////////////////
+  panel_thickness_ = teflon_thickn_;
+  panel_length_ = teflon_drift_length_;
+
+  sens_z = 1. * mm;
+  fiber_end_z = 0.1 * mm;
+  fiber_length = panel_length_ - (sens_z + fiber_end_z);
+  // ****************************************************************************
+
   /// Calculate relative z positions in mother volume
   /// All of them are calculated from GetELzCoord(), which is the position
   /// of the beginning of the ACTIVE volume and the end of the gate grid.
@@ -263,18 +273,9 @@ void Next100FieldCage::Construct()
   }
 
   // FIBER BARREL ******************************************************
-  /// DIMENSIONS PARAMETERS /////////////////////////////////////////////
-  panel_thickness_ = teflon_thickn_;
-  panel_length_ = teflon_drift_length_;
-
-  sens_z = 1. * mm;
-  fiber_end_z = 0.1 * mm;
-  fiber_length = panel_length_ - (sens_z + fiber_end_z);
-
-
   /// GEOMETRY PARAMETERS /////////////////////////////////////////////
 
-  z = active_zpos_; // z-position of the panels
+  z = gate_grid_zpos_ + grid_thickn_/2. + active_length_/2.; // z-position of the panels
   z_f = z + fiber_length/2. + sens_z - panel_length_/2.; // z-pos for the fibers
   z_fend = z_f - (fiber_length + fiber_end_z)/2.; // z-pos for the fibers' Al ends
   z_s = z_f + (fiber_length + sens_z)/2.; // z-pos for the sensors
@@ -285,7 +286,7 @@ void Next100FieldCage::Construct()
   //// Teflon panels angular separation
   dif_theta = 2*std::atan(panel_width_/(2.*h));
 
-  n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
+  // n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
 
   n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
   dl_fib = panel_width_/n_fibers; // distance between fibers
@@ -296,13 +297,13 @@ void Next100FieldCage::Construct()
   n_sensors = 5; // number of sensors per panel
   dl_sens = panel_width_/n_sensors; // distance between sensors
 
-  G4cout << "[FiberBarrel] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
+  G4cout << "[FiberBarrel] Using " << n_panels_*n_sensors << " sensors in total"<< G4endl;
 
 
   //// Re-calculation of parameters for optimization
-  dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
+  dif_theta = ( 2 * M_PI) / n_panels_; // re-calculate angular difference
   h = (panel_width_/2.)/(std::tan(dif_theta/2.)) + panel_thickness_/2. + fiber_diameter_; // re-calculate distance to the center
-  G4cout << "[FiberBarrel] Using " << n_panels << " panels" << G4endl;
+  G4cout << "[FiberBarrel] Using " << n_panels_ << " panels" << G4endl;
 
   //// Fibers/sensors/aluminium distance to the center
   hh = h - (fiber_diameter_/2. + panel_thickness_/2.);
@@ -313,13 +314,14 @@ void Next100FieldCage::Construct()
   /// Define materials to be used
   DefineMaterials();
   /// Build the different parts of the field cage
+  // BuildFiberBarrel();
   BuildActive();
-  BuildCathode();
-  BuildBuffer();
-  BuildELRegion();
-  BuildFiberBarrel();
-  // BuildLightTube();
-  BuildFieldCage();
+  // BuildCathode();
+  // BuildBuffer();
+  // BuildELRegion();
+  // // BuildFiberBarrel();
+  // // BuildLightTube();
+  // BuildFieldCage();
 }
 
 
@@ -357,6 +359,8 @@ void Next100FieldCage::DefineMaterials()
 
 void Next100FieldCage::BuildActive()
 {
+  active_zpos_     = z_fend + active_length_/2. + fiber_end_z/2.;
+
   /// Position of z planes
   G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_ + fiber_end_z,
                          active_length_/2.};
@@ -417,7 +421,8 @@ void Next100FieldCage::BuildActive()
                                              G4ThreeVector(0., 0., active_zpos_));
 
   /// Visibilities
-  active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+  // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+  active_logic->SetVisAttributes(nexus::LightGrey());
 
   /// Verbosity
   if (verbosity_) {
@@ -498,7 +503,7 @@ void Next100FieldCage::BuildBuffer()
   G4double router[2] = {active_diam_/2., active_diam_/2.};
 
   G4Polyhedra* buffer_solid =
-    new G4Polyhedra("BUFFER_POLY", 0., twopi, n_panels_, 2, zplane, rinner, router);
+    new G4Polyhedra("BUFFER_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
 
   G4Tubs* buffer_cathode_solid =
     new G4Tubs("BUFF_CATHODE_RING", 0, cathode_int_diam_/2.,
@@ -914,6 +919,7 @@ void Next100FieldCage::BuildFiberBarrel()
 
    // PLACEMENT /////////////////////////////////////////////
    G4double rot_angle;
+   G4double phi0 = pi/2.;
 
    for (G4int itheta=0; itheta < n_panels; itheta++) {
    // for (G4int itheta=0; itheta < 3; itheta++) {
@@ -922,7 +928,7 @@ void Next100FieldCage::BuildFiberBarrel()
      G4double theta = dif_theta * itheta;
      G4double x = h * std::cos(theta) * mm;
      G4double y = h * std::sin(theta) * mm;
-     G4double phi = pi/2. + std::atan2(y, x);
+     G4double phi = phi0 + std::atan2(y, x);
      std::string label = std::to_string(itheta);
 
      G4RotationMatrix* panel_rot = new G4RotationMatrix();
@@ -951,10 +957,10 @@ void Next100FieldCage::BuildFiberBarrel()
 
          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_f),
                            fiber_logic, "FIBER-" + label + label2, mother_logic_,
-                           false, n_panels + ii, false);
+                           false, n_panels_ + ii, false);
         new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_fend),
                           fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, mother_logic_,
-                          false, n_panels + n_fibers*itheta + ii, false);
+                          false, n_panels_ + n_fibers*itheta + ii, false);
        }
      for (G4int jj=0; jj < n_sensors; jj++) {
     // for (G4int jj=0; jj < 3; jj++) {
@@ -971,7 +977,7 @@ void Next100FieldCage::BuildFiberBarrel()
           sensor_rot->rotateZ(phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, "SENS-" + label + label3, mother_logic_,
-                            true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, true);
+                            true, n_panels_*(1 + n_fibers) + n_sensors*itheta  + jj, true);
 
     }
 
@@ -990,7 +996,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*teflon_thickn_)/2., (active_diam_ + 2.*teflon_thickn_)/2.};
 
   G4Polyhedra* teflon_drift_solid =
-    new G4Polyhedra("LIGHT_TUBE_DRIFT", 0., twopi, n_panels_, 2, zplane, rinner, router);
+    new G4Polyhedra("LIGHT_TUBE_DRIFT", 0., twopi, n_panels, 2, zplane, rinner, router);
 
   G4LogicalVolume* teflon_drift_logic =
     new G4LogicalVolume(teflon_drift_solid, teflon_, "LIGHT_TUBE_DRIFT");
@@ -1005,7 +1011,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*tpb_thickn_)/2., (active_diam_ + 2.*tpb_thickn_)/2.};
 
   G4Polyhedra* tpb_drift_solid =
-    new  G4Polyhedra("DRIFT_TPB", 0., twopi, n_panels_, 2, zplane, rinner, router_tpb);
+    new  G4Polyhedra("DRIFT_TPB", 0., twopi, n_panels, 2, zplane, rinner, router_tpb);
   G4LogicalVolume* tpb_drift_logic =
     new G4LogicalVolume(tpb_drift_solid, tpb_, "DRIFT_TPB");
   G4VPhysicalVolume* tpb_drift_phys =
@@ -1019,7 +1025,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*teflon_thickn_)/2., (active_diam_ + 2.*teflon_thickn_)/2.};
 
   G4Polyhedra* teflon_buffer_solid =
-   new G4Polyhedra("LIGHT_TUBE_BUFFER", 0., twopi, n_panels_, 2, zplane_buff, rinner, router_buff);
+   new G4Polyhedra("LIGHT_TUBE_BUFFER", 0., twopi, n_panels, 2, zplane_buff, rinner, router_buff);
 
   G4LogicalVolume* teflon_buffer_logic =
     new G4LogicalVolume(teflon_buffer_solid, teflon_, "LIGHT_TUBE_BUFFER");
@@ -1033,7 +1039,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*tpb_thickn_)/2., (active_diam_ + 2.*tpb_thickn_)/2.};
 
   G4Polyhedra* tpb_buffer_solid =
-    new  G4Polyhedra("BUFFER_TPB", 0., twopi, n_panels_, 2, zplane_buff, rinner, router_tpb_buff);
+    new  G4Polyhedra("BUFFER_TPB", 0., twopi, n_panels, 2, zplane_buff, rinner, router_tpb_buff);
 
   G4LogicalVolume* tpb_buffer_logic =
     new G4LogicalVolume(tpb_buffer_solid, tpb_, "BUFFER_TPB");
