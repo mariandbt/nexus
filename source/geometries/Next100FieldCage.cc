@@ -262,6 +262,54 @@ void Next100FieldCage::Construct()
     G4cout << G4endl;
   }
 
+  // FIBER BARREL ******************************************************
+  /// DIMENSIONS PARAMETERS /////////////////////////////////////////////
+  panel_thickness_ = teflon_thickn_;
+  panel_length_ = teflon_drift_length_;
+
+  sens_z = 1. * mm;
+  fiber_end_z = 0.1 * mm;
+  fiber_length = panel_length_ - (sens_z + fiber_end_z);
+
+
+  /// GEOMETRY PARAMETERS /////////////////////////////////////////////
+
+  z = active_zpos_; // z-position of the panels
+  z_f = z + fiber_length/2. + sens_z - panel_length_/2.; // z-pos for the fibers
+  z_fend = z_f - (fiber_length + fiber_end_z)/2.; // z-pos for the fibers' Al ends
+  z_s = z_f + (fiber_length + sens_z)/2.; // z-pos for the sensors
+
+  //// Teflon panels distance to the center
+  h = active_diam_/2. - panel_thickness_/2.;
+
+  //// Teflon panels angular separation
+  dif_theta = 2*std::atan(panel_width_/(2.*h));
+
+  n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
+
+  n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
+  dl_fib = panel_width_/n_fibers; // distance between fibers
+
+  G4cout << "[FiberBarrel] Using " << n_fibers << " fibers per panel"<< G4endl;
+
+
+  n_sensors = 5; // number of sensors per panel
+  dl_sens = panel_width_/n_sensors; // distance between sensors
+
+  G4cout << "[FiberBarrel] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
+
+
+  //// Re-calculation of parameters for optimization
+  dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
+  h = (panel_width_/2.)/(std::tan(dif_theta/2.)) + panel_thickness_/2. + fiber_diameter_; // re-calculate distance to the center
+  G4cout << "[FiberBarrel] Using " << n_panels << " panels" << G4endl;
+
+  //// Fibers/sensors/aluminium distance to the center
+  hh = h - (fiber_diameter_/2. + panel_thickness_/2.);
+
+ // ****************************************************************************
+
+
   /// Define materials to be used
   DefineMaterials();
   /// Build the different parts of the field cage
@@ -310,14 +358,16 @@ void Next100FieldCage::DefineMaterials()
 void Next100FieldCage::BuildActive()
 {
   /// Position of z planes
-  G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_,
+  G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_ + fiber_end_z,
                          active_length_/2.};
   /// Inner radius
   G4double rinner[2] = {0., 0.};
   /// Outer radius
   // G4double router[2] = {active_diam_/2., active_diam_/2.};
-  G4double router[2] = {active_diam_/2. - (teflon_thickn_ + fiber_diameter_),
-                        active_diam_/2. - (teflon_thickn_ + fiber_diameter_)};
+  G4double router[2] = {hh - fiber_diameter_/2.,
+                        hh - fiber_diameter_/2.};
+  // G4double router[2] = {active_diam_/2. - (teflon_thickn_ + fiber_diameter_),
+  //                       active_diam_/2. - (teflon_thickn_ + fiber_diameter_)};
 
   G4Polyhedra* active_solid =
     new G4Polyhedra("ACTIVE_TEFLON", 0., twopi, n_panels_, 2, zplane, rinner, router);
@@ -666,53 +716,6 @@ void Next100FieldCage::BuildFiberBarrel()
                   FatalException, "Invalid fiber type, must be Y11 or B2");
     }
 
-
-    // DIMENSIONS PARAMETERS /////////////////////////////////////////////
-    G4double panel_thickness_ = teflon_thickn_;
-    G4double panel_length_ = teflon_drift_length_;
-
-    G4double sens_z = 1. * mm;
-    G4double fiber_end_z = 0.1 * mm;
-    G4double fiber_length = panel_length_ - (sens_z + fiber_end_z);
-
-
-    // GEOMETRY PARAMETERS /////////////////////////////////////////////
-    G4double rot_angle;
-
-    G4double z = active_zpos_; // z-position of the panels
-    G4double z_f = z + fiber_length/2. + sens_z - panel_length_/2.; // z-pos for the fibers
-    G4double z_fend = z_f - (fiber_length + fiber_end_z)/2.; // z-pos for the fibers' Al ends
-    G4double z_s = z_f + (fiber_length + sens_z)/2.; // z-pos for the sensors
-
-    // Teflon panels distance to the center
-    G4double h = active_diam_/2. - panel_thickness_/2.;
-
-    // Teflon panels angular separation
-    G4double dif_theta = 2*std::atan(panel_width_/(2.*h));
-
-    G4int n_panels = floor(( 2 * M_PI) / dif_theta); // optimize the number of panels
-
-    G4int n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
-    G4double dl_fib = panel_width_/n_fibers; // distance between fibers
-
-    G4cout << "[FiberBarrel] Using " << n_fibers << " fibers per panel"<< G4endl;
-
-
-    G4int n_sensors = 5; // number of sensors per panel
-    G4double dl_sens = panel_width_/n_sensors; // distance between sensors
-
-    G4cout << "[FiberBarrel] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
-
-
-    // Re-calculation of parameters for optimization
-    dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
-    // h = (panel_width_/2.)/(std::tan(dif_theta/2.)) + panel_thickness_/2. + fiber_diameter_; // re-calculate distance to the center
-    G4cout << "[FiberBarrel] Using " << n_panels << " panels" << G4endl;
-
-    // Fibers/sensors/aluminium distance to the center
-   G4double hh = h - (fiber_diameter_/2. + panel_thickness_/2.);
-
-
    // TEFLON PANEL /////////////////////////////////////////////
    G4Box* teflon_panel =
      new G4Box("TEFLON_PANEL", panel_width_/2., panel_length_/2., panel_thickness_/2.);
@@ -906,15 +909,11 @@ void Next100FieldCage::BuildFiberBarrel()
 
    new G4PVPlacement(0, G4ThreeVector(0, 0, z_fend),
                      teflon_cap_logic, "TEFLON_CAP", mother_logic_,
-                     true, 0, false);
+                     true, 0, true);
 
 
    // PLACEMENT /////////////////////////////////////////////
-   // n_panels = 1;
-
-
-
-
+   G4double rot_angle;
 
    for (G4int itheta=0; itheta < n_panels; itheta++) {
    // for (G4int itheta=0; itheta < 3; itheta++) {
@@ -972,7 +971,7 @@ void Next100FieldCage::BuildFiberBarrel()
           sensor_rot->rotateZ(phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, "SENS-" + label + label3, mother_logic_,
-                            true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
+                            true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, true);
 
     }
 
