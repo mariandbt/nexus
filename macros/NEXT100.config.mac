@@ -17,7 +17,7 @@
 ##### GEOMETRY #####
 /Geometry/Next100/elfield false
 /Geometry/Next100/max_step_size 1. mm
-/Geometry/Next100/field_cage_vis false
+/Geometry/Next100/field_cage_vis 0
 
 ## fibers______________________________________________________
 /Geometry/Next100/fiber_type Y11 ### (Y11, B2)
