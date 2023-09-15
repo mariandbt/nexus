@@ -241,7 +241,7 @@ void Next100FieldCage::Construct()
   // ****************************************************************************
 
   /// Calculate lengths of active and buffer regions
-  active_length_ = (cathode_thickn_ - grid_thickn_)/2. + teflon_drift_length_ + gate_teflon_dist_ - fiber_end_z;
+  active_length_ = (cathode_thickn_ - grid_thickn_)/2. + teflon_drift_length_ + gate_teflon_dist_;
   buffer_length_ = gate_sapphire_wdw_dist_ - active_length_ - grid_thickn_;
 
   /// Calculate length of teflon in the buffer region
@@ -273,8 +273,8 @@ void Next100FieldCage::Construct()
 
   z = gate_grid_zpos_ + grid_thickn_/2. + active_length_/2.; // z-position of the panels
   z_f = z + fiber_length/2. + sens_z - panel_length_/2.; // z-pos for the fibers
-  z_fend = z_f - (fiber_length + fiber_end_z)/2.; // z-pos for the fibers' Al ends
-  z_s = z_f + (fiber_length + sens_z)/2.; // z-pos for the sensors
+  z_fend = z_f + (fiber_length + fiber_end_z)/2.; // z-pos for the fibers' Al ends
+  z_s = z_f - (fiber_length + sens_z)/2.; // z-pos for the sensors
 
   //// Teflon panels distance to the center
   h = active_diam_/2. - panel_thickness_/2.;
@@ -310,14 +310,13 @@ void Next100FieldCage::Construct()
   /// Define materials to be used
   DefineMaterials();
   /// Build the different parts of the field cage
-  // BuildFiberBarrel();
   BuildActive();
-  // BuildCathode();
-  // BuildBuffer();
-  // BuildELRegion();
-  // // BuildFiberBarrel();
-  // // BuildLightTube();
-  // BuildFieldCage();
+  BuildCathode();
+  BuildBuffer();
+  BuildELRegion();
+  BuildFiberBarrel();
+  // BuildLightTube();
+  BuildFieldCage();
 }
 
 
@@ -358,11 +357,14 @@ void Next100FieldCage::DefineMaterials()
 
 void Next100FieldCage::BuildActive()
 {
-  active_zpos_     = z_fend + active_length_/2. + fiber_end_z/2.;
+  G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z/2.);
+  // G4double new_active_zpos_ = active_zpos_;
 
   /// Position of z planes
-  G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_ + fiber_end_z,
-                         active_length_/2.-(cathode_thickn_-grid_thickn_)/2.};
+  G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_,
+                         active_length_/2.-(cathode_thickn_-grid_thickn_)/2. - fiber_end_z};
+  // G4double zplane[2] = {-teflon_drift_length_/2.,
+  //                        teflon_drift_length_/2.};
   /// Inner radius
   G4double rinner[2] = {0., 0.};
   /// Outer radius
@@ -376,7 +378,7 @@ void Next100FieldCage::BuildActive()
     new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
 
   G4Tubs* active_cathode_solid =
-    new G4Tubs("ACT_CATHODE_RING", 0, cathode_int_diam_/2.,
+  new G4Tubs("ACT_CATHODE_RING", 0, cathode_int_diam_/2.,
               ((cathode_thickn_ - grid_thickn_)/2. + overlap_)/2., 0, twopi);
 
   G4ThreeVector act_cathode_pos =
@@ -385,21 +387,26 @@ void Next100FieldCage::BuildActive()
   G4UnionSolid* union_active =
     new G4UnionSolid ("ACTIVE", active_solid, active_cathode_solid, 0, act_cathode_pos);
 
-  //This volume is added as an extension of the active volume that reaches the gate grid.
-  G4Tubs* active_gate_solid =
-    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
 
-  G4ThreeVector act_gate_pos =
-  G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2.);
+// THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
-  union_active =
-    new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
+  // //This volume is added as an extension of the active volume that reaches the gate grid.
+  // G4Tubs* active_gate_solid =
+  //   new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
+  //
+  // G4ThreeVector act_gate_pos =
+  // G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2.);
+  //
+  // union_active =
+  //   new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
+
+// THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
   G4LogicalVolume* active_logic =
     new G4LogicalVolume(union_active, gas_, "ACTIVE");
 
   active_phys_ =
-    new G4PVPlacement(0, G4ThreeVector(0., 0., active_zpos_),
+    new G4PVPlacement(0, G4ThreeVector(0., 0., new_active_zpos_),
                       active_logic, "ACTIVE", mother_logic_,
                       false, 0, false);
 
@@ -414,7 +421,7 @@ void Next100FieldCage::BuildActive()
 
   /// Define a drift field for this volume
   UniformElectricDriftField* field = new UniformElectricDriftField();
-  G4double global_active_zpos = active_zpos_ - GetELzCoord();
+  G4double global_active_zpos = new_active_zpos_ - GetELzCoord();
   field->SetCathodePosition(global_active_zpos + active_length_/2.);
   field->SetAnodePosition(global_active_zpos - active_length_/2.);
   field->SetDriftVelocity(1. * mm/microsecond);
@@ -428,18 +435,18 @@ void Next100FieldCage::BuildActive()
   /// Vertex generator
   active_gen_ = new CylinderPointSampler2020(0., active_diam_/2., active_length_/2.,
                                              0., twopi, nullptr,
-                                             G4ThreeVector(0., 0., active_zpos_));
+                                             G4ThreeVector(0., 0., new_active_zpos_));
 
 
   /// Visibilities
   // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-  active_logic->SetVisAttributes(nexus::LightGrey());
+  active_logic->SetVisAttributes(nexus::Yellow());
 
   /// Verbosity
   if (verbosity_) {
-    G4cout << "Active starts in " << (active_zpos_ - active_length_/2.)/mm
+    G4cout << "Active starts in " << (new_active_zpos_ - active_length_/2.)/mm
            << " mm and ends in "
-           << (active_zpos_ + active_length_/2.)/mm << " mm" << G4endl;
+           << (new_active_zpos_ + active_length_/2.)/mm << " mm" << G4endl;
   }
 }
 
@@ -923,16 +930,16 @@ void Next100FieldCage::BuildFiberBarrel()
 
    // PLACEMENT /////////////////////////////////////////////
    G4double rot_angle;
-   G4double phi0 = pi/2.;
+   G4double theta0 =  (10.)*pi/180.;
 
    for (G4int itheta=0; itheta < n_panels; itheta++) {
    // for (G4int itheta=0; itheta < 3; itheta++) {
 
      // panels
-     G4double theta = dif_theta * itheta;
+     G4double theta = theta0 + dif_theta * itheta;
      G4double x = h * std::cos(theta) * mm;
      G4double y = h * std::sin(theta) * mm;
-     G4double phi = phi0 + std::atan2(y, x);
+     G4double phi = pi/2. + std::atan2(y, x);
      std::string label = std::to_string(itheta);
 
      G4RotationMatrix* panel_rot = new G4RotationMatrix();
