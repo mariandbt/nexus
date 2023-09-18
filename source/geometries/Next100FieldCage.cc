@@ -315,7 +315,6 @@ void Next100FieldCage::Construct()
   BuildBuffer();
   BuildELRegion();
   BuildFiberBarrel();
-  // BuildLightTube();
   BuildFieldCage();
 }
 
@@ -357,12 +356,15 @@ void Next100FieldCage::DefineMaterials()
 
 void Next100FieldCage::BuildActive()
 {
-  G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z/2.);
+  // G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z/2.);
+  G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z);
   // G4double new_active_zpos_ = active_zpos_;
 
   /// Position of z planes
-  G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_,
-                         active_length_/2.-(cathode_thickn_-grid_thickn_)/2. - fiber_end_z};
+  // G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_,
+  G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_,
+    // active_length_/2.-(cathode_thickn_-grid_thickn_)/2. - fiber_end_z};
+                         active_length_/2.-(cathode_thickn_-grid_thickn_)/2.};
   // G4double zplane[2] = {-teflon_drift_length_/2.,
   //                        teflon_drift_length_/2.};
   /// Inner radius
@@ -390,15 +392,16 @@ void Next100FieldCage::BuildActive()
 
 // THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
-  // //This volume is added as an extension of the active volume that reaches the gate grid.
-  // G4Tubs* active_gate_solid =
-  //   new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
-  //
-  // G4ThreeVector act_gate_pos =
+  //This volume is added as an extension of the active volume that reaches the gate grid.
+  G4Tubs* active_gate_solid =
+    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2. - 1*mm, 0, twopi);
+
+  G4ThreeVector act_gate_pos =
   // G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2.);
-  //
-  // union_active =
-  //   new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
+  G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2. - 12.475*mm);
+
+  union_active =
+    new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
 
 // THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
@@ -585,9 +588,9 @@ void Next100FieldCage::BuildELRegion()
   G4LogicalVolume* gate_logic =
     new G4LogicalVolume(gate_solid, steel_, "GATE_RING");
 
-  new G4PVPlacement(0, G4ThreeVector(0., 0., gate_zpos_),
-                    gate_logic, "GATE_RING", mother_logic_,
-                    false, 0, false);
+  // new G4PVPlacement(0, G4ThreeVector(0., 0., gate_zpos_),
+  //                   gate_logic, "GATE_RING", mother_logic_,
+  //                   false, 0, false);
 
   /// EL gap.
   G4Tubs* el_gap_solid =
@@ -607,9 +610,9 @@ void Next100FieldCage::BuildELRegion()
   G4LogicalVolume* anode_logic =
     new G4LogicalVolume(anode_solid, steel_, "ANODE_RING");
 
-  new G4PVPlacement(0, G4ThreeVector(0., 0., anode_zpos_),
-                    anode_logic, "ANODE_RING", mother_logic_,
-                    false, 0, false);
+  // new G4PVPlacement(0, G4ThreeVector(0., 0., anode_zpos_),
+  //                   anode_logic, "ANODE_RING", mother_logic_,
+  //                   false, 0, false);
 
   if (elfield_) {
     /// ma EL electric field
@@ -640,12 +643,12 @@ void Next100FieldCage::BuildELRegion()
   G4LogicalVolume* diel_grid_logic =
     new G4LogicalVolume(diel_grid_solid, fgrid_mat, "EL_GRID");
 
-  new G4PVPlacement(0, G4ThreeVector(0., 0., el_gap_length_/2. + grid_thickn_/2.),
-                    diel_grid_logic, "EL_GRID_GATE", el_gap_logic,
-                    false, 0, false);
-  new G4PVPlacement(0, G4ThreeVector(0., 0., -el_gap_length_/2. - grid_thickn_/2.),
-                    diel_grid_logic, "EL_GRID_ANODE", el_gap_logic,
-                    false, 1, false);
+  // new G4PVPlacement(0, G4ThreeVector(0., 0., el_gap_length_/2. + grid_thickn_/2.),
+  //                   diel_grid_logic, "EL_GRID_GATE", el_gap_logic,
+  //                   false, 0, false);
+  // new G4PVPlacement(0, G4ThreeVector(0., 0., -el_gap_length_/2. - grid_thickn_/2.),
+  //                   diel_grid_logic, "EL_GRID_ANODE", el_gap_logic,
+  //                   false, 1, false);
 
   // Vertex generator
   if (el_gap_gen_disk_zmin_ > el_gap_gen_disk_zmax_)
@@ -681,6 +684,10 @@ void Next100FieldCage::BuildELRegion()
     el_gap_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     diel_grid_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
   }
+
+  G4VisAttributes color = nexus::Lilla();
+  el_gap_logic->SetVisAttributes(color);
+
   G4VisAttributes grey = nexus::DarkGrey();
   grey.SetForceSolid(true);
   gate_logic->SetVisAttributes(grey);
@@ -925,7 +932,7 @@ void Next100FieldCage::BuildFiberBarrel()
 
    new G4PVPlacement(0, G4ThreeVector(0, 0, z_fend),
                      teflon_cap_logic, "TEFLON_CAP", mother_logic_,
-                     true, 0, true);
+                     true, 0, false);
 
 
    // PLACEMENT /////////////////////////////////////////////
@@ -988,7 +995,7 @@ void Next100FieldCage::BuildFiberBarrel()
           sensor_rot->rotateZ(phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, "SENS-" + label + label3, mother_logic_,
-                            true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, true);
+                            true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
 
     }
 
