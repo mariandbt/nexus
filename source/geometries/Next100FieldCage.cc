@@ -588,9 +588,9 @@ void Next100FieldCage::BuildELRegion()
   G4LogicalVolume* gate_logic =
     new G4LogicalVolume(gate_solid, steel_, "GATE_RING");
 
-  // new G4PVPlacement(0, G4ThreeVector(0., 0., gate_zpos_),
-  //                   gate_logic, "GATE_RING", mother_logic_,
-  //                   false, 0, false);
+  new G4PVPlacement(0, G4ThreeVector(0., 0., gate_zpos_),
+                    gate_logic, "GATE_RING", mother_logic_,
+                    false, 0, false);
 
   /// EL gap.
   G4Tubs* el_gap_solid =
@@ -610,9 +610,9 @@ void Next100FieldCage::BuildELRegion()
   G4LogicalVolume* anode_logic =
     new G4LogicalVolume(anode_solid, steel_, "ANODE_RING");
 
-  // new G4PVPlacement(0, G4ThreeVector(0., 0., anode_zpos_),
-  //                   anode_logic, "ANODE_RING", mother_logic_,
-  //                   false, 0, false);
+  new G4PVPlacement(0, G4ThreeVector(0., 0., anode_zpos_),
+                    anode_logic, "ANODE_RING", mother_logic_,
+                    false, 0, false);
 
   if (elfield_) {
     /// ma EL electric field
@@ -643,12 +643,12 @@ void Next100FieldCage::BuildELRegion()
   G4LogicalVolume* diel_grid_logic =
     new G4LogicalVolume(diel_grid_solid, fgrid_mat, "EL_GRID");
 
-  // new G4PVPlacement(0, G4ThreeVector(0., 0., el_gap_length_/2. + grid_thickn_/2.),
-  //                   diel_grid_logic, "EL_GRID_GATE", el_gap_logic,
-  //                   false, 0, false);
-  // new G4PVPlacement(0, G4ThreeVector(0., 0., -el_gap_length_/2. - grid_thickn_/2.),
-  //                   diel_grid_logic, "EL_GRID_ANODE", el_gap_logic,
-  //                   false, 1, false);
+  new G4PVPlacement(0, G4ThreeVector(0., 0., el_gap_length_/2. + grid_thickn_/2.),
+                    diel_grid_logic, "EL_GRID_GATE", el_gap_logic,
+                    false, 0, false);
+  new G4PVPlacement(0, G4ThreeVector(0., 0., -el_gap_length_/2. - grid_thickn_/2.),
+                    diel_grid_logic, "EL_GRID_ANODE", el_gap_logic,
+                    false, 1, false);
 
   // Vertex generator
   if (el_gap_gen_disk_zmin_ > el_gap_gen_disk_zmax_)
@@ -685,8 +685,8 @@ void Next100FieldCage::BuildELRegion()
     diel_grid_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
   }
 
-  G4VisAttributes color = nexus::Lilla();
-  el_gap_logic->SetVisAttributes(color);
+  // G4VisAttributes color = nexus::Lilla();
+  // el_gap_logic->SetVisAttributes(color);
 
   G4VisAttributes grey = nexus::DarkGrey();
   grey.SetForceSolid(true);
