@@ -23,8 +23,5 @@
 /nexus/RegisterEventAction DefaultEventAction
 /nexus/RegisterTrackingAction DefaultTrackingAction
 
-/nexus/RegisterTrackingAction OpticalTrackingAction
-/nexus/RegisterSteppingAction AnalysisSteppingAction
-
 /nexus/RegisterMacro macros/NEXT100.config.mac
 /nexus/RegisterDelayedMacro macros/physics/Bi214.mac
