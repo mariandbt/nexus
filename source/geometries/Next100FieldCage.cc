@@ -994,7 +994,7 @@ void Next100FieldCage::BuildFiberBarrel()
           sensor_rot->rotateY(rot_angle);
           sensor_rot->rotateZ(phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
-                            photo_sensor_logic, "SENS-" + label + label3, mother_logic_,
+                            photo_sensor_logic, photo_sensor_logic->GetName() + "_" + label + label3, mother_logic_,
                             true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
 
     }
