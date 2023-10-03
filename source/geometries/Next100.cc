@@ -53,9 +53,8 @@ namespace nexus {
     ics_ep_lip_width_ (55. * mm), // length of the step cut out in the ICS, in the EP side
 
     specific_vertex_{},
-    lab_walls_(false)//,
+    lab_walls_(false)
 
-    // fiber_type_ ("Y11")
   {
 
     msg_ = new G4GenericMessenger(this, "/Geometry/Next100/",
@@ -65,8 +64,6 @@ namespace nexus {
       "Set generation vertex.");
 
     msg_->DeclareProperty("lab_walls", lab_walls_, "Placement of Hall A walls");
-
-    // msg_->DeclareProperty("fiber_type", fiber_type_, "Fiber type (Y11 or B2)");
 
   // The following methods must be invoked in this particular
   // order since some of them depend on the previous ones
@@ -102,7 +99,6 @@ namespace nexus {
 
   void Next100::Construct()
   {
-     G4cout << "[Next100] *** Full Next100 simulation with fibers ***" << G4endl;
     // LAB /////////////////////////////////////////////////////////////
     // This is just a volume of air surrounding the detector so that
     // events (from calibration sources or cosmic rays) can be generated
