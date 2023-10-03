@@ -16,7 +16,8 @@
 
 /nexus/RegisterGeometry Next100OpticalGeometry
 
-/nexus/RegisterGenerator Kr83mGenerator
+#/nexus/RegisterGenerator Kr83mGenerator
+/nexus/RegisterGenerator SingleParticleGenerator
 
 /nexus/RegisterPersistencyManager PersistencyManager
 
@@ -27,4 +28,4 @@
 /nexus/RegisterTrackingAction OpticalTrackingAction
 /nexus/RegisterSteppingAction AnalysisSteppingAction
 
-/nexus/RegisterMacro macros/NEXT100_full.config.mac
+/nexus/RegisterMacro macros/test.config.mac
