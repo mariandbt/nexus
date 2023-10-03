@@ -264,9 +264,9 @@ namespace nexus {
                       teflon_logic, "TEFLON1", world_logic_vol,
                       true, 0, false);
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0, (length_ + teflon_thickness_)/2.),
-                      teflon_logic, "TEFLON2", world_logic_vol,
-                      true, 1, false);
+    // new G4PVPlacement(0, G4ThreeVector(0, 0, (length_ + teflon_thickness_)/2.),
+    //                   teflon_logic, "TEFLON2", world_logic_vol,
+    //                   true, 1, false);
 
     // TEFLON PANEL /////////////////////////////////////////////////
 
