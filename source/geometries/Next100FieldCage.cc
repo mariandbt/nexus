@@ -231,6 +231,7 @@ void Next100FieldCage::SetMotherPhysicalVolume(G4VPhysicalVolume* mother_phys)
 void Next100FieldCage::Construct()
 {
   // FIBER BARREL ******************************************************
+  G4cout << "[Next100] *** Full Next100 simulation with fibers ***" << G4endl;
   /// DIMENSIONS PARAMETERS /////////////////////////////////////////////
   panel_thickness_ = teflon_thickn_;
   panel_length_ = teflon_drift_length_;
@@ -954,7 +955,7 @@ void Next100FieldCage::BuildFiberBarrel()
      panel_rot->rotateX(rot_angle);
      panel_rot->rotateY(phi);
      new G4PVPlacement(panel_rot, G4ThreeVector(x,y, z),
-                       teflon_panel_logic, "PANEL-"+label, mother_logic_,
+                       teflon_panel_logic, teflon_panel_logic->GetName() + "_"+label, mother_logic_,
                        false, itheta, false);
 
      // Relative positions of the fibers wrt the panel
@@ -974,11 +975,12 @@ void Next100FieldCage::BuildFiberBarrel()
          std::string label2 = std::to_string(ii);
 
          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_f),
-                           fiber_logic, "FIBER-" + label + label2, mother_logic_,
+                           fiber_logic, fiber_logic->GetName() + "_" + label + label2, mother_logic_,
                            false, n_panels + ii, false);
         new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_fend),
                           fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, mother_logic_,
-                          false, n_panels + n_fibers*itheta + ii, false);
+                          // false, n_panels + n_fibers*itheta + ii, false);
+                          false, itheta*(1000) + ii, false);
        }
      for (G4int jj=0; jj < n_sensors; jj++) {
     // for (G4int jj=0; jj < 3; jj++) {
@@ -995,7 +997,8 @@ void Next100FieldCage::BuildFiberBarrel()
           sensor_rot->rotateZ(phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, photo_sensor_logic->GetName() + "_" + label + label3, mother_logic_,
-                            true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
+                            // true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
+                            true,  1000*n_panels + n_fibers  + itheta*(1000) +jj, false);
 
     }
 
