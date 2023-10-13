@@ -9,7 +9,7 @@
 
 # Xenon______________________________________________________
 /Geometry/Fib_pan_meth/LXe false
-/Geometry/Fib_pan_meth/pressure 15. bar
+/Geometry/Fib_pan_meth/pressure 10. bar
 
 # barrel______________________________________________________
 /Geometry/Fib_pan_meth/length 150. cm
