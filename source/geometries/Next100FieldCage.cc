@@ -358,51 +358,65 @@ void Next100FieldCage::DefineMaterials()
 void Next100FieldCage::BuildActive()
 {
   // G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z/2.);
-  G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z);
+  // G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z);
+  G4double new_active_zpos_ = z - fiber_end_z;
   // G4double new_active_zpos_ = active_zpos_;
 
   /// Position of z planes
   // G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_,
-  G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_,
+  // G4double zplane[2] = {- panel_length_/2 - overlap_,
+  G4double zplane[2] = {- panel_length_/2 - overlap_,
     // active_length_/2.-(cathode_thickn_-grid_thickn_)/2. - fiber_end_z};
-                         active_length_/2.-(cathode_thickn_-grid_thickn_)/2.};
+                        //  active_length_/2.-(cathode_thickn_-grid_thickn_)/2.};
+                        panel_length_/2. - fiber_end_z};
   // G4double zplane[2] = {-teflon_drift_length_/2.,
   //                        teflon_drift_length_/2.};
   /// Inner radius
   G4double rinner[2] = {0., 0.};
   /// Outer radius
   // G4double router[2] = {active_diam_/2., active_diam_/2.};
+
   G4double router[2] = {hh - fiber_diameter_/2.,
                         hh - fiber_diameter_/2.};
+                        // G4double router[2] = {.2*hh - fiber_diameter_/2.,
+                        //                       .2*hh - fiber_diameter_/2.};
+
   // G4double router[2] = {active_diam_/2. - (teflon_thickn_ + fiber_diameter_),
   //                       active_diam_/2. - (teflon_thickn_ + fiber_diameter_)};
 
   G4Polyhedra* active_solid =
+  // new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
     new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
 
-  G4Tubs* active_cathode_solid =
-  new G4Tubs("ACT_CATHODE_RING", 0, cathode_int_diam_/2.,
-              ((cathode_thickn_ - grid_thickn_)/2. + overlap_)/2., 0, twopi);
-
-  G4ThreeVector act_cathode_pos =
-  G4ThreeVector(0., 0., active_length_/2.-((cathode_thickn_ - grid_thickn_)/2.)/2. - overlap_/2.);
-
-  G4UnionSolid* union_active =
-    new G4UnionSolid ("ACTIVE", active_solid, active_cathode_solid, 0, act_cathode_pos);
+  // G4Tubs* active_cathode_solid =
+  // new G4Tubs("ACT_CATHODE_RING", 0, cathode_int_diam_/2.,
+  //             ((cathode_thickn_ - grid_thickn_)/2. + overlap_)/2., 0, twopi);
+  //
+  // G4ThreeVector act_cathode_pos =
+  // // G4ThreeVector(0., 0., active_length_/2.-((cathode_thickn_ - grid_thickn_)/2.)/2. - overlap_/2.);
+  // G4ThreeVector(0., 0., z -((cathode_thickn_ - grid_thickn_)/2.)/2. - overlap_/2.);
+  //
+  // G4UnionSolid* union_active =
+  //   new G4UnionSolid ("ACTIVE", active_solid, active_cathode_solid, 0, act_cathode_pos);
 
 
 // THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
   //This volume is added as an extension of the active volume that reaches the gate grid.
   G4Tubs* active_gate_solid =
-    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2. - 1*mm, 0, twopi);
+  // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2. - 1*mm, 0, twopi);
+    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., (gate_teflon_dist_ - 2.625 *mm)/2., 0, twopi);
 
   G4ThreeVector act_gate_pos =
   // G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2.);
-  G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2. - 12.475*mm);
+  // G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2. - 12.475*mm);
+  // G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_/2. - 1.*mm) + overlap_);
+  G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_ - 2.625 *mm)/2.);
 
-  union_active =
-    new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
+  // union_active =
+  // new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
+  G4UnionSolid* union_active =
+    new G4UnionSolid ("ACTIVE", active_solid, active_gate_solid, 0, act_gate_pos);
 
 // THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
@@ -685,13 +699,13 @@ void Next100FieldCage::BuildELRegion()
     el_gap_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     diel_grid_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
   }
-
-  // G4VisAttributes color = nexus::Lilla();
-  // el_gap_logic->SetVisAttributes(color);
+  G4VisAttributes color = nexus::Lilla();
+  el_gap_logic->SetVisAttributes(color);
 
   G4VisAttributes grey = nexus::DarkGrey();
   grey.SetForceSolid(true);
   gate_logic->SetVisAttributes(grey);
+  // gate_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
   anode_logic->SetVisAttributes(grey);
 
   /// Verbosity
@@ -749,7 +763,9 @@ void Next100FieldCage::BuildFiberBarrel()
    new G4LogicalSkinSurface("TEFLON_PANEL_OPSURF", teflon_panel_logic, opsur_teflon);
 
    teflon_panel_logic->SetVisAttributes(nexus::White());
-   // teflon_panel_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+   if (panels_visibility_ == false){
+     teflon_panel_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+   };
 
 
     // DETECTOR ////////////////////////////////////////////////////////////////
@@ -941,7 +957,7 @@ void Next100FieldCage::BuildFiberBarrel()
    G4double theta0 =  (10.)*pi/180.;
 
    for (G4int itheta=0; itheta < n_panels; itheta++) {
-   // for (G4int itheta=0; itheta < 3; itheta++) {
+  //  for (G4int itheta=0; itheta < 3; itheta++) {
 
      // panels
      G4double theta = theta0 + dif_theta * itheta;
