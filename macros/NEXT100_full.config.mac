@@ -30,7 +30,7 @@
 /Geometry/Next100/sensor_visibility true
 
 ## teflon______________________________________________________
-/Geometry/Next100/cap_visibility false
+/Geometry/Next100/cap_visibility true
 /Geometry/Next100/panels_visibility true
 
 
