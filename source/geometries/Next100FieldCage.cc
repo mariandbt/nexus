@@ -888,8 +888,10 @@ void Next100FieldCage::BuildFiberBarrel()
 
       // Set mother depth & naming order
       photo_sensor_ ->SetSensorDepth(1);
-      photo_sensor_ ->SetMotherDepth(2);
-      photo_sensor_ ->SetNamingOrder(1);
+      // photo_sensor_ ->SetMotherDepth(2);
+      // photo_sensor_ ->SetNamingOrder(1);
+      photo_sensor_ ->SetMotherDepth(0);
+      photo_sensor_ ->SetNamingOrder(0);
 
       // Set visibilities
       photo_sensor_ ->SetVisibility(sensor_visibility_);
@@ -960,6 +962,7 @@ void Next100FieldCage::BuildFiberBarrel()
    // PLACEMENT /////////////////////////////////////////////
    G4double rot_angle;
    G4double theta0 =  (10.)*pi/180.;
+   G4int sens_count = 200;
 
    for (G4int itheta=0; itheta < n_panels; itheta++) {
   //  for (G4int itheta=0; itheta < 3; itheta++) {
@@ -977,7 +980,7 @@ void Next100FieldCage::BuildFiberBarrel()
      panel_rot->rotateY(phi);
      new G4PVPlacement(panel_rot, G4ThreeVector(x,y, z),
                        teflon_panel_logic, teflon_panel_logic->GetName() + "_"+label, mother_logic_,
-                       false, itheta, false);
+                       false, 0, false);
 
      // Relative positions of the fibers wrt the panel
      G4double x0_f = x*hh/h + (panel_width_/2. - fiber_diameter_/2.)*std::cos(phi);
@@ -997,11 +1000,15 @@ void Next100FieldCage::BuildFiberBarrel()
 
          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_f),
                            fiber_logic, fiber_logic->GetName() + "_" + label + label2, mother_logic_,
-                           false, n_panels + ii, false);
+                           false, 0, false);
         new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_fend),
                           fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, mother_logic_,
                           // false, n_panels + n_fibers*itheta + ii, false);
-                          false, itheta*(1000) + ii, false);
+                          false, 0, false);
+
+         // Vertex in 1 fibers
+         one_fiber_gen_ = G4ThreeVector(xx_f, yy_f, z_f);
+
        }
      for (G4int jj=0; jj < n_sensors; jj++) {
     // for (G4int jj=0; jj < 3; jj++) {
@@ -1019,13 +1026,22 @@ void Next100FieldCage::BuildFiberBarrel()
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, photo_sensor_logic->GetName() + "_" + label + label3, mother_logic_,
                             // true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
-                            true,  1000*n_panels + n_fibers  + itheta*(1000) +jj, false);
+                            true,  sens_count, false);
+
+          sens_count++;
 
     }
 
    }
 
+   /// Vertex generator
+   fibers_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_/2., hh - fiber_diameter_/2.,
+                                              fiber_length/2.,
+                                              0., twopi, nullptr,
+                                              G4ThreeVector(0., 0., z_f));
+
 }
+
 void Next100FieldCage::BuildLightTube()
 {
   /// DRIFT PART ///
@@ -1261,6 +1277,7 @@ void Next100FieldCage::BuildFieldCage()
 Next100FieldCage::~Next100FieldCage()
 {
   delete active_gen_;
+  delete fibers_gen_;
   delete buffer_gen_;
   delete xenon_gen_;
   delete teflon_gen_;
@@ -1280,6 +1297,21 @@ G4ThreeVector Next100FieldCage::GenerateVertex(const G4String& region) const
 
   if (region == "CENTER") {
     vertex = G4ThreeVector(0., 0., active_zpos_);
+  }
+
+  else if (region == "ONE_FIBER") {
+    vertex = one_fiber_gen_;
+  }
+
+  else if (region == "FIBERS") {
+    G4VPhysicalVolume *VertexVolume;
+    do {
+      vertex = fibers_gen_->GenerateVertex("VOLUME");
+      G4ThreeVector glob_vtx(vertex);
+      glob_vtx = glob_vtx + G4ThreeVector(0, 0, -GetELzCoord());
+      VertexVolume =
+        geom_navigator_->LocateGlobalPointAndSetup(glob_vtx, 0, false);
+    } while (VertexVolume->GetName() != region);
   }
 
   else if (region == "ACTIVE") {
