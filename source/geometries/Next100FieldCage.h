@@ -123,6 +123,9 @@ namespace nexus {
 
 
     // Vertex generators
+    CylinderPointSampler2020* fibers_gen_;
+    G4ThreeVector one_fiber_gen_;
+    
     CylinderPointSampler2020* active_gen_;
     CylinderPointSampler2020* buffer_gen_;
     CylinderPointSampler2020* teflon_gen_;
