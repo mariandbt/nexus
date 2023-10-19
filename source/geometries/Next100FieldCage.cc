@@ -1000,10 +1000,6 @@ void Next100FieldCage::BuildFiberBarrel()
                           fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, mother_logic_,
                           // false, n_panels + n_fibers*itheta + ii, false);
                           false, 0, false);
-
-         // Vertex in 1 fibers
-         one_fiber_gen_ = G4ThreeVector(xx_f, yy_f, z_f);
-
        }
      for (G4int jj=0; jj < n_sensors; jj++) {
     // for (G4int jj=0; jj < 3; jj++) {
@@ -1029,14 +1025,7 @@ void Next100FieldCage::BuildFiberBarrel()
 
    }
 
-   /// Vertex generator
-   fibers_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_/2., hh - fiber_diameter_/2.,
-                                              fiber_length/2.,
-                                              0., twopi, nullptr,
-                                              G4ThreeVector(0., 0., z_f));
-
 }
-
 void Next100FieldCage::BuildLightTube()
 {
   /// DRIFT PART ///
@@ -1357,7 +1346,6 @@ void Next100FieldCage::BuildFieldCage()
 Next100FieldCage::~Next100FieldCage()
 {
   delete active_gen_;
-  delete fibers_gen_;
   delete buffer_gen_;
   delete xenon_gen_;
   delete teflon_gen_;
@@ -1377,21 +1365,6 @@ G4ThreeVector Next100FieldCage::GenerateVertex(const G4String& region) const
 
   if (region == "CENTER") {
     vertex = G4ThreeVector(0., 0., active_zpos_);
-  }
-
-  else if (region == "ONE_FIBER") {
-    vertex = one_fiber_gen_;
-  }
-
-  else if (region == "FIBERS") {
-    G4VPhysicalVolume *VertexVolume;
-    do {
-      vertex = fibers_gen_->GenerateVertex("VOLUME");
-      G4ThreeVector glob_vtx(vertex);
-      glob_vtx = glob_vtx + G4ThreeVector(0, 0, -GetELzCoord());
-      VertexVolume =
-        geom_navigator_->LocateGlobalPointAndSetup(glob_vtx, 0, false);
-    } while (VertexVolume->GetName() != region);
   }
 
   else if (region == "ACTIVE") {

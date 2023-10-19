@@ -18,6 +18,7 @@
 
 /nexus/RegisterGenerator Kr83mGenerator
 
+
 /nexus/RegisterPersistencyManager PersistencyManager
 
 /nexus/RegisterRunAction DefaultRunAction
