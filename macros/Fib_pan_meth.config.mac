@@ -5,24 +5,24 @@
 #/Generator/SingleParticle/max_energy 7 eV
 #/Generator/SingleParticle/region VOLUME
 
-/Generator/Kr83mGenerator/region VOLUME
+/Generator/Kr83mGenerator/region ACTIVE
 
 # Xenon______________________________________________________
 /Geometry/Fib_pan_meth/LXe false
 /Geometry/Fib_pan_meth/pressure 10. bar
 
 # barrel______________________________________________________
-/Geometry/Fib_pan_meth/length 150. cm
+/Geometry/Fib_pan_meth/panel_length 150. cm
 /Geometry/Fib_pan_meth/radius 50 cm
 /Geometry/Fib_pan_meth/panel_width 17 cm
 
-#/Geometry/Fib_pan_meth/length 1.5 cm
+#/Geometry/Fib_pan_meth/panel_length 1.5 cm
 #/Geometry/Fib_pan_meth/radius .5 cm
 #/Geometry/Fib_pan_meth/panel_width .3 cm
 
-#/Geometry/Fib_pan_meth/length 5 cm
-#/Geometry/Fib_pan_meth/radius .5 cm
-#/Geometry/Fib_pan_meth/panel_width 2 cm
+#/Geometry/Fib_pan_meth/panel_length 5 cm
+#/Geometry/Fib_pan_meth/radius 2 cm
+#/Geometry/Fib_pan_meth/panel_width 1 cm
 
 # teflon______________________________________________________
 /Geometry/Fib_pan_meth/teflon_thickness 1. mm

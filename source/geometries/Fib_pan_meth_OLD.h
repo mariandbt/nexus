@@ -1,13 +1,13 @@
 // ----------------------------------------------------------------------------
-// nexus | Fib_pan_meth.h
+// nexus | Fib_pan_meth_OLD.h
 //
 // Box-shaped box of material with a coating.
 //
 // The NEXT Collaboration
 // ----------------------------------------------------------------------------
 
-#ifndef Fib_pan_meth_H
-#define Fib_pan_meth_H
+#ifndef Fib_pan_meth_OLD_H
+#define Fib_pan_meth_OLD_H
 
 #include "GeometryBase.h"
 #include "GenericWLSFiber.h"
@@ -24,13 +24,13 @@ namespace nexus {
 
   /// Fiber Barrel
 
-  class Fib_pan_meth: public GeometryBase
+  class Fib_pan_meth_OLD: public GeometryBase
   {
   public:
     /// Constructor
-    Fib_pan_meth();
+    Fib_pan_meth_OLD();
     /// Destructor
-    ~Fib_pan_meth();
+    ~Fib_pan_meth_OLD();
 
     /// Return vertex within region <region> of the chamber
     G4ThreeVector GenerateVertex(const G4String& region) const;
@@ -46,21 +46,14 @@ namespace nexus {
 
     G4double radius_;             // Cylinder radius
     G4double fiber_diameter_;
+    G4double length_;             // Cylinder length
     G4String fiber_type_;
     G4bool coated_;
 
     // cylinder
-    G4double panel_length_;             // Cylinder length
     G4double teflon_thickness_;   // thickness of the outer teflon cover
     G4bool caps_visibility_;
     G4bool teflon_visibility_;
-    G4VPhysicalVolume* active_phys_; // active volume
-
-    // vertex
-    CylinderPointSampler2020* cyl_vertex_gen_;
-    CylinderPointSampler2020* active_gen_;
-
-
 
     G4double panel_width_;
 
@@ -74,6 +67,7 @@ namespace nexus {
     G4bool sensor_visibility_;
 
     GenericWLSFiber* fiber_;
+    CylinderPointSampler2020* cyl_vertex_gen_;
     /// Messenger for the definition of control commands
     G4GenericMessenger* msg_;
   };

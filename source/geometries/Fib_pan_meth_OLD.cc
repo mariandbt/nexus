@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
-// nexus | Fib_pan_meth.cc
+// nexus | Fib_pan_meth_OLD.cc
 //
 // Box containing optical fibers
 //
 // The NEXT Collaboration
 // ----------------------------------------------------------------------------
 
-#include "Fib_pan_meth.h"
+#include "Fib_pan_meth_OLD.h"
 
 #include "FactoryBase.h"
 #include "OpticalMaterialProperties.h"
@@ -21,7 +21,6 @@
 #include <G4NistManager.hh>
 #include <G4Box.hh>
 #include <G4Tubs.hh>
-#include <G4Polyhedra.hh>
 #include <G4VisAttributes.hh>
 #include <G4SDManager.hh>
 #include <G4VUserDetectorConstruction.hh>
@@ -29,11 +28,11 @@
 
 using namespace nexus;
 
-REGISTER_CLASS(Fib_pan_meth, GeometryBase)
+REGISTER_CLASS(Fib_pan_meth_OLD, GeometryBase)
 
 namespace nexus {
 
-  Fib_pan_meth::Fib_pan_meth():
+  Fib_pan_meth_OLD::Fib_pan_meth_OLD():
     GeometryBase(),
     liquid_(false),
     pressure_(STP_Pressure),
@@ -41,7 +40,7 @@ namespace nexus {
     methacrylate_ (false),
     window_thickness_ (5. * mm),
     fiber_diameter_(1 * mm),
-    panel_length_ (2 * cm),
+    length_ (2 * cm),
     fiber_type_ ("Y11"),
     sensor_type_ ("PERFECT"),
     sensor_visibility_ (true),
@@ -51,8 +50,8 @@ namespace nexus {
     teflon_visibility_ (false),
     coated_(true)
   {
-    msg_ = new G4GenericMessenger(this, "/Geometry/Fib_pan_meth/",
-      "Control commands of geometry Fib_pan_meth.");
+    msg_ = new G4GenericMessenger(this, "/Geometry/Fib_pan_meth_OLD/",
+      "Control commands of geometry Fib_pan_meth_OLD.");
 
     msg_->DeclareProperty("LXe", liquid_,
       "Fill the inside of the detector with liquid xenon.");
@@ -74,10 +73,10 @@ namespace nexus {
                             "Inner methacrylate thickness");
     window_thickness_cmd.SetUnitCategory("Length");
 
-    G4GenericMessenger::Command&  panel_length_cmd =
-      msg_->DeclareProperty("panel_length", panel_length_,
-                            "Barrel panel length");
-    panel_length_cmd.SetUnitCategory("Length");
+    G4GenericMessenger::Command&  length_cmd =
+      msg_->DeclareProperty("length", length_,
+                            "Barrel fiber length");
+    length_cmd.SetUnitCategory("Length");
 
     G4GenericMessenger::Command&  fiber_diameter_cmd =
       msg_->DeclareProperty("fiber_diameter", fiber_diameter_,
@@ -106,28 +105,24 @@ namespace nexus {
 
 
 
-  Fib_pan_meth::~Fib_pan_meth()
+  Fib_pan_meth_OLD::~Fib_pan_meth_OLD()
   {
     delete msg_;
   }
 
 
 
-  void Fib_pan_meth::Construct()
+  void Fib_pan_meth_OLD::Construct()
   {
 
-    G4cout << "[Fib_pan_meth] *** Barrel Fiber prototype ***" << G4endl;
-    G4cout << "[Fib_pan_meth] Using " << fiber_type_ << " fibers"<< G4endl;
+    G4cout << "[Fib_pan_meth_OLD] *** Barrel Fiber prototype ***" << G4endl;
+    G4cout << "[Fib_pan_meth_OLD] Using " << fiber_type_ << " fibers"<< G4endl;
 
 
-    world_z_ = (panel_length_ + teflon_thickness_) * 3;
+    world_z_ = (length_ + teflon_thickness_) * 3;
     world_xy_ = (radius_ + teflon_thickness_) * 3;
 
     G4double rot_angle;
-
-    G4double sens_z = 1. * mm;
-    G4double fiber_end_z = 0.1 * mm;
-    G4double fiber_length_ = panel_length_ - (sens_z + fiber_end_z);
 
 
     G4Material *this_fiber = nullptr;
@@ -160,7 +155,7 @@ namespace nexus {
     }
 
 
-    fiber_ = new GenericWLSFiber(fiber_type_, true, fiber_diameter_, fiber_length_, true, coated_, this_coating, this_fiber, true);
+    fiber_ = new GenericWLSFiber(fiber_type_, true, fiber_diameter_, length_, true, coated_, this_coating, this_fiber, true);
 
     // WORLD /////////////////////////////////////////////////
 
@@ -171,16 +166,13 @@ namespace nexus {
       xenon = G4NistManager::Instance()->FindOrBuildMaterial("G4_lXe");
     else
       xenon = materials::GXe(pressure_);
-      xenon->SetMaterialPropertiesTable(opticalprops::GXe());
-
-
 
     G4String world_name = "WORLD";
 
     // G4Material* world_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
-    // world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
-
     G4Material* world_mat = xenon;
+
+    // world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
     world_mat->SetMaterialPropertiesTable(opticalprops::GXe());
 
     G4Box* world_solid_vol =
@@ -191,15 +183,21 @@ namespace nexus {
     world_logic_vol->SetVisAttributes(G4VisAttributes::GetInvisible());
     GeometryBase::SetLogicalVolume(world_logic_vol);
 
+    // // Set the logical volume of the lab as an ionization
+    // // sensitive detector, i.e. position, time and energy deposition
+    // // will be stored for each step of any charged particle crossing
+    // // the volume.
+    // IonizationSD* ionizsd = new IonizationSD("/Fib_pan_meth_OLD");
+    // G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
+    // world_logic_vol->SetSensitiveDetector(ionizsd);
+    // // Fix the length of the maximum step an electron can make
+    // // when depositing energy.
+    // // The smaller the limit the narrower the trace
+    // world_logic_vol->SetUserLimits(new G4UserLimits(1.*mm));
+
 
 
     // GEOMETRY PARAMETERS /////////////////////////////////////////////
-
-    G4double z_p = 0.; // z-position of the panels
-    G4double z_f = z_p + fiber_length_/2. + sens_z - panel_length_/2.; // z-pos for the fibers
-    G4double z_fend = z_f + (fiber_length_ + fiber_end_z)/2.; // z-pos for the fibers' Al ends
-    G4double z_s = z_f - (fiber_length_ + sens_z)/2.; // z-pos for the sensors
-
 
     // Teflon panels distance to the center
     // G4double h = radius_ + fiber_diameter_/2. + teflon_thickness_/2.;
@@ -213,90 +211,39 @@ namespace nexus {
     G4int n_fibers = floor(panel_width_ / fiber_diameter_); // number of fibers per panel
     G4double dl_fib = panel_width_/n_fibers; // distance between fibers
 
-    G4cout << "[Fib_pan_meth] Using " << n_fibers << " fibers per panel"<< G4endl;
+    G4cout << "[Fib_pan_meth_OLD] Using " << n_fibers << " fibers per panel"<< G4endl;
 
 
     G4int n_sensors = 5; // number of sensors per panel
     G4double dl_sens = panel_width_/n_sensors; // distance between sensors
 
-    G4cout << "[Fib_pan_meth] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
+    G4cout << "[Fib_pan_meth_OLD] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
 
 
     // Re-calculation of parameters for optimization
     dif_theta = ( 2 * M_PI) / n_panels; // re-calculate angular difference
     h = (panel_width_/2.)/(std::tan(dif_theta/2.)) + teflon_thickness_/2. + fiber_diameter_; // re-calculate distance to the center
-    G4cout << "[Fib_pan_meth] Using " << n_panels << " panels" << G4endl;
+    G4cout << "[Fib_pan_meth_OLD] Using " << n_panels << " panels" << G4endl;
 
     // Fibers/sensors/aluminium distance to the center
     G4double hh = h - (fiber_diameter_/2. + teflon_thickness_/2.);
 
 
-    // ACTIVE VOLUME /////////////////////////////////////////////////
-    G4double active_length_ = panel_length_ - 2*fiber_end_z;
-    G4double active_diam_ = 2*(hh - fiber_diameter_/2.);
-
-    // /// Position of z planes
-    // G4double zplane[2] = {-panel_length_/2. + fiber_end_z,
-    //                        panel_length_/2. - fiber_end_z};
-    // /// Inner radius
-    // G4double rinner[2] = {0., 0.};
-    // /// Outer radius
-    // G4double router[2] = {active_diam_/2., active_diam_/2.};
-    //
-    // G4Polyhedra* active_solid =
-    //   new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
-    //
-    // G4LogicalVolume* active_logic =
-    //   new G4LogicalVolume(active_solid, xenon, "ACTIVE");
-
-    G4double active_zpos_ = z_p;
-
-    // active_phys_ =
-    //   new G4PVPlacement(0, G4ThreeVector(0., 0., active_zpos_),
-    //                     active_logic, "ACTIVE", world_logic_vol,
-    //                     false, 0, false);
-
-
-
-    // // Set the logical volume of the vessel as an ionization
-    // // sensitive detector, i.e. position, time and energy deposition
-    // // will be stored for each step of any charged particle crossing
-    // // the volume.
-    // IonizationSD* ionizsd = new IonizationSD("/Fib_pan_meth/ACTIVE");
-    // G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
-    // active_logic->SetSensitiveDetector(ionizsd);
-    // // Fix the length of the maximum step an electron can make
-    // // when depositing energy.
-    // // The smaller the limit the narrower the trace
-    // active_logic->SetUserLimits(new G4UserLimits(1.*mm));
-
-    /// Vertex generator
-    active_gen_ = new CylinderPointSampler2020(0., active_diam_/2., active_length_/2.,
-    // active_gen_ = new CylinderPointSampler2020(active_diam_/2., active_diam_, active_length_/2.,
-                                               0., 2*pi, nullptr,
-                                               G4ThreeVector(0., 0., active_zpos_));
-
-
-    // /// Visibilities
-    // // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-    // active_logic->SetVisAttributes(nexus::Yellow());
-
-
-    // // volume where the vertex will be created
-    // if (methacrylate_)
-    // {
-    //   cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2. - window_thickness_, panel_length_/2, 0, 2 * M_PI);
-    // } else if (methacrylate_ == false){
-    //   cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2., panel_length_/2, 0, 2 * M_PI,
-    //                                                  nullptr, G4ThreeVector(0,0,0));
-    //   // cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh/2., panel_length_/2, 0, 2 * M_PI);
-    // }
+    // volume where the vertex will be created
+    if (methacrylate_)
+    {
+      cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2. - window_thickness_, length_/2, 0, 2 * M_PI);
+    } else if (methacrylate_ == false){
+      cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2., length_/2, 0, 2 * M_PI,
+                                                     nullptr, G4ThreeVector(0,0,0));
+      // cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh/2., length_/2, 0, 2 * M_PI);
+    }
 
 
     // TEFLON END-CAPS ////////////////////////////////////////////
     G4Tubs* teflon_cap =
     // new G4Tubs("TEFLON_CAP", 0, radius_ - (fiber_diameter_ + teflon_thickness_) , teflon_thickness_/2., 0, twopi);
-    new G4Tubs("TEFLON_CAP", 0, hh - fiber_diameter_/2., fiber_end_z/2., 0, twopi);
+    new G4Tubs("TEFLON_CAP", 0, hh - fiber_diameter_/2., teflon_thickness_/2., 0, twopi);
     G4Material* teflon = G4NistManager::Instance()->FindOrBuildMaterial("G4_TEFLON");
     teflon->SetMaterialPropertiesTable(opticalprops::PTFE());
     G4LogicalVolume* teflon_logic =
@@ -313,18 +260,18 @@ namespace nexus {
       teflon_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     }
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0, -z_fend),
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -(length_ + teflon_thickness_)/2.),
                       teflon_logic, "TEFLON1", world_logic_vol,
                       true, 0, false);
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0, z_fend),
-                      teflon_logic, "TEFLON2", world_logic_vol,
-                      true, 1, false);
+    // new G4PVPlacement(0, G4ThreeVector(0, 0, (length_ + teflon_thickness_)/2.),
+    //                   teflon_logic, "TEFLON2", world_logic_vol,
+    //                   true, 1, false);
 
     // TEFLON PANEL /////////////////////////////////////////////////
 
     G4Box* teflon_panel =
-      new G4Box("TEFLON_PANEL", panel_width_/2., panel_length_/2., teflon_thickness_/2.);
+      new G4Box("TEFLON_PANEL", panel_width_/2., length_/2., teflon_thickness_/2.);
     G4LogicalVolume* teflon_panel_logic =
       new G4LogicalVolume(teflon_panel, teflon, "TEFLON_PANEL");
 
@@ -350,14 +297,15 @@ namespace nexus {
       fiber_logic->SetVisAttributes(nexus::LightBlueAlpha());
 
     // G4int n_fibers = floor((radius_ * 2 * M_PI) / fiber_diameter_);
-    // G4cout << "[Fib_pan_meth] Barrel with " << n_fibers << " fibers" << G4endl;
+    // G4cout << "[Fib_pan_meth_OLD] Barrel with " << n_fibers << " fibers" << G4endl;
 
     // DETECTOR /////////////////////////////////////////////////
     G4double sensor_width = panel_width_/n_sensors;
+    G4double sensor_thickness = 1. * mm;
     G4String sensor_name = "F_SENSOR";
 
     /// Build the sensor
-    photo_sensor_  = new GenericPhotosensor(sensor_name, sensor_width, fiber_diameter_, sens_z);
+    photo_sensor_  = new GenericPhotosensor(sensor_name, sensor_width, fiber_diameter_, sensor_thickness);
 
 
     // Optical Properties of the sensor
@@ -462,13 +410,13 @@ namespace nexus {
 
       photo_sensor_ ->SetTimeBinning(t_binning); // Size of fiber sensors time binning
 
-      G4cout << "[Fib_pan_meth] Using " << t_binning << " [ns] binning"<< G4endl;
+      G4cout << "[Fib_pan_meth_OLD] Using " << t_binning << " [ns] binning"<< G4endl;
 
 
       // Set mother depth & naming order
       photo_sensor_ ->SetSensorDepth(1);
-      // photo_sensor_ ->SetMotherDepth(2);
-      // photo_sensor_ ->SetNamingOrder(1);
+      photo_sensor_ ->SetMotherDepth(2);
+      photo_sensor_ ->SetNamingOrder(1);
 
       // Set visibilities
       photo_sensor_ ->SetVisibility(sensor_visibility_);
@@ -483,6 +431,8 @@ namespace nexus {
     // ALUMINIZED ENDCAP//////////////////////////////////////////////////
 
     G4Material* fiber_end_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_Al");
+
+    G4double fiber_end_z = 0.1 * mm;
 
     G4Tubs* fiber_end_solid_vol =
       new G4Tubs("fiber_end", 0, fiber_diameter_ / 2, fiber_end_z/2., 0, 2 * M_PI);
@@ -500,13 +450,12 @@ namespace nexus {
 
     // PLACEMENT /////////////////////////////////////////////
     // n_panels = 1;
-    G4double theta0 =  (10.)*pi/180.;
 
     for (G4int itheta=0; itheta < n_panels; itheta++) {
     // for (G4int itheta=0; itheta < 3; itheta++) {
 
       // panels
-      G4double theta = theta0 + dif_theta * itheta;
+      G4double theta = dif_theta * itheta;
       G4double x = h * std::cos(theta) * mm;
       G4double y = h * std::sin(theta) * mm;
       G4double phi = pi/2. + std::atan2(y, x);
@@ -516,7 +465,7 @@ namespace nexus {
       rot_angle = pi/2.;
       panel_rot->rotateX(rot_angle);
       panel_rot->rotateY(phi);
-      new G4PVPlacement(panel_rot, G4ThreeVector(x,y, z_p),
+      new G4PVPlacement(panel_rot, G4ThreeVector(x,y, 0.),
                         teflon_panel_logic, "PANEL-"+label, world_logic_vol,
                         false, itheta, false);
 
@@ -529,7 +478,7 @@ namespace nexus {
         window_mat->SetMaterialPropertiesTable(opticalprops::PMMA());
 
         G4Box* window_solid_vol =
-          new G4Box(window_name, panel_width_/2., panel_length_/2., window_thickness_/2.);
+          new G4Box(window_name, panel_width_/2., length_/2., window_thickness_/2.);
 
         G4LogicalVolume* window_logic_vol =
           new G4LogicalVolume(window_solid_vol, window_mat, window_name);
@@ -545,7 +494,7 @@ namespace nexus {
 
         G4double hw = h - (window_thickness_/2. + fiber_diameter_ + teflon_thickness_/2.);
 
-        new G4PVPlacement(panel_rot, G4ThreeVector(x*hw/h,y*hw/h, z_p),
+        new G4PVPlacement(panel_rot, G4ThreeVector(x*hw/h,y*hw/h, 0.),
                           window_logic_vol, window_name + label, world_logic_vol,
                           false, 0, false);
       }
@@ -567,10 +516,10 @@ namespace nexus {
 
           std::string label2 = std::to_string(ii);
 
-          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_f),
+          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f),
                             fiber_logic, "FIBER-" + label + label2, world_logic_vol,
                             false, n_panels + ii, false);
-          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, +z_fend),
+          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, -(length_ + fiber_end_z)/2.),
                             fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, world_logic_vol,
                             false, n_panels + n_fibers*itheta + ii, false);
         }
@@ -587,7 +536,7 @@ namespace nexus {
             rot_angle = M_PI;
             sensor_rot->rotateY(rot_angle);
             sensor_rot->rotateZ(phi);
-            new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
+            new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, (length_ + sensor_thickness)/2.),
                               photo_sensor_logic, "SENS-" + label + label3, world_logic_vol,
                               true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
 
@@ -599,17 +548,9 @@ namespace nexus {
 
 
 
-  G4ThreeVector Fib_pan_meth::GenerateVertex(const G4String& region) const
+  G4ThreeVector Fib_pan_meth_OLD::GenerateVertex(const G4String& region) const
   {
     G4ThreeVector vertex;
-
-    if (region == "CENTER") {
-      vertex = G4ThreeVector(0., 0., 0.);
-    }
-
-    else if (region == "ACTIVE") {
-      vertex = active_gen_->GenerateVertex("VOLUME");
-    }
 
     if (region == "VOLUME"){
 
