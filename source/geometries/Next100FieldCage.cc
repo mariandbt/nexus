@@ -315,12 +315,12 @@ void Next100FieldCage::Construct()
   /// Define materials to be used
   DefineMaterials();
   /// Build the different parts of the field cage
-  // BuildActive();
-  // BuildCathode();
-  // BuildBuffer();
-  // BuildELRegion();
+  BuildActive();
+  BuildCathode();
+  BuildBuffer();
+  BuildELRegion();
   BuildFiberBarrel();
-  // BuildFieldCage();
+  BuildFieldCage();
 }
 
 
@@ -455,8 +455,8 @@ void Next100FieldCage::BuildActive()
                                              G4ThreeVector(0., 0., new_active_zpos_));
 
   /// Visibilities
-  // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-  active_logic->SetVisAttributes(nexus::Yellow());
+  active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+  // active_logic->SetVisAttributes(nexus::Yellow());
 
   /// Verbosity
   if (verbosity_) {
