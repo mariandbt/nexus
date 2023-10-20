@@ -166,7 +166,7 @@ namespace nexus {
 
     // Define the material (LXe or GXe) for the tank.
     // We use for this the NIST manager or the nexus materials list.
-    G4Material* xenon = 0;
+    G4Material* xenon = nullptr;
     if (liquid_)
       xenon = G4NistManager::Instance()->FindOrBuildMaterial("G4_lXe");
     else
@@ -177,11 +177,10 @@ namespace nexus {
 
     G4String world_name = "WORLD";
 
-    // G4Material* world_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
-    // world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
+    G4Material* world_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+    world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
 
-    G4Material* world_mat = xenon;
-    world_mat->SetMaterialPropertiesTable(opticalprops::GXe());
+    // G4Material* world_mat = xenon;
 
     G4Box* world_solid_vol =
      new G4Box(world_name, world_xy_/2., world_xy_/2., world_z_/2.);
@@ -235,62 +234,64 @@ namespace nexus {
     G4double active_length_ = panel_length_ - 2*fiber_end_z;
     G4double active_diam_ = 2*(hh - fiber_diameter_/2.);
 
-    // /// Position of z planes
-    // G4double zplane[2] = {-panel_length_/2. + fiber_end_z,
-    //                        panel_length_/2. - fiber_end_z};
-    // /// Inner radius
-    // G4double rinner[2] = {0., 0.};
-    // /// Outer radius
-    // G4double router[2] = {active_diam_/2., active_diam_/2.};
-    //
-    // G4Polyhedra* active_solid =
-    //   new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
-    //
-    // G4LogicalVolume* active_logic =
-    //   new G4LogicalVolume(active_solid, xenon, "ACTIVE");
+    /// Position of z planes
+    G4double zplane[2] = {-panel_length_/2. + fiber_end_z,
+                           panel_length_/2. - fiber_end_z};
+    /// Inner radius
+    G4double rinner[2] = {0., 0.};
+    /// Outer radius
+    G4double router[2] = {active_diam_/2., active_diam_/2.};
+
+    G4Polyhedra* active_solid =
+      new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
+
+    G4LogicalVolume* active_logic =
+      new G4LogicalVolume(active_solid, xenon, "ACTIVE");
 
     G4double active_zpos_ = z_p;
 
-    // active_phys_ =
-    //   new G4PVPlacement(0, G4ThreeVector(0., 0., active_zpos_),
-    //                     active_logic, "ACTIVE", world_logic_vol,
-    //                     false, 0, false);
+    active_phys_ =
+      new G4PVPlacement(0, G4ThreeVector(0., 0., active_zpos_),
+                        active_logic, "ACTIVE", world_logic_vol,
+                        false, 0, false);
 
 
 
-    // // Set the logical volume of the vessel as an ionization
-    // // sensitive detector, i.e. position, time and energy deposition
-    // // will be stored for each step of any charged particle crossing
-    // // the volume.
-    // IonizationSD* ionizsd = new IonizationSD("/Fib_pan_meth/ACTIVE");
-    // G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
-    // active_logic->SetSensitiveDetector(ionizsd);
-    // // Fix the length of the maximum step an electron can make
-    // // when depositing energy.
-    // // The smaller the limit the narrower the trace
-    // active_logic->SetUserLimits(new G4UserLimits(1.*mm));
+    // Set the logical volume of the vessel as an ionization
+    // sensitive detector, i.e. position, time and energy deposition
+    // will be stored for each step of any charged particle crossing
+    // the volume.
+    IonizationSD* ionizsd = new IonizationSD("/Fib_pan_meth/ACTIVE");
+    G4SDManager::GetSDMpointer()->AddNewDetector(ionizsd);
+    active_logic->SetSensitiveDetector(ionizsd);
+    // Fix the length of the maximum step an electron can make
+    // when depositing energy.
+    // The smaller the limit the narrower the trace
+    active_logic->SetUserLimits(new G4UserLimits(1.*mm));
 
-    /// Vertex generator
-    active_gen_ = new CylinderPointSampler2020(0., active_diam_/2., active_length_/2.,
-    // active_gen_ = new CylinderPointSampler2020(active_diam_/2., active_diam_, active_length_/2.,
+    /// Vertex generator in active volume
+    // Remember, since the vertex generator is a cylinder and the active volume a polyedra,
+    // if we set the cylinder's radius = to active's radius the volumewould be bigger,
+    // so we make is slightly smaller
+    active_gen_ = new CylinderPointSampler2020(0., active_diam_/2. - 1*mm, active_length_/2.,
                                                0., 2*pi, nullptr,
                                                G4ThreeVector(0., 0., active_zpos_));
 
 
-    // /// Visibilities
-    // // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-    // active_logic->SetVisAttributes(nexus::Yellow());
+    /// Visibilities
+    // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+    active_logic->SetVisAttributes(nexus::Yellow());
 
 
-    // // volume where the vertex will be created
-    // if (methacrylate_)
-    // {
-    //   cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2. - window_thickness_, panel_length_/2, 0, 2 * M_PI);
-    // } else if (methacrylate_ == false){
-    //   cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2., panel_length_/2, 0, 2 * M_PI,
-    //                                                  nullptr, G4ThreeVector(0,0,0));
-    //   // cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh/2., panel_length_/2, 0, 2 * M_PI);
-    // }
+    // volume where the vertex will be created
+    if (methacrylate_)
+    {
+      cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2. - window_thickness_, panel_length_/2, 0, 2 * M_PI);
+    } else if (methacrylate_ == false){
+      cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh - fiber_diameter_/2., panel_length_/2, 0, 2 * M_PI,
+                                                     nullptr, G4ThreeVector(0,0,0));
+      // cyl_vertex_gen_ = new CylinderPointSampler2020(0, hh/2., panel_length_/2, 0, 2 * M_PI);
+    }
 
 
     // TEFLON END-CAPS ////////////////////////////////////////////
@@ -313,11 +314,11 @@ namespace nexus {
       teflon_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
     }
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0, -z_fend),
+    new G4PVPlacement(0, G4ThreeVector(0, 0, z_fend),
                       teflon_logic, "TEFLON1", world_logic_vol,
                       true, 0, false);
 
-    new G4PVPlacement(0, G4ThreeVector(0, 0, z_fend),
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -z_fend),
                       teflon_logic, "TEFLON2", world_logic_vol,
                       true, 1, false);
 
@@ -500,7 +501,8 @@ namespace nexus {
 
     // PLACEMENT /////////////////////////////////////////////
     // n_panels = 1;
-    G4double theta0 =  (10.)*pi/180.;
+    G4double const theta0 =  (10.)*pi/180.;
+    // G4double const theta0 =  0.;
 
     for (G4int itheta=0; itheta < n_panels; itheta++) {
     // for (G4int itheta=0; itheta < 3; itheta++) {
@@ -570,7 +572,7 @@ namespace nexus {
           new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_f),
                             fiber_logic, "FIBER-" + label + label2, world_logic_vol,
                             false, n_panels + ii, false);
-          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, +z_fend),
+          new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_fend),
                             fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, world_logic_vol,
                             false, n_panels + n_fibers*itheta + ii, false);
         }
@@ -583,10 +585,10 @@ namespace nexus {
             std::string label3 = std::to_string(jj);
 
             G4RotationMatrix* sensor_rot = new G4RotationMatrix();
-            // rot_angle = 0.;
-            rot_angle = M_PI;
+            rot_angle = 0.;
+            // rot_angle = M_PI;
             sensor_rot->rotateY(rot_angle);
-            sensor_rot->rotateZ(phi);
+            sensor_rot->rotateZ(-phi);
             new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                               photo_sensor_logic, "SENS-" + label + label3, world_logic_vol,
                               true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);

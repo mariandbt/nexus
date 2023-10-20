@@ -161,19 +161,20 @@ namespace nexus {
 
     // Define the material (LXe or GXe) for the tank.
     // We use for this the NIST manager or the nexus materials list.
-    G4Material* xenon = 0;
+    G4Material* xenon = nullptr;
     if (liquid_)
       xenon = G4NistManager::Instance()->FindOrBuildMaterial("G4_lXe");
     else
       xenon = materials::GXe(pressure_);
+      xenon->SetMaterialPropertiesTable(opticalprops::GXe());
 
     G4String world_name = "WORLD";
 
     // G4Material* world_mat = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+    // world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
+    
     G4Material* world_mat = xenon;
 
-    // world_mat->SetMaterialPropertiesTable(opticalprops::Vacuum());
-    world_mat->SetMaterialPropertiesTable(opticalprops::GXe());
 
     G4Box* world_solid_vol =
      new G4Box(world_name, world_xy_/2., world_xy_/2., world_z_/2.);
