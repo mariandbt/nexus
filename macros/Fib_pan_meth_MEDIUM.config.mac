@@ -1,0 +1,63 @@
+
+# Generator______________________________________________________
+#/Generator/SingleParticle/particle opticalphoton
+#/Generator/SingleParticle/min_energy 7 eV
+#/Generator/SingleParticle/max_energy 7 eV
+#/Generator/SingleParticle/region VOLUME
+
+/Generator/Kr83mGenerator/region VOLUME
+
+# Xenon______________________________________________________
+/Geometry/Fib_pan_meth_MEDIUM/LXe false
+/Geometry/Fib_pan_meth_MEDIUM/pressure 10. bar
+
+# barrel______________________________________________________
+#/Geometry/Fib_pan_meth_MEDIUM/panel_length 150. cm
+#/Geometry/Fib_pan_meth_MEDIUM/radius 50 cm
+#/Geometry/Fib_pan_meth_MEDIUM/panel_width 17 cm
+
+/Geometry/Fib_pan_meth_MEDIUM/panel_length 1.5 cm
+/Geometry/Fib_pan_meth_MEDIUM/radius .8 cm
+/Geometry/Fib_pan_meth_MEDIUM/panel_width .8 cm
+
+#/Geometry/Fib_pan_meth_MEDIUM/panel_length 5 cm
+#/Geometry/Fib_pan_meth_MEDIUM/radius .5 cm
+#/Geometry/Fib_pan_meth_MEDIUM/panel_width 2 cm
+
+# teflon______________________________________________________
+/Geometry/Fib_pan_meth_MEDIUM/teflon_thickness 1. mm
+
+/Geometry/Fib_pan_meth_MEDIUM/caps_visibility false
+/Geometry/Fib_pan_meth_MEDIUM/teflon_visibility true
+
+# sensor______________________________________________________
+#/Geometry/Fib_pan_meth_MEDIUM/sensor_type PERFECT
+#/Geometry/Fib_pan_meth_MEDIUM/sensor_type SiPM_FBK
+/Geometry/Fib_pan_meth_MEDIUM/sensor_type SiPM_Hamamatsu
+#/Geometry/Fib_pan_meth_MEDIUM/sensor_type PMT
+
+/Geometry/Fib_pan_meth_MEDIUM/sensor_visibility true
+
+# fibers______________________________________________________
+/Geometry/Fib_pan_meth_MEDIUM/fiber_diameter 1 mm
+/Geometry/Fib_pan_meth_MEDIUM/coated true
+/Geometry/Fib_pan_meth_MEDIUM/fiber_type Y11
+
+# methacrylate______________________________________________________
+/Geometry/Fib_pan_meth_MEDIUM/methacrylate false
+#/Geometry/Fib_pan_meth_MEDIUM/window_thickness 5. mm
+/Geometry/Fib_pan_meth_MEDIUM/window_thickness .5 mm
+
+
+/PhysicsList/Nexus/photoelectric false
+/process/optical/processActivation Cerenkov false
+
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+/process/em/verbose 0
+
+### JOB CONTROL
+/nexus/random_seed            -1
+/nexus/persistency/start_id   0
+/nexus/persistency/output_file Fib_pan_meth_MEDIUM.next
