@@ -781,7 +781,7 @@ void Next100FieldCage::BuildFiberBarrel()
 
     if (sensor_type_ == "PERFECT") {
       // perfect detector
-      G4int entries = 4;
+      G4int const entries = 4;
       G4double energy[entries]       = {0.2 * eV, 3.5 * eV, 3.6 * eV, 11.5 * eV};
       G4double efficiency[entries]   = {1.      , 1.      , 1.      , 1.       };
 
