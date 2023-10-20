@@ -311,12 +311,12 @@ void Next100FieldCage::Construct()
   /// Define materials to be used
   DefineMaterials();
   /// Build the different parts of the field cage
-  BuildActive();
-  BuildCathode();
-  BuildBuffer();
-  BuildELRegion();
+  // BuildActive();
+  // BuildCathode();
+  // BuildBuffer();
+  // BuildELRegion();
   BuildFiberBarrel();
-  BuildFieldCage();
+  // BuildFieldCage();
 }
 
 
@@ -1010,10 +1010,10 @@ void Next100FieldCage::BuildFiberBarrel()
           std::string label3 = std::to_string(jj);
 
           G4RotationMatrix* sensor_rot = new G4RotationMatrix();
-          // rot_angle = 0.;
-          rot_angle = M_PI;
+          rot_angle = 0.;
+          // rot_angle = M_PI;
           sensor_rot->rotateY(rot_angle);
-          sensor_rot->rotateZ(phi);
+          sensor_rot->rotateZ(-phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, photo_sensor_logic->GetName() + "_" + label + label3, mother_logic_,
                             // true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
