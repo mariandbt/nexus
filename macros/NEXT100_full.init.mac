@@ -16,7 +16,8 @@
 
 /nexus/RegisterGeometry Next100OpticalGeometry
 
-/nexus/RegisterGenerator Kr83mGenerator
+#/nexus/RegisterGenerator Kr83mGenerator
+/nexus/RegisterGenerator Decay0Interface
 
 
 /nexus/RegisterPersistencyManager PersistencyManager
