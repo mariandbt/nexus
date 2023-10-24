@@ -27,12 +27,16 @@ using namespace nexus;
 
 
 GenericWLSFiber::GenericWLSFiber(G4String    name,
+<<<<<<< HEAD
                                  G4bool      verbosity,
+=======
+>>>>>>> c52d3ae (Add GenericWSLFiber)
                                  G4bool      isround,
                                  G4double    thickness,
                                  G4double    length,
                                  G4bool      doubleclad,
                                  G4bool      with_coating,
+<<<<<<< HEAD
                                  G4Material* core_mat,
                                  G4Material* coating_mat,
                                  G4bool      visibility):
@@ -40,13 +44,27 @@ GenericWLSFiber::GenericWLSFiber(G4String    name,
   name_           (name),
   verbosity_      (verbosity),
   isround_        (isround),       // true if "round"  or false if "square"
+=======
+                                 G4Material* coating_mat,
+                                 G4Material* core_mat,
+                                 G4bool      visibility):
+  GeometryBase    (),
+  name_           (name),
+  isround_        (isround),         // "round"  or "square"
+>>>>>>> c52d3ae (Add GenericWSLFiber)
   thickness_      (thickness),     // Diameter (for round), Side (for square)
   length_         (length),
   doubleclad_     (doubleclad),
   with_coating_   (with_coating),
+<<<<<<< HEAD
   core_mat_       (core_mat),
   coating_mat_    (coating_mat),
   coating_optProp_(nullptr),
+=======
+  coating_mat_    (coating_mat),
+  coating_optProp_(nullptr),
+  core_mat_       (core_mat),
+>>>>>>> c52d3ae (Add GenericWSLFiber)
   core_optProp_   (nullptr),
   visibility_     (visibility)
 {
@@ -131,7 +149,11 @@ void GenericWLSFiber::BuildRoundFiber()
   G4LogicalVolume* coating_logic;
   if (with_coating_) {
     G4String coating_name = name_ + "_WLS";
+<<<<<<< HEAD
     if (verbosity_) G4cout << "**** Building COATING " << coating_name << G4endl;
+=======
+    G4cout << "**** Building COATING " << coating_name << G4endl;
+>>>>>>> c52d3ae (Add GenericWSLFiber)
     G4Tubs* coating_solid =
       new G4Tubs(coating_name, 0., thickness_/2., length_/2., 0., 360.*deg);
     coating_logic =
@@ -152,7 +174,11 @@ void GenericWLSFiber::BuildRoundFiber()
   G4LogicalVolume* oclad_logic;
   if (doubleclad_) {
     G4String oclad_name = name_ + "_OCLAD";
+<<<<<<< HEAD
     if (verbosity_) G4cout << "**** Building OCLAD " << oclad_name << G4endl;
+=======
+    G4cout << "**** Building OCLAD " << oclad_name << G4endl;
+>>>>>>> c52d3ae (Add GenericWSLFiber)
     G4Tubs* oclad_solid =
       new G4Tubs(oclad_name, 0., oclad_rad_, length_/2., 0., 360.*deg);
     oclad_logic =
@@ -169,7 +195,11 @@ void GenericWLSFiber::BuildRoundFiber()
 
   // Inner Cladding (always built)
   G4String iclad_name = name_ + "_ICLAD";
+<<<<<<< HEAD
   if (verbosity_) G4cout << "**** Building ICLAD " << iclad_name << G4endl;
+=======
+  G4cout << "**** Building ICLAD " << iclad_name << G4endl;
+>>>>>>> c52d3ae (Add GenericWSLFiber)
   G4Tubs* iclad_solid =
     new G4Tubs(iclad_name, 0., iclad_rad_, length_/2., 0., 360.*deg);
   G4LogicalVolume* iclad_logic =
@@ -182,7 +212,11 @@ void GenericWLSFiber::BuildRoundFiber()
                       iclad_name, innermost_logic, false, 0, false);
 
   // Fiber core (always inside the iclad)
+<<<<<<< HEAD
   if (verbosity_) G4cout << "**** Building CORE " << name_ << G4endl;
+=======
+  G4cout << "**** Building CORE " << name_ << G4endl;
+>>>>>>> c52d3ae (Add GenericWSLFiber)
   G4Tubs* core_solid =
     new G4Tubs(name_, 0., core_rad_, length_/2., 0., 360.*deg);
   G4LogicalVolume* core_logic =
