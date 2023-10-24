@@ -731,7 +731,7 @@ void Next100FieldCage::BuildFiberBarrel()
     G4MaterialPropertiesTable *this_coating_optical = nullptr;
 
     if (fiber_type_ == "Y11") {
-      this_fiber = materials::Y11();
+      this_fiber = materials::PS();
       this_fiber_optical = opticalprops::Y11();
 
       if (coated_) {
@@ -741,7 +741,7 @@ void Next100FieldCage::BuildFiberBarrel()
 
     } else if (fiber_type_ == "B2") {
 
-      this_fiber = materials::B2();
+      this_fiber = materials::PS();
       this_fiber_optical = opticalprops::B2();
 
       if (coated_) {
@@ -917,7 +917,8 @@ void Next100FieldCage::BuildFiberBarrel()
 
     // fiber ////////////////////////////////////////////////////
 
-    fiber_ = new GenericWLSFiber(fiber_type_, true, fiber_diameter_, fiber_length, true, coated_, this_coating, this_fiber, true);
+    fiber_ = new GenericWLSFiber(fiber_type_, false, true, fiber_diameter_,
+      fiber_length, true, coated_, this_fiber, this_coating, true);
 
     fiber_->SetCoreOpticalProperties(this_fiber_optical);
     fiber_->SetCoatingOpticalProperties(this_coating_optical);
