@@ -46,6 +46,7 @@
 
 /Generator/Decay0Interface/EnergyThreshold 0.5
 /Generator/Decay0Interface/Ba136FinalState 0
+/Generator/Decay0Interface/region ACTIVE
 
 #### bb0nu________________
 # for 0 neutrino  bb to Barium Ground state.
@@ -56,7 +57,6 @@
 #/Generator/Decay0Interface/Xe136DecayMode 4
 
 
-/Generator/Decay0Interface/region ACTIVE
 
 
 ##### PERSISTENCY #####
