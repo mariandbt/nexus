@@ -37,8 +37,15 @@
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
+# Single Particle____________________________________________
+/Generator/SingleParticle/particle e-
+/Generator/SingleParticle/min_energy 0.01 keV
+/Generator/SingleParticle/max_energy 0.01 keV
+/Generator/SingleParticle/region ACTIVE_END
+/Generator/SingleParticle/momentum 0 0 0
+
 ## Kr38m______________________________________________________
-/Generator/Kr83mGenerator/region ACTIVE
+#/Generator/Kr83mGenerator/region ACTIVE_END
 
 ## bb______________________________________________________
 # use C++ translation of DECAY0
