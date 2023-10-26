@@ -14,6 +14,7 @@
 #include "UniformElectricDriftField.h"
 #include "XenonProperties.h"
 #include "CylinderPointSampler2020.h"
+#include "SegmentPointSampler.h"
 
 #include <G4Navigator.hh>
 #include <G4SystemOfUnits.hh>
@@ -454,6 +455,12 @@ void Next100FieldCage::BuildActive()
   active_gen_ = new CylinderPointSampler2020(0., active_diam_/2., active_length_/2.,
                                              0., twopi, nullptr,
                                              G4ThreeVector(0., 0., new_active_zpos_));
+
+
+  active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., new_active_zpos_),
+                                            G4ThreeVector(0., active_diam_/2., new_active_zpos_));
+  // active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., GetELzCoord()),
+  //                                           G4ThreeVector(0., active_diam_/2., GetELzCoord()));
 
 
   /// Visibilities
@@ -1367,6 +1374,21 @@ G4ThreeVector Next100FieldCage::GenerateVertex(const G4String& region) const
   if (region == "CENTER") {
     vertex = G4ThreeVector(0., 0., active_zpos_);
   }
+
+  else if (region == "ACTIVE_END") {
+      vertex = active_end_gen_->Shoot();
+  }
+
+  // else if (region == "ACTIVE_END") {
+  //   G4VPhysicalVolume *VertexVolume;
+  //   do {
+  //     vertex = active_end_gen_->Shoot();
+  //     G4ThreeVector glob_vtx(vertex);
+  //     glob_vtx = glob_vtx + G4ThreeVector(0, 0, -GetELzCoord());
+  //     VertexVolume =
+  //       geom_navigator_->LocateGlobalPointAndSetup(glob_vtx, 0, false);
+  //   } while (VertexVolume->GetName() != region);
+  // }
 
   else if (region == "ACTIVE") {
     G4VPhysicalVolume *VertexVolume;
