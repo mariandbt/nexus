@@ -15,11 +15,20 @@
 /process/em/verbose 0
 
 ##### GEOMETRY #####
-/Geometry/Next100/elfield false
-/Geometry/Next100/EL_field 13 kV/cm
 /Geometry/Next100/pressure 10. bar
 /Geometry/Next100/max_step_size 1. mm
 /Geometry/Next100/field_cage_vis 0
+
+## EL______________________________________________________
+/Geometry/Next100/elfield false
+/Geometry/Next100/EL_field 13 kV/cm
+
+## difusion______________________________________________________
+/Geometry/Next100/drift_transv_diff 0. mm/sqrt(cm)
+/Geometry/Next100/drift_long_diff 0. mm/sqrt(cm)
+/Geometry/Next100/ELtransv_diff 0. mm/sqrt(cm)
+/Geometry/Next100/ELlong_diff 0. mm/sqrt(cm)
+
 
 ## fibers______________________________________________________
 /Geometry/Next100/fiber_type Y11 ### (Y11, B2)
@@ -38,10 +47,10 @@
 
 ##### GENERATOR #####
 # Single Particle____________________________________________
-/Generator/SingleParticle/particle e-
-/Generator/SingleParticle/min_energy 0.01 keV
-/Generator/SingleParticle/max_energy 0.01 keV
-/Generator/SingleParticle/region ACTIVE_END
+/Generator/SingleParticle/particle ie-
+/Generator/SingleParticle/min_energy 1 eV
+/Generator/SingleParticle/max_energy 1 eV
+/Generator/SingleParticle/region ACTIVE_END_SECTOR
 /Generator/SingleParticle/momentum 0 0 0
 
 ## Kr38m______________________________________________________
@@ -63,6 +72,13 @@
 # for 2 neutrino  bb to Barium Ground state.
 #/Generator/Decay0Interface/Xe136DecayMode 4
 
+
+##### PHYSICS #####
+
+/PhysicsList/Nexus/clustering          false
+/PhysicsList/Nexus/drift               true
+/PhysicsList/Nexus/electroluminescence true
+/PhysicsList/Nexus/photoelectric       false
 
 
 
