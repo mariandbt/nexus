@@ -126,6 +126,7 @@ namespace nexus {
 
     // Vertex generators
     SegmentPointSampler* active_end_gen_;
+    CylinderPointSampler2020* active_end_sector_gen_;
     CylinderPointSampler2020* active_gen_;
     CylinderPointSampler2020* buffer_gen_;
     CylinderPointSampler2020* teflon_gen_;

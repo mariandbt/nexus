@@ -451,15 +451,20 @@ void Next100FieldCage::BuildActive()
   drift_region->AddRootLogicalVolume(active_logic);
 
   /// Vertex generator
-  active_gen_ = new CylinderPointSampler2020(0., active_ext_radius_, active_length_/2.,
+  active_gen_ = new CylinderPointSampler2020(0., hh - fiber_diameter_/2., active_length_/2.,
                                              0., twopi, nullptr,
                                              G4ThreeVector(0., 0., new_active_zpos_));
 
-  active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., new_active_zpos_),
-                                            G4ThreeVector(0., active_diam_/2., new_active_zpos_));
-  // active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., GetELzCoord()),
-  //                                           G4ThreeVector(0., active_diam_/2., GetELzCoord()));
 
+  // active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., new_active_zpos_),
+  //                                           G4ThreeVector(0., hh - fiber_diameter_/2., new_active_zpos_));
+  active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., GetELzCoord()),
+                                            G4ThreeVector(0., hh - fiber_diameter_/2., GetELzCoord()));
+
+  active_end_sector_gen_ = new CylinderPointSampler2020(0., hh - fiber_diameter_/2., 0.,
+                                                        -dif_theta/2., dif_theta, nullptr,
+                                                        // G4ThreeVector(0., 0., GetELzCoord()));
+                                                        G4ThreeVector(0., 0., new_active_zpos_));
 
   /// Visibilities
   active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
@@ -1299,16 +1304,9 @@ G4ThreeVector Next100FieldCage::GenerateVertex(const G4String& region) const
       vertex = active_end_gen_->Shoot();
   }
 
-  // else if (region == "ACTIVE_END") {
-  //   G4VPhysicalVolume *VertexVolume;
-  //   do {
-  //     vertex = active_end_gen_->Shoot();
-  //     G4ThreeVector glob_vtx(vertex);
-  //     glob_vtx = glob_vtx + G4ThreeVector(0, 0, -GetELzCoord());
-  //     VertexVolume =
-  //       geom_navigator_->LocateGlobalPointAndSetup(glob_vtx, 0, false);
-  //   } while (VertexVolume->GetName() != region);
-  // }
+  else if (region == "ACTIVE_END_SECTOR") {
+    vertex = active_end_sector_gen_->GenerateVertex("VOLUME");
+  }
 
   else if (region == "ACTIVE") {
     G4VPhysicalVolume *VertexVolume;
