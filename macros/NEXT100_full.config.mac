@@ -20,7 +20,7 @@
 /Geometry/Next100/field_cage_vis 0
 
 ## EL______________________________________________________
-/Geometry/Next100/elfield false
+/Geometry/Next100/elfield true
 /Geometry/Next100/EL_field 13 kV/cm
 
 ## difusion______________________________________________________
