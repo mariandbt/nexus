@@ -20,14 +20,16 @@
 #include <G4Trajectory.hh>
 #include <G4ParticleDefinition.hh>
 #include <G4OpticalPhoton.hh>
+#include <globals.hh>
 
 using namespace nexus;
 
 REGISTER_CLASS(noOpticalTrackingAction, G4UserTrackingAction)
 
-noOpticalTrackingAction::noOpticalTrackingAction() : G4UserTrackingAction()
-{
-}
+noOpticalTrackingAction::noOpticalTrackingAction() :
+  G4UserTrackingAction(), nevt_(0), nupdate_(10)
+  {
+  }
 
 noOpticalTrackingAction::~noOpticalTrackingAction()
 {
@@ -56,6 +58,12 @@ void noOpticalTrackingAction::PreUserTrackingAction(const G4Track *track)
 
 void noOpticalTrackingAction::PostUserTrackingAction(const G4Track *track)
 {
+  // Print out event number info
+  if ((nevt_ % nupdate_) == 0) {
+    G4cout << " >> Event no. " << nevt_  << G4endl;
+    if (nevt_  == (10 * nupdate_)) nupdate_ *= 10;
+  }
+
   // Do nothing if the track is an optical photon or an ionization electron
   if (track->GetDefinition() == G4OpticalPhoton::Definition())
     return;
@@ -75,4 +83,7 @@ void noOpticalTrackingAction::PostUserTrackingAction(const G4Track *track)
   // Record last process of the track
   G4String proc_name = track->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
   trj->SetFinalProcess(proc_name);
+
+  nevt_++;
+
 }
