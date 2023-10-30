@@ -24,10 +24,12 @@
 /nexus/RegisterPersistencyManager PersistencyManager
 
 /nexus/RegisterRunAction DefaultRunAction
-/nexus/RegisterEventAction DefaultEventAction
-/nexus/RegisterTrackingAction DefaultTrackingAction
+#/nexus/RegisterEventAction DefaultEventAction
 
-/nexus/RegisterTrackingAction OpticalTrackingAction
+#/nexus/RegisterTrackingAction DefaultTrackingAction
+#/nexus/RegisterTrackingAction OpticalTrackingAction
+/nexus/RegisterTrackingAction noOpticalTrackingAction
+
 /nexus/RegisterSteppingAction AnalysisSteppingAction
 
 /nexus/RegisterMacro macros/NEXT100_full.config.mac
