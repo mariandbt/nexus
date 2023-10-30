@@ -12,6 +12,7 @@
 #define NO_OPTICAL_TRACKING_ACTION_H
 
 #include <G4UserTrackingAction.hh>
+#include <globals.hh>
 
 class G4Track;
 
@@ -30,6 +31,9 @@ namespace nexus {
 
     virtual void PreUserTrackingAction(const G4Track*);
     virtual void PostUserTrackingAction(const G4Track*);
+
+  private:
+    G4int nevt_, nupdate_;
   };
 
 }
