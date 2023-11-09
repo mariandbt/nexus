@@ -462,10 +462,11 @@ void Next100FieldCage::BuildActive()
   active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., GetELzCoord()),
                                             G4ThreeVector(0., hh - fiber_diameter_/2., GetELzCoord()));
 
-  active_end_sector_gen_ = new CylinderPointSampler2020(0., hh - fiber_diameter_/2., 0.,
+  active_end_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
+  // active_end_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
                                                         -dif_theta/2., dif_theta, nullptr,
-                                                        // G4ThreeVector(0., 0., GetELzCoord()));
-                                                        G4ThreeVector(0., 0., new_active_zpos_));
+                                                        G4ThreeVector(0., 0., GetELzCoord()));
+                                                        // G4ThreeVector(0., 0., new_active_zpos_));
 
   /// Visibilities
   active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
@@ -650,10 +651,16 @@ void Next100FieldCage::BuildELRegion()
     el_field->SetTransverseDiffusion(ELtransv_diff_);
     el_field->SetLongitudinalDiffusion(ELlong_diff_);
     el_field->SetLightYield(XenonELLightYield(ELelectric_field_, pressure_));
+    // el_field->SetLightYield(1);
     G4Region* el_region = new G4Region("EL_REGION");
     el_region->SetUserInformation(el_field);
     el_region->AddRootLogicalVolume(el_gap_logic);
   }
+
+  G4cout << "ELelectric_field_ = " << ELelectric_field_ * kilovolt/cm << G4endl;
+  G4cout << "pressure_ = " << pressure_ * bar << G4endl;
+  G4cout << "EL yield = " << XenonELLightYield(ELelectric_field_, pressure_)*el_gap_length_ << " ph/e⁻" << G4endl;
+
 
   /// EL grids
   G4Material* fgrid_mat = materials::FakeDielectric(gas_, "el_grid_mat");
