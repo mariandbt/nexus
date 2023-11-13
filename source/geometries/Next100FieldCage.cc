@@ -461,8 +461,8 @@ void Next100FieldCage::BuildActive()
   active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., GetELzCoord()),
                                             G4ThreeVector(0., hh - fiber_diameter_/2., GetELzCoord()));
 
-  active_end_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
-  // active_end_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
+  // active_end_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
+  active_end_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
                                                         -dif_theta/2., dif_theta, nullptr,
                                                         G4ThreeVector(0., 0., GetELzCoord()));
                                                         // G4ThreeVector(0., 0., new_active_zpos_));
