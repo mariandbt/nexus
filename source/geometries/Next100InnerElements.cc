@@ -97,8 +97,8 @@ namespace nexus {
 
     // Field Cage regions
     if ((region == "CENTER") ||
-    (region == "ACTIVE_END_SECTOR") ||
-    (region == "ACTIVE_END") ||
+    (region == "SEGMENT") ||
+    (region == "SECTOR") ||
         (region == "ACTIVE") ||
         (region == "CATHODE_RING") ||
         (region == "BUFFER") ||
