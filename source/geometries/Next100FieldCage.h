@@ -125,6 +125,7 @@ namespace nexus {
 
 
     // Vertex generators
+    G4String vertex_zpos_; // vertex generator's position in z
     SegmentPointSampler* active_end_gen_;
     CylinderPointSampler2020* active_end_sector_gen_;
     CylinderPointSampler2020* active_gen_;

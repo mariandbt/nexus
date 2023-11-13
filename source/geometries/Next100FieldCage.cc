@@ -211,6 +211,7 @@ Next100FieldCage::Next100FieldCage(G4double grid_thickn):
                           "Teflon panel width");
   panel_width_cmd.SetUnitCategory("Length");
 
+  msg_->DeclareProperty("vertex_zpos", vertex_zpos_, "Z positon of the vertex (ACTIVE_CENTER, ACTIVE_END, ...)");
   msg_->DeclareProperty("fiber_type", fiber_type_, "Fiber type (Y11 or B2)");
   msg_->DeclareProperty("sensor_type", sensor_type_, "Sensors type");
   msg_->DeclareProperty("sensor_visibility", sensor_visibility_, "Sensors visibility");
@@ -451,21 +452,29 @@ void Next100FieldCage::BuildActive()
   drift_region->AddRootLogicalVolume(active_logic);
 
   /// Vertex generator
+  // Cilynder generator
   active_gen_ = new CylinderPointSampler2020(0., hh - fiber_diameter_/2., active_length_/2.,
                                              0., twopi, nullptr,
                                              G4ThreeVector(0., 0., new_active_zpos_));
 
+  // Vertex z position
+  G4double vertex_zpos;
+  if (vertex_zpos_ == "ACTIVE_CENTER"){
+    vertex_zpos = new_active_zpos_;
+  }
+  else if (vertex_zpos_ == "ACTIVE_END"){
+    vertex_zpos = GetELzCoord();
+  }
 
-  // active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., new_active_zpos_),
-  //                                           G4ThreeVector(0., hh - fiber_diameter_/2., new_active_zpos_));
-  active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., GetELzCoord()),
-                                            G4ThreeVector(0., hh - fiber_diameter_/2., GetELzCoord()));
+  // Segment generator
+  active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., vertex_zpos),
+                                            G4ThreeVector(0., hh - fiber_diameter_/2., vertex_zpos));
 
-  // active_end_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
-  active_end_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
+  // Sector generator
+  active_end_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
+  // active_end_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
                                                         -dif_theta/2., dif_theta, nullptr,
-                                                        G4ThreeVector(0., 0., GetELzCoord()));
-                                                        // G4ThreeVector(0., 0., new_active_zpos_));
+                                                        G4ThreeVector(0., 0., vertex_zpos));
 
   /// Visibilities
   active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
@@ -1307,11 +1316,11 @@ G4ThreeVector Next100FieldCage::GenerateVertex(const G4String& region) const
     vertex = G4ThreeVector(0., 0., active_zpos_);
   }
 
-  else if (region == "ACTIVE_END") {
+  else if (region == "SEGMENT") {
       vertex = active_end_gen_->Shoot();
   }
 
-  else if (region == "ACTIVE_END_SECTOR") {
+  else if (region == "SECTOR") {
     vertex = active_end_sector_gen_->GenerateVertex("VOLUME");
   }
 
