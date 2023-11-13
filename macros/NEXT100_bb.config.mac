@@ -1,0 +1,77 @@
+## ----------------------------------------------------------------------------
+## nexus | NEXT100_full.config.mac
+##
+## Configuration macro to simulate Kr-83 decays in the NEXT-100 geometry
+## with generation and transportation of optical photons.
+##
+## The NEXT Collaboration
+## ----------------------------------------------------------------------------
+
+##### VERBOSITY #####
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+##### GEOMETRY #####
+/Geometry/Next100/pressure 10. bar
+/Geometry/Next100/max_step_size 1. mm
+/Geometry/Next100/field_cage_vis 0
+
+## EL______________________________________________________
+/Geometry/Next100/elfield false
+/Geometry/Next100/EL_field 13 kV/cm
+
+## difusion______________________________________________________
+/Geometry/Next100/drift_transv_diff 0. mm/sqrt(cm)
+/Geometry/Next100/drift_long_diff 0. mm/sqrt(cm)
+/Geometry/Next100/ELtransv_diff 0. mm/sqrt(cm)
+/Geometry/Next100/ELlong_diff 0. mm/sqrt(cm)
+
+
+## fibers______________________________________________________
+/Geometry/Next100/fiber_type Y11 ### (Y11, B2)
+/Geometry/Next100/coated true
+
+## sensor______________________________________________________
+/Geometry/Next100/sensor_type SiPM_Hamamatsu ### (PERFECT, SiPM_FBK, SiPM_Hamamatsu, PMT)
+/Geometry/Next100/sensor_visibility true
+
+## teflon______________________________________________________
+/Geometry/Next100/cap_visibility false
+/Geometry/Next100/panels_visibility false
+
+
+/process/optical/processActivation Cerenkov false
+
+##### GENERATOR #####
+
+## bb______________________________________________________
+# use C++ translation of DECAY0
+/Generator/Decay0Interface/inputFile none
+
+/Generator/Decay0Interface/EnergyThreshold 0.5
+/Generator/Decay0Interface/Ba136FinalState 0
+/Generator/Decay0Interface/region ACTIVE
+
+#### bb0nu________________
+# for 0 neutrino  bb to Barium Ground state.
+/Generator/Decay0Interface/Xe136DecayMode 1
+
+#### bb2nu________________
+# for 2 neutrino  bb to Barium Ground state.
+#/Generator/Decay0Interface/Xe136DecayMode 4
+
+
+##### PHYSICS #####
+
+/PhysicsList/Nexus/clustering          false
+/PhysicsList/Nexus/drift               true
+/PhysicsList/Nexus/electroluminescence true
+/PhysicsList/Nexus/photoelectric       false
+
+
+
+##### PERSISTENCY #####
+/nexus/persistency/output_file Next100_bb.next
