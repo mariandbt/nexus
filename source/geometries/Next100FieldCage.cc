@@ -39,8 +39,7 @@
 #include <G4UnitsTable.hh>
 #include <G4TransportationManager.hh>
 
-// Marian's adenda
-//
+
 
 using namespace nexus;
 
