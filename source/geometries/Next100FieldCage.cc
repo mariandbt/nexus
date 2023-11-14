@@ -665,8 +665,8 @@ void Next100FieldCage::BuildELRegion()
     el_field->SetDriftVelocity(2.5 * mm/microsecond);
     el_field->SetTransverseDiffusion(ELtransv_diff_);
     el_field->SetLongitudinalDiffusion(ELlong_diff_);
-    el_field->SetLightYield(XenonELLightYield(ELelectric_field_, pressure_));
-    // el_field->SetLightYield(1);
+    // el_field->SetLightYield(XenonELLightYield(ELelectric_field_, pressure_));
+    el_field->SetLightYield(200);
     G4Region* el_region = new G4Region("EL_REGION");
     el_region->SetUserInformation(el_field);
     el_region->AddRootLogicalVolume(el_gap_logic);
