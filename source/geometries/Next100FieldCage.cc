@@ -107,6 +107,7 @@ Next100FieldCage::Next100FieldCage(G4double grid_thickn):
   el_gap_gen_disk_x_(0.), el_gap_gen_disk_y_(0.),
   el_gap_gen_disk_zmin_(0.), el_gap_gen_disk_zmax_(1.),
   // Fiber Barrel
+  vertex_zpos_ ("ACTIVE_END"), // Z positon of the vertex (ACTIVE_CENTER, ACTIVE_END, ...)
   fiber_type_ ("Y11"), // type of fibers attached to the teflon panels (Y11 or B2)
   sensor_type_ ("PERFECT"),
   fiber_diameter_(1 * mm),
@@ -465,6 +466,8 @@ void Next100FieldCage::BuildActive()
   else if (vertex_zpos_ == "ACTIVE_END"){
     vertex_zpos = GetELzCoord();
   }
+
+  G4cout << "Vertex' z positon is " << vertex_zpos << "mm" <<G4endl;
 
   // Segment generator
   active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., vertex_zpos),
