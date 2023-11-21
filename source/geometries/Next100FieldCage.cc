@@ -391,37 +391,20 @@ void Next100FieldCage::BuildActive()
   G4Polyhedra* active_solid =
     new G4Polyhedra("ACTIVE_TEFLON", 0., twopi, n_panels_, 2, zplane, rinner, router);
 
+  // THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
   // This volume is added as an extension of the active volume that reaches the gate grid.
   G4Tubs* active_gate_solid =
-    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
-
-  G4ThreeVector act_gate_pos =
-    G4ThreeVector(0., 0., -active_length_/2. + gate_teflon_dist_/2.);
-
-  G4UnionSolid* union_active =
-    new G4UnionSolid ("ACTIVE", active_solid, active_gate_solid, 0, act_gate_pos);
-
-
-// THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
-
-  //This volume is added as an extension of the active volume that reaches the gate grid.
-  G4Tubs* active_gate_solid =
-  // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2. - 1*mm, 0, twopi);
+    // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
     new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., (gate_teflon_dist_ - 2.625 *mm)/2., 0, twopi);
 
   G4ThreeVector act_gate_pos =
-  // G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2.);
-  // G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2. - 12.475*mm);
-  // G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_/2. - 1.*mm) + overlap_);
-  G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_ - 2.625 *mm)/2.);
+    // G4ThreeVector(0., 0., -active_length_/2. + gate_teflon_dist_/2.);
+    G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_ - 2.625 *mm)/2.);
 
-  // union_active =
-  // new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
   G4UnionSolid* union_active =
     new G4UnionSolid ("ACTIVE", active_solid, active_gate_solid, 0, act_gate_pos);
+  // THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
-// THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
->>>>>>> b8fa620 (Fix overlaps (a little bit ad hoc))
 
   G4LogicalVolume* active_logic =
     new G4LogicalVolume(union_active, gas_, "ACTIVE");
@@ -562,7 +545,7 @@ void Next100FieldCage::BuildBuffer()
   G4double router[2] = {active_diam_/2., active_diam_/2.};
 
   G4Polyhedra* buffer_solid =
-    new G4Polyhedra("BUFFER_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
+    new G4Polyhedra("BUFFER_POLY", 0., twopi, n_panels_, 2, zplane, rinner, router);
 
   G4Tubs* buffer_cathode_solid =
     new G4Tubs("BUFF_CATHODE_RING", 0, cathode_int_diam_/2.,
@@ -996,7 +979,7 @@ void Next100FieldCage::BuildFiberBarrel()
    G4double theta0 =  (10.)*pi/180.;
    G4int sens_count = 200;
 
-   for (G4int itheta=0; itheta < n_panels; itheta++) {
+   for (G4int itheta=0; itheta < n_panels_; itheta++) {
   //  for (G4int itheta=0; itheta < 3; itheta++) {
 
      // panels
@@ -1035,7 +1018,7 @@ void Next100FieldCage::BuildFiberBarrel()
                            false, 0, false);
         new G4PVPlacement(0, G4ThreeVector(xx_f, yy_f, z_fend),
                           fiber_end_logic_vol, "ALUMINIUMR-" + label + label2, mother_logic_,
-                          // false, n_panels + n_fibers*itheta + ii, false);
+                          // false, n_panels_ + n_fibers*itheta + ii, false);
                           false, 0, false);
        }
      for (G4int jj=0; jj < n_sensors; jj++) {
@@ -1053,7 +1036,7 @@ void Next100FieldCage::BuildFiberBarrel()
           sensor_rot->rotateZ(-phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, photo_sensor_logic->GetName() + "_" + label + label3, mother_logic_,
-                            // true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
+                            // true, n_panels_*(1 + n_fibers) + n_sensors*itheta  + jj, false);
                             true,  sens_count, false);
 
           sens_count++;
@@ -1075,7 +1058,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*teflon_thickn_)/2., (active_diam_ + 2.*teflon_thickn_)/2.};
 
   G4Polyhedra* teflon_drift_solid =
-    new G4Polyhedra("LIGHT_TUBE_DRIFT", 0., twopi, n_panels, 2, zplane, rinner, router);
+    new G4Polyhedra("LIGHT_TUBE_DRIFT", 0., twopi, n_panels_, 2, zplane, rinner, router);
 
   G4LogicalVolume* teflon_drift_logic =
     new G4LogicalVolume(teflon_drift_solid, teflon_, "LIGHT_TUBE_DRIFT");
@@ -1090,7 +1073,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*tpb_thickn_)/2., (active_diam_ + 2.*tpb_thickn_)/2.};
 
   G4Polyhedra* tpb_drift_solid =
-    new  G4Polyhedra("DRIFT_TPB", 0., twopi, n_panels, 2, zplane, rinner, router_tpb);
+    new  G4Polyhedra("DRIFT_TPB", 0., twopi, n_panels_, 2, zplane, rinner, router_tpb);
   G4LogicalVolume* tpb_drift_logic =
     new G4LogicalVolume(tpb_drift_solid, tpb_, "DRIFT_TPB");
   G4VPhysicalVolume* tpb_drift_phys =
@@ -1104,7 +1087,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*teflon_thickn_)/2., (active_diam_ + 2.*teflon_thickn_)/2.};
 
   G4Polyhedra* teflon_buffer_solid =
-   new G4Polyhedra("LIGHT_TUBE_BUFFER", 0., twopi, n_panels, 2, zplane_buff, rinner, router_buff);
+   new G4Polyhedra("LIGHT_TUBE_BUFFER", 0., twopi, n_panels_, 2, zplane_buff, rinner, router_buff);
 
   G4LogicalVolume* teflon_buffer_logic =
     new G4LogicalVolume(teflon_buffer_solid, teflon_, "LIGHT_TUBE_BUFFER");
@@ -1118,7 +1101,7 @@ void Next100FieldCage::BuildLightTube()
     {(active_diam_ + 2.*tpb_thickn_)/2., (active_diam_ + 2.*tpb_thickn_)/2.};
 
   G4Polyhedra* tpb_buffer_solid =
-    new  G4Polyhedra("BUFFER_TPB", 0., twopi, n_panels, 2, zplane_buff, rinner, router_tpb_buff);
+    new  G4Polyhedra("BUFFER_TPB", 0., twopi, n_panels_, 2, zplane_buff, rinner, router_tpb_buff);
 
   G4LogicalVolume* tpb_buffer_logic =
     new G4LogicalVolume(tpb_buffer_solid, tpb_, "BUFFER_TPB");
