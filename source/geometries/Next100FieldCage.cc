@@ -322,7 +322,7 @@ void Next100FieldCage::Construct()
   BuildCathode();
   BuildBuffer();
   BuildELRegion();
-  BuildFiberBarrel();
+  // BuildFiberBarrel();
   BuildFieldCage();
 }
 
@@ -395,11 +395,13 @@ void Next100FieldCage::BuildActive()
   // This volume is added as an extension of the active volume that reaches the gate grid.
   G4Tubs* active_gate_solid =
     // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
-    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., (gate_teflon_dist_ - 2.625 *mm)/2., 0, twopi);
+    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_, (gate_teflon_dist_)/2., 0, twopi);
+    // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., (gate_teflon_dist_ - 2.625 *mm)/2., 0, twopi);
 
   G4ThreeVector act_gate_pos =
     // G4ThreeVector(0., 0., -active_length_/2. + gate_teflon_dist_/2.);
-    G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_ - 2.625 *mm)/2.);
+    G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2.);
+    // G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_ - 2.625 *mm)/2.);
 
   G4UnionSolid* union_active =
     new G4UnionSolid ("ACTIVE", active_solid, active_gate_solid, 0, act_gate_pos);
@@ -463,8 +465,8 @@ void Next100FieldCage::BuildActive()
                                                         G4ThreeVector(0., 0., vertex_zpos));
 
   /// Visibilities
-  active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-  // active_logic->SetVisAttributes(nexus::Yellow());
+  // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+  active_logic->SetVisAttributes(nexus::Yellow());
 
   /// Verbosity
   if (verbosity_) {
@@ -658,8 +660,6 @@ void Next100FieldCage::BuildELRegion()
     el_region->AddRootLogicalVolume(el_gap_logic);
   }
 
-  G4cout << "ELelectric_field_ = " << ELelectric_field_ * kilovolt/cm << G4endl;
-  G4cout << "pressure_ = " << pressure_ * bar << G4endl;
   G4cout << "EL yield = " << XenonELLightYield(ELelectric_field_, pressure_)*el_gap_length_ << " ph/e⁻" << G4endl;
 
 
