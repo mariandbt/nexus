@@ -46,13 +46,13 @@
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
-/Geometry/Next100/vertex_zpos ACTIVE_END ### (ACTIVE_CENTER, ACTIVE_END)
+/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
+/Generator/SingleParticle/region SECTOR
 
 # Single Particle____________________________________________
 /Generator/SingleParticle/particle ie-
 /Generator/SingleParticle/min_energy 1 eV
 /Generator/SingleParticle/max_energy 1 eV
-/Generator/SingleParticle/region SECTOR
 /Generator/SingleParticle/momentum 0 0 0
 
 
