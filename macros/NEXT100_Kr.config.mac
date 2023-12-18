@@ -24,10 +24,10 @@
 /Geometry/Next100/EL_field 13 kV/cm
 
 ## difusion______________________________________________________
-/Geometry/Next100/drift_transv_diff 0. mm/sqrt(cm)
-/Geometry/Next100/drift_long_diff 0. mm/sqrt(cm)
-/Geometry/Next100/ELtransv_diff 0. mm/sqrt(cm)
-/Geometry/Next100/ELlong_diff 0. mm/sqrt(cm)
+#/Geometry/Next100/drift_transv_diff 0. mm/sqrt(cm)
+#/Geometry/Next100/drift_long_diff 0. mm/sqrt(cm)
+#/Geometry/Next100/ELtransv_diff 0. mm/sqrt(cm)
+#/Geometry/Next100/ELlong_diff 0. mm/sqrt(cm)
 
 
 ## fibers______________________________________________________
@@ -46,7 +46,7 @@
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
-/Geometry/Next100/vertex_zpos ACTIVE_END ### (ACTIVE_CENTER, ACTIVE_END)
+/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
 
 
 ## Kr38m______________________________________________________
@@ -54,7 +54,7 @@
 
 ##### PHYSICS #####
 
-/PhysicsList/Nexus/clustering          false
+/PhysicsList/Nexus/clustering          true
 /PhysicsList/Nexus/drift               true
 /PhysicsList/Nexus/electroluminescence true
 /PhysicsList/Nexus/photoelectric       false
