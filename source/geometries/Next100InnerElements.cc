@@ -25,12 +25,12 @@ using namespace CLHEP;
 namespace nexus {
 
 
-  Next100InnerElements::Next100InnerElements():
+  Next100InnerElements::Next100InnerElements(G4double grid_thickn):
     GeometryBase(),
     mother_logic_(nullptr),
     mother_phys_ (nullptr),
     gas_(nullptr),
-    field_cage_    (new Next100FieldCage()),
+    field_cage_    (new Next100FieldCage(grid_thickn)),
     energy_plane_  (new Next100EnergyPlane()),
     tracking_plane_(new Next100TrackingPlane()),
     msg_(nullptr)
@@ -97,6 +97,8 @@ namespace nexus {
 
     // Field Cage regions
     if ((region == "CENTER") ||
+    (region == "SEGMENT") ||
+    (region == "SECTOR") ||
         (region == "ACTIVE") ||
         (region == "CATHODE_RING") ||
         (region == "BUFFER") ||
