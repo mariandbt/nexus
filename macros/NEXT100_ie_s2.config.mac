@@ -14,6 +14,9 @@
 
 /process/em/verbose 0
 
+##### JOB CONTROL #####
+/nexus/random_seed 1
+
 ##### GEOMETRY #####
 /Geometry/Next100/pressure 10. bar
 /Geometry/Next100/max_step_size 1. mm
@@ -46,7 +49,7 @@
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
-/Geometry/Next100/vertex_zpos ACTIVE_END ### (ACTIVE_CENTER, ACTIVE_END)
+/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
 
 # Single Particle____________________________________________
 /Generator/SingleParticle/particle ie-

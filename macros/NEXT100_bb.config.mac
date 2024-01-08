@@ -14,6 +14,9 @@
 
 /process/em/verbose 0
 
+##### JOB CONTROL #####
+/nexus/random_seed 1
+
 ##### GEOMETRY #####
 /Geometry/Next100/pressure 10. bar
 /Geometry/Next100/max_step_size 1. mm
@@ -46,6 +49,7 @@
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
+/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
 
 ## bb______________________________________________________
 # use C++ translation of DECAY0
@@ -53,7 +57,7 @@
 
 /Generator/Decay0Interface/EnergyThreshold 0.5
 /Generator/Decay0Interface/Ba136FinalState 0
-/Generator/Decay0Interface/region ACTIVE
+/Generator/Decay0Interface/region SECTOR
 
 #### bb0nu________________
 # for 0 neutrino  bb to Barium Ground state.
@@ -66,7 +70,7 @@
 
 ##### PHYSICS #####
 
-/PhysicsList/Nexus/clustering          false
+/PhysicsList/Nexus/clustering          true
 /PhysicsList/Nexus/drift               true
 /PhysicsList/Nexus/electroluminescence true
 /PhysicsList/Nexus/photoelectric       false
