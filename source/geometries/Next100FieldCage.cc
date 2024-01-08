@@ -322,7 +322,7 @@ void Next100FieldCage::Construct()
   BuildCathode();
   BuildBuffer();
   BuildELRegion();
-  // BuildFiberBarrel();
+  BuildFiberBarrel();
   BuildFieldCage();
 }
 
@@ -465,8 +465,8 @@ void Next100FieldCage::BuildActive()
                                                         G4ThreeVector(0., 0., vertex_zpos));
 
   /// Visibilities
-  // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
-  active_logic->SetVisAttributes(nexus::Yellow());
+  active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+  // active_logic->SetVisAttributes(nexus::Yellow());
 
   /// Verbosity
   if (verbosity_) {
