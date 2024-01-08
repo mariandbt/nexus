@@ -394,8 +394,8 @@ void Next100FieldCage::BuildActive()
   // THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
   // This volume is added as an extension of the active volume that reaches the gate grid.
   G4Tubs* active_gate_solid =
-    // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
-    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_, (gate_teflon_dist_)/2., 0, twopi);
+    new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2., 0, twopi);
+    // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_, (gate_teflon_dist_)/2., 0, twopi);
     // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., (gate_teflon_dist_ - 2.625 *mm)/2., 0, twopi);
 
   G4ThreeVector act_gate_pos =
