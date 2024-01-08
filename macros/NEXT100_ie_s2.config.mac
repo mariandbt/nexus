@@ -43,7 +43,7 @@
 
 ## teflon______________________________________________________
 /Geometry/Next100/cap_visibility false
-/Geometry/Next100/panels_visibility false
+/Geometry/Next100/panels_visibility true
 
 
 /process/optical/processActivation Cerenkov false
