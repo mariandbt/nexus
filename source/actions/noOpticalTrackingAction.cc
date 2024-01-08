@@ -58,10 +58,11 @@ void noOpticalTrackingAction::PreUserTrackingAction(const G4Track *track)
 
 void noOpticalTrackingAction::PostUserTrackingAction(const G4Track *track)
 {
+  G4double nupdate_max = 1000;
   // Print out event number info
   if ((nevt_ % nupdate_) == 0) {
     G4cout << " >> Event no. " << nevt_  << G4endl;
-    if (nevt_  == (10 * nupdate_)) nupdate_ *= 10;
+    if ((nevt_  == (10 * nupdate_)) & (nupdate_  < nupdate_max)) nupdate_ *= 10;
   }
 
   // Do nothing if the track is an optical photon or an ionization electron
