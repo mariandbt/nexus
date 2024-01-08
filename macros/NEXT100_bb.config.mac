@@ -15,7 +15,7 @@
 /process/em/verbose 0
 
 ##### JOB CONTROL #####
-/nexus/random_seed 1
+/nexus/random_seed -1 # random
 
 ##### GEOMETRY #####
 /Geometry/Next100/pressure 10. bar
