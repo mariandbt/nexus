@@ -293,7 +293,8 @@ void Next100FieldCage::Construct()
   G4cout << "[FiberBarrel] Using " << n_fibers << " fibers per panel"<< G4endl;
 
 
-  n_sensors = 5; // number of sensors per panel
+  // n_sensors = 5; // number of sensors per panel
+  n_sensors = 6; // number of sensors per panel
   dl_sens = panel_width_/n_sensors; // distance between sensors
 
   G4cout << "[FiberBarrel] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
