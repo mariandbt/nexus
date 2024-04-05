@@ -12,6 +12,8 @@
 /event/verbose 0
 /tracking/verbose 0
 
+/nexus/random_seed -1
+
 /process/em/verbose 0
 
 ##### GEOMETRY #####
