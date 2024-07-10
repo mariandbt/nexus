@@ -467,87 +467,87 @@ void Fib_box_struct::Construct(){
                       panel_logic_vol, panel_name, lab_logic,
                       false, 0, false);
 
-    // ONLY 1 FIBER_____________________________________________________________
+    // // ONLY 1 FIBER_____________________________________________________________
 
-    y = 0.;
-    z = box_z_ + diameter_/2;
+    // y = 0.;
+    // z = box_z_ + diameter_/2;
 
-    G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
-    rot_angle_ = pi/2.;
-    // rot_angle_ = 0.;
-    fib_rot_->rotateY(rot_angle_);
+    // G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
+    // rot_angle_ = pi/2.;
+    // // rot_angle_ = 0.;
+    // fib_rot_->rotateY(rot_angle_);
 
-    new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
-                            fiber_logic->GetName(),lab_logic,true,0,true);
-
-
-    // Optical gel
-
-    G4ThreeVector opt_gel_pos = G4ThreeVector(x + length_/2 + opt_gel_thickness/2., y, z);
-    G4RotationMatrix* opt_gel_rot_ = new G4RotationMatrix();
-    rot_angle_ = pi/2.;
-    // rot_angle_ = 0.;
-    opt_gel_rot_->rotateY(rot_angle_);
-    new G4PVPlacement(G4Transform3D(*opt_gel_rot_, opt_gel_pos),
-                      opt_gel_logic_vol, opt_gel_name, lab_logic,
-                      false, 0, false);
+    // new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
+    //                         fiber_logic->GetName(),lab_logic,true,0,true);
 
 
-    // Al disk
+    // // Optical gel
 
-    G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
-    G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
-    rot_angle_ = pi/2.;
-    // rot_angle_ = 0.;
-    disk_rot_->rotateY(rot_angle_);
-    new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
-                      disk_logic_vol, disk_name, lab_logic,
-                      false, 0, false);
+    // G4ThreeVector opt_gel_pos = G4ThreeVector(x + length_/2 + opt_gel_thickness/2., y, z);
+    // G4RotationMatrix* opt_gel_rot_ = new G4RotationMatrix();
+    // rot_angle_ = pi/2.;
+    // // rot_angle_ = 0.;
+    // opt_gel_rot_->rotateY(rot_angle_);
+    // new G4PVPlacement(G4Transform3D(*opt_gel_rot_, opt_gel_pos),
+    //                   opt_gel_logic_vol, opt_gel_name, lab_logic,
+    //                   false, 0, false);
 
-    // // LOOP (n_fibers)_____________________________________________________________
-    //
-    // for (int i=0; i < n_fibers; i++){
-    //
-    //   // fiber
-    //
-    //   // x = length_/2 - box_xy_/2 - 1*mm;
-    //   // y = i*diameter_ - box_xy_/2;
-    //   y = (box_xy_/n_fibers)*i - box_xy_/2 + diameter_/2.;
-    //   z = box_z_ + diameter_/2;
-    //
-    //   G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
-    //   rot_angle_ = pi/2.;
-    //   // rot_angle_ = 0.;
-    //   fib_rot_->rotateY(rot_angle_);
-    //
-    //   new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
-    //                           fiber_logic->GetName(),lab_logic,true,0,true);
-    //
-    //
-    //   // Optical gel
-    //
-    //   G4ThreeVector opt_gel_pos = G4ThreeVector(x + length_/2 + opt_gel_thickness/2., y, z);
-    //   G4RotationMatrix* opt_gel_rot_ = new G4RotationMatrix();
-    //   rot_angle_ = pi/2.;
-    //   // rot_angle_ = 0.;
-    //   opt_gel_rot_->rotateY(rot_angle_);
-    //   new G4PVPlacement(G4Transform3D(*opt_gel_rot_, opt_gel_pos),
-    //                     opt_gel_logic_vol, opt_gel_name, lab_logic,
-    //                     false, 0, false);
-    //
-    //
-    //   // Al disk
-    //
-    //   G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
-    //   G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
-    //   rot_angle_ = pi/2.;
-    //   // rot_angle_ = 0.;
-    //   disk_rot_->rotateY(rot_angle_);
-    //   new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
-    //                     disk_logic_vol, disk_name, lab_logic,
-    //                     false, 0, false);
-    //
-    // }
+
+    // // Al disk
+
+    // G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
+    // G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
+    // rot_angle_ = pi/2.;
+    // // rot_angle_ = 0.;
+    // disk_rot_->rotateY(rot_angle_);
+    // new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
+    //                   disk_logic_vol, disk_name, lab_logic,
+    //                   false, 0, false);
+
+    // LOOP (n_fibers)_____________________________________________________________
+    
+    for (int i=0; i < n_fibers; i++){
+    
+      // fiber
+    
+      // x = length_/2 - box_xy_/2 - 1*mm;
+      y = i*diameter_ - box_xy_/2;
+      // y = (box_xy_/n_fibers)*i - box_xy_/2 + diameter_/2.;
+      z = box_z_ + diameter_/2;
+    
+      G4RotationMatrix* fib_rot_ = new G4RotationMatrix();
+      rot_angle_ = pi/2.;
+      // rot_angle_ = 0.;
+      fib_rot_->rotateY(rot_angle_);
+    
+      new G4PVPlacement(fib_rot_,G4ThreeVector(x, y, z),fiber_logic,
+                              fiber_logic->GetName(),lab_logic,true,0,true);
+    
+    
+      // Optical gel
+    
+      G4ThreeVector opt_gel_pos = G4ThreeVector(x + length_/2 + opt_gel_thickness/2., y, z);
+      G4RotationMatrix* opt_gel_rot_ = new G4RotationMatrix();
+      rot_angle_ = pi/2.;
+      // rot_angle_ = 0.;
+      opt_gel_rot_->rotateY(rot_angle_);
+      new G4PVPlacement(G4Transform3D(*opt_gel_rot_, opt_gel_pos),
+                        opt_gel_logic_vol, opt_gel_name, lab_logic,
+                        false, 0, false);
+    
+    
+      // Al disk
+    
+      G4ThreeVector disk_pos = G4ThreeVector(x - length_/2 - disk_thickness/2., y, z);
+      G4RotationMatrix* disk_rot_ = new G4RotationMatrix();
+      rot_angle_ = pi/2.;
+      // rot_angle_ = 0.;
+      disk_rot_->rotateY(rot_angle_);
+      new G4PVPlacement(G4Transform3D(*disk_rot_, disk_pos),
+                        disk_logic_vol, disk_name, lab_logic,
+                        false, 0, false);
+    
+    }
 
 
 

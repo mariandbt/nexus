@@ -8,20 +8,22 @@
 #/Geometry/Fib_box_struct/length 1. m
 /Geometry/Fib_box_struct/length 25. cm
 
-/Geometry/Fib_box_struct/diameter 1. mm
+/Geometry/Fib_box_struct/diameter 2. mm
 
 # sensor______________________________________________________
-#/Geometry/Fib_box_struct/sensor_type PERFECT
-/Geometry/Fib_box_struct/sensor_type SiPM_FBK
+/Geometry/Fib_box_struct/sensor_type PERFECT
+#/Geometry/Fib_box_struct/sensor_type SiPM_FBK
 #/Geometry/Fib_box_struct/sensor_type SiPM_Hamamatsu
 #/Geometry/Fib_box_struct/sensor_type PMT
 
+/Geometry/Fib_box_struct/sensor_width 3.75 mm # random
+/Geometry/Fib_box_struct/sensor_height 50 mm # random
 
 #/Geometry/Fib_box_struct/sensor_width 3.75 mm # PMT
 #/Geometry/Fib_box_struct/sensor_height 3.75 mm # PMT
 
-/Geometry/Fib_box_struct/sensor_width 1.65 mm # FBK
-/Geometry/Fib_box_struct/sensor_height 2.30 mm # FBK
+#/Geometry/Fib_box_struct/sensor_width 1.65 mm # FBK
+#/Geometry/Fib_box_struct/sensor_height 2.30 mm # FBK
 
 #/Geometry/Fib_box_struct/sensor_width 1.25 mm # Hamamatsu
 #/Geometry/Fib_box_struct/sensor_height 1.25 mm # Hamamatsu
@@ -33,7 +35,7 @@
 /Geometry/Fib_box_struct/sensor_distance 0.5 mm
 /Geometry/Fib_box_struct/sensor_distance 0.25 mm
 /Geometry/Fib_box_struct/sensor_distance 0.1 mm
-/Geometry/Fib_box_struct/sensor_distance 0. mm
+/Geometry/Fib_box_struct/sensor_distance 40. mm
 
 /Geometry/Fib_box_struct/sensor_visibility true
 
@@ -54,7 +56,8 @@
 #/Generator/SingleParticle/max_energy 3.35 eV # B2
 
 #/Generator/SingleParticle/min_costheta 0.98995 # costheta_min = box_z/sqrt((box_xy/2)² + box_z²)
-/Generator/SingleParticle/min_costheta 0.99999362251 # costheta_min = box_z/sqrt((diameter/2)² + box_z²)
+#/Generator/SingleParticle/min_costheta 0.99999362251 # costheta_min = box_z/sqrt((diameter/2)² + box_z²)
+/Generator/SingleParticle/min_costheta 0.995
 /Generator/SingleParticle/max_costheta 1.
 /Generator/SingleParticle/min_phi 0
 /Generator/SingleParticle/max_phi 90.
