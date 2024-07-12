@@ -1,8 +1,11 @@
+
+
+/Generator/SingleParticle/particle gamma
 #/Generator/SingleParticle/particle opticalphoton
-#/Generator/SingleParticle/min_energy 7 eV
-#/Generator/SingleParticle/max_energy 7 eV
-#/Generator/SingleParticle/region INSIDE_CIGAR
-/Generator/Kr83mGenerator/region INSIDE_CIGAR
+/Generator/SingleParticle/min_energy 137 keV
+/Generator/SingleParticle/max_energy 137 keV
+/Generator/SingleParticle/region INSIDE_CIGAR
+#/Generator/Kr83mGenerator/region INSIDE_CIGAR
 
 /Geometry/Cigar/pressure 1 bar
 /Geometry/Cigar/fiber_diameter 1 mm
