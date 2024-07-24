@@ -24,6 +24,11 @@
 
 using namespace nexus;
 
+// Function to convert wavelength in nm to energy in eV
+G4double wavelengthToEnergy(G4double wavelength_nm) {
+    return 1240.0 / wavelength_nm * eV;
+}
+
 REGISTER_CLASS(Cigar, GeometryBase)
 
 namespace nexus {
@@ -327,6 +332,61 @@ namespace nexus {
                         fiber_end_logic_vol, "ALUMINUM4-" + label, world_logic_vol,
                         true, ifiber, false);
     }
+
+    // SCINTILLATOR ////////////////////////////////////////////////////
+    G4double scint_diameter   = cigar_width_;
+    G4double scint_length     = 10 * mm;
+    G4double scint_z_pos      = - cigar_length_/2. + scint_length/2.;      
+
+    G4Tubs* scint_solid =
+      new G4Tubs("SCINTILATING_TUBE_SOLID", 0, scint_diameter/2.,
+                scint_length/2., 0, 2 * M_PI);
+
+    G4Material* scint_mat = materials::PVT();
+    // Set scintillation properties
+    // Spectral data 
+    const G4int numAbsorptionPoints = 8;
+    G4double absorptionWavelength[numAbsorptionPoints] = {229, 243.25, 276.75, 301.25, 314.75, 328.25, 338.25, 353.5}; // nm
+    G4double molarExtinctionCoeff[numAbsorptionPoints] = {15446, 3154, 15995, 34974, 32996, 17783, 7068, 485}; 
+
+    const G4int numEmissionPoints = 12;
+    G4double emissionWavelength[numEmissionPoints] = {300, 330, 335, 342.5, 354.5, 363, 371, 381.5, 390, 401, 426, 450}; // nm
+    G4double emissionIntensity[numEmissionPoints] = {0, 356368, 1288499, 917438, 2007761, 1436790, 1631486, 1177748, 978258, 699435, 240069, 78273}; // example values, replace with actual data
+
+    // Convert wavelength to energy
+    G4double absorptionEnergy[numAbsorptionPoints];
+    G4double absorptionLength[numAbsorptionPoints];
+    for (G4int i = 0; i < numAbsorptionPoints; i++) {
+        absorptionEnergy[i] = wavelengthToEnergy(absorptionWavelength[i]);
+        // absorptionCoeff = molarExtinctionCoeff*concentracion = molarExtinctionCoeff* (density/molar_mass) = molarExtinctionCoeff*  (1.094g/cm³ / 221.259 g/mol)
+        G4double absorptionCoeff = molarExtinctionCoeff[i] * (1.094e-3/221.259); // molarExtinctionCoeff is in cm⁻¹/M, convert calculating the concentration M
+        absorptionLength[i] = 1.0 / absorptionCoeff; // Convert to absorption length in cm
+    }
+
+    G4double emissionEnergy[numEmissionPoints];
+    for (G4int i = 0; i < numEmissionPoints; i++) {
+        emissionEnergy[i] = wavelengthToEnergy(emissionWavelength[i]);
+    }
+
+    // Set the material properties table
+    G4MaterialPropertiesTable* MPT = new G4MaterialPropertiesTable();
+    // Assuming RINDEX is approximately constant
+    G4double refractiveIndex[numAbsorptionPoints] = {1.6231, 1.6231, 1.6231, 1.6231, 1.6231, 1.6231, 1.6231, 1.6231}; // constant or measured values
+    MPT->AddProperty("RINDEX", absorptionEnergy, refractiveIndex, numAbsorptionPoints);
+    // Add ABSLENGTH and SCINTILLATIONCOMPONENT1
+    MPT->AddProperty("ABSLENGTH", absorptionEnergy, absorptionLength, numAbsorptionPoints);
+    MPT->AddProperty("SCINTILLATIONCOMPONENT1", emissionEnergy, emissionIntensity, numEmissionPoints);
+    MPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV);
+    MPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
+    MPT->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 1.*ns);
+    scint_mat->SetMaterialPropertiesTable(MPT);
+
+    G4LogicalVolume* scint_logic = new G4LogicalVolume(scint_solid, scint_mat, "SCINTILATING_TUBE_LOGIC");
+    scint_logic->SetVisAttributes(nexus::Red());
+    // scint_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    new G4PVPlacement(0, G4ThreeVector(0., 0., scint_z_pos),
+                      scint_logic, "SCINTILATING_TUBE", world_logic_vol, false, 0, false);
 
   }
 
