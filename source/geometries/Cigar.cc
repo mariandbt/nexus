@@ -334,9 +334,9 @@ namespace nexus {
     }
 
     // SCINTILLATOR ////////////////////////////////////////////////////
-    G4double scint_diameter   = cigar_width_;
-    G4double scint_length     = 10 * mm;
-    G4double scint_z_pos      = - cigar_length_/2. + scint_length/2.;      
+    scint_diameter   = 25 * mm;
+    scint_length     = 15 * mm;
+    scint_z_pos      = - cigar_length_/2. + scint_length/2.;      
 
     G4Tubs* scint_solid =
       new G4Tubs("SCINTILATING_TUBE_SOLID", 0, scint_diameter/2.,
@@ -400,6 +400,11 @@ namespace nexus {
     if (region == "INSIDE_CIGAR") {
       // return vertex;
       return inside_cigar_->GenerateVertex("INSIDE");
+    }
+    if (region == "IN_FRONT_SCINTILLATOR") {
+      // AD_HOC does not need to be shifted because it is passed by the user
+      vertex = G4ThreeVector(0., 0., scint_z_pos + scint_length/2.);
+      return vertex;
     }
     else {
       G4Exception("[Cigar]", "GenerateVertex()", FatalException,
