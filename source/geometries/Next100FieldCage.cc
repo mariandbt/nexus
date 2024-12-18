@@ -318,6 +318,7 @@ void Next100FieldCage::Construct()
   BuildCathode();
   BuildBuffer();
   BuildELRegion();
+  // BuildLightTube();
   BuildFiberBarrel();
   BuildFieldCage();
 }
@@ -474,11 +475,15 @@ void Next100FieldCage::BuildActive()
   active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., vertex_zpos),
                                             G4ThreeVector(0., hh - fiber_diameter_/2., vertex_zpos));
 
-  // Sector generator
+  // Sector area generator
   active_end_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
   // active_end_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
                                                         -dif_theta/2., dif_theta, nullptr,
                                                         G4ThreeVector(0., 0., vertex_zpos));
+  // Sector volume generator
+  active_vol_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, active_length_/2.,
+                                                        -dif_theta/2., dif_theta, nullptr,
+                                                        G4ThreeVector(0., 0., new_active_zpos_));
 
   /// Visibilities
   // active_logic->SetVisAttributes(G4VisAttributes::GetInvisible());
@@ -1057,6 +1062,7 @@ void Next100FieldCage::BuildFiberBarrel()
    }
 
 }
+
 void Next100FieldCage::BuildLightTube()
 {
   /// DRIFT PART ///
@@ -1402,9 +1408,14 @@ G4ThreeVector Next100FieldCage::GenerateVertex(const G4String& region) const
       vertex = active_end_gen_->Shoot();
   }
 
-  else if (region == "SECTOR") {
+  else if (region == "SECTOR_AREA") {
     vertex = active_end_sector_gen_->GenerateVertex("VOLUME");
   }
+
+  else if (region == "SECTOR_VOL") {
+    vertex = active_vol_sector_gen_->GenerateVertex("VOLUME");
+  }
+  
 
   else if (region == "ACTIVE") {
     G4VPhysicalVolume *VertexVolume;
