@@ -46,7 +46,7 @@
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
-/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
+#/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
 
 
 ## Kr38m______________________________________________________
@@ -54,10 +54,10 @@
 
 ##### PHYSICS #####
 
-/PhysicsList/Nexus/clustering          true
-/PhysicsList/Nexus/drift               true
-/PhysicsList/Nexus/electroluminescence true
-/PhysicsList/Nexus/photoelectric       false
+/PhysicsList/Nexus/clustering          true # base-state true
+/PhysicsList/Nexus/drift               true # base-state true
+/PhysicsList/Nexus/electroluminescence true # base-state true
+/PhysicsList/Nexus/photoelectric       false # base-state false
 
 
 

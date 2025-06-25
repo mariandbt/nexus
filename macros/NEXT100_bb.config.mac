@@ -54,7 +54,7 @@
 
 /Generator/Decay0Interface/EnergyThreshold 0.5
 /Generator/Decay0Interface/Ba136FinalState 0
-/Generator/Decay0Interface/region SECTOR
+/Generator/Decay0Interface/region SECTOR_AREA
 
 #### bb0nu________________
 # for 0 neutrino  bb to Barium Ground state.
@@ -67,10 +67,10 @@
 
 ##### PHYSICS #####
 
-/PhysicsList/Nexus/clustering          true
-/PhysicsList/Nexus/drift               true
-/PhysicsList/Nexus/electroluminescence true
-/PhysicsList/Nexus/photoelectric       false
+/PhysicsList/Nexus/clustering          false # base-state true
+/PhysicsList/Nexus/drift               false # base-state true
+/PhysicsList/Nexus/electroluminescence false # base-state true
+/PhysicsList/Nexus/photoelectric       false # base-state false
 
 
 

@@ -1,0 +1,37 @@
+## ----------------------------------------------------------------------------
+## nexus | NEXT100fibers_S1_table.config.mac
+##
+## Configuration macro to simulate primary scintillation light
+## for look-up tables in the NEXT-100 detector.
+##
+## The NEXT Collaboration
+## ----------------------------------------------------------------------------
+
+# VERBOSITY
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+# JOB CONTROL
+/nexus/random_seed -2
+
+# GEOMETRY
+/Geometry/Next100/pressure 15. bar
+
+## fibers______________________________________________________
+/Geometry/Next100/fiber_type Y11 ### (Y11, B2)
+/Geometry/Next100/coated true
+
+## sensor______________________________________________________
+/Geometry/Next100/sensor_type SiPM_Hamamatsu ### (PERFECT, SiPM_FBK, SiPM_Hamamatsu, PMT)
+/Geometry/Next100/sensor_visibility true
+
+# GENERATION
+/Generator/ScintGenerator/region ACTIVE
+/Generator/ScintGenerator/nphotons 100000
+
+# PHYSICS
+/control/execute macros/physics/IonizationElectron.mac
+/nexus/persistency/output_file S1_param.next

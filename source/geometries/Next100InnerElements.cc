@@ -98,7 +98,8 @@ namespace nexus {
     // Field Cage regions
     if ((region == "CENTER") ||
     (region == "SEGMENT") ||
-    (region == "SECTOR") ||
+    (region == "SECTOR_AREA") ||
+    (region == "SECTOR_VOL") ||
         (region == "ACTIVE") ||
         (region == "CATHODE_RING") ||
         (region == "BUFFER") ||

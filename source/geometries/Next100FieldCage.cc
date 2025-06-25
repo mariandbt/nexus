@@ -476,8 +476,8 @@ void Next100FieldCage::BuildActive()
                                             G4ThreeVector(0., hh - fiber_diameter_/2., vertex_zpos));
 
   // Sector area generator
-  active_end_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
-  // active_end_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
+  active_area_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
+  // active_area_sector_gen_ = new CylinderPointSampler2020(hh - fiber_diameter_, h + teflon_thickn_, 0.,
                                                         -dif_theta/2., dif_theta, nullptr,
                                                         G4ThreeVector(0., 0., vertex_zpos));
   // Sector volume generator
@@ -1409,7 +1409,7 @@ G4ThreeVector Next100FieldCage::GenerateVertex(const G4String& region) const
   }
 
   else if (region == "SECTOR_AREA") {
-    vertex = active_end_sector_gen_->GenerateVertex("VOLUME");
+    vertex = active_area_sector_gen_->GenerateVertex("VOLUME");
   }
 
   else if (region == "SECTOR_VOL") {
