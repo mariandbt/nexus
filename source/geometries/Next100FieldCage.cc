@@ -48,33 +48,46 @@ using namespace nexus;
 Next100FieldCage::Next100FieldCage():
   GeometryBase(),
   // Dimensions
-  active_diam_         (984. * mm), // distance between the centers of two opposite panels
+  // active_diam_         (984. * mm), // distance between the centers of two opposite panels
+  active_diam_         (348. * mm), // distance between the centers of two opposite panels
 
-  cathode_int_diam_    (960. * mm),
-  cathode_ext_diam_    (1020.* mm),
-  cathode_thickn_      (10.  * mm),
+  // cathode_int_diam_    (960. * mm),
+  // cathode_ext_diam_    (1020.* mm),
+  // cathode_thickn_      (10.  * mm),
+  cathode_int_diam_    (389. * mm),
+  cathode_ext_diam_    (390.* mm),
+  cathode_thickn_      (1.  * mm),
   // Caution: updating grid-thickn_ will require updating gate-tp and gate-sapphire-window distances
   grid_thickn_         (0.1  * mm),
 
-  teflon_drift_length_ (1178.*mm), //distance from the gate to the beginning of the cathode volume.
-  teflon_total_length_ (1431. * mm),
+  // teflon_drift_length_ (1178.*mm), //distance from the gate to the beginning of the cathode volume.
+  // teflon_total_length_ (1431. * mm),
+  teflon_drift_length_ (300.*mm), //distance from the gate to the beginning of the cathode volume.
+  teflon_total_length_ (400. * mm),
   teflon_thickn_       (5. * mm),
   // n_panels_            (18),
 
   el_gap_length_ (10. * mm),
 
   gate_teflon_dist_ (10.2 * mm - grid_thickn_), //distance from gate-grid to teflon
-  gate_ext_diam_    (1042. * mm), //preliminary
-  gate_int_diam_    (1009. * mm), //preliminary
+  // gate_ext_diam_    (1042. * mm), //preliminary
+  // gate_int_diam_    (1009. * mm), //preliminary
+  gate_ext_diam_    (390. * mm), //preliminary
+  gate_int_diam_    (389. * mm), //preliminary
   gate_ring_thickn_ (9.9   * mm), // maximum possible value to avoid overlap with sipm board masks
 
   // external to teflon (hdpe + rings + holders)
-  hdpe_tube_int_diam_ (1080. * mm),
-  hdpe_tube_ext_diam_ (1105.4 * mm),
-  hdpe_length_        (1192. * mm),
+  // hdpe_tube_int_diam_ (1080. * mm),
+  // hdpe_tube_ext_diam_ (1105.4 * mm),
+  // hdpe_length_        (1192. * mm),
+  hdpe_tube_int_diam_ (500. * mm),
+  hdpe_tube_ext_diam_ (510 * mm),
+  hdpe_length_        (500. * mm),
 
-  ring_ext_diam_ (1038. * mm),
-  ring_int_diam_ (1014. * mm),
+  // ring_ext_diam_ (1038. * mm),
+  // ring_int_diam_ (1014. * mm),
+  ring_ext_diam_ (390. * mm),
+  ring_int_diam_ (389. * mm),
   ring_thickn_   (10. * mm),
   drift_ring_dist_  (24. * mm),
   buffer_ring_dist_ (48. * mm),
@@ -105,7 +118,7 @@ Next100FieldCage::Next100FieldCage():
   fiber_type_ ("Y11"), // type of fibers attached to the teflon panels (Y11 or B2)
   sensor_type_ ("PERFECT"),
   fiber_diameter_(1 * mm),
-  panel_width_ (170. * mm),
+  panel_width_ (60. * mm),
   sensor_visibility_ (true),
   cap_visibility_ (false),
   panels_visibility_ (false),
@@ -294,7 +307,7 @@ void Next100FieldCage::Construct()
 
 
   // n_sensors = 5; // number of sensors per panel
-  n_sensors = 6; // number of sensors per panel
+  n_sensors = 2; // number of sensors per panel
   dl_sens = panel_width_/n_sensors; // distance between sensors
 
   G4cout << "[FiberBarrel] Using " << n_panels*n_sensors << " sensors in total"<< G4endl;
@@ -1281,6 +1294,10 @@ void Next100FieldCage::BuildFieldCage()
   G4double first_buff_short_z = -teflon_buffer_length_/2. +
                                 (ring_drift_buffer_dist/2.-cathode_thickn_/2.) +
                                 buffer_ring_dist_/2.;
+
+  G4cout << "[FieldCage] holder_x_= " << holder_x_/mm << " mm" << G4endl;
+  G4cout << "[FieldCage] holder_long_y_, = " << holder_long_y_/mm<< " mm" << G4endl;
+  G4cout << "[FieldCage] teflon_buffer_length_ = " <<teflon_buffer_length_/mm << " mm" << G4endl;
   G4Box* buffer_long_solid =
     new G4Box("BUFF_LONG", holder_x_/2., holder_long_y_/2., teflon_buffer_length_/2.);
 

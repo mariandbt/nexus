@@ -46,7 +46,7 @@
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
-/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
+#/Geometry/Next100/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
 
 ## bb______________________________________________________
 # use C++ translation of DECAY0
@@ -54,7 +54,7 @@
 
 /Generator/Decay0Interface/EnergyThreshold 0.5
 /Generator/Decay0Interface/Ba136FinalState 0
-/Generator/Decay0Interface/region SECTOR_AREA
+/Generator/Decay0Interface/region ACTIVE
 
 #### bb0nu________________
 # for 0 neutrino  bb to Barium Ground state.
