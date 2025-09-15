@@ -1,0 +1,30 @@
+## ----------------------------------------------------------------------------
+## nexus | NEXTHDDEMOfibers_S1_table.init.mac
+##
+## Initialization macro to simulate primary scintillation light
+## for look-up tables in the NEXT-HDDEMO detector.
+##
+## The NEXT Collaboration
+## ----------------------------------------------------------------------------
+
+/PhysicsList/RegisterPhysics G4EmStandardPhysics_option4
+/PhysicsList/RegisterPhysics G4DecayPhysics
+/PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics
+/PhysicsList/RegisterPhysics G4OpticalPhysics
+/PhysicsList/RegisterPhysics NexusPhysics
+/PhysicsList/RegisterPhysics G4StepLimiterPhysics
+
+/nexus/RegisterGeometry NextHDDEMOOpticalGeometry
+#/nexus/RegisterGeometry NextHDDEMO
+
+/nexus/RegisterGenerator ScintillationGenerator
+
+/nexus/RegisterPersistencyManager PersistencyManager
+
+#/nexus/RegisterTrackingAction DefaultTrackingAction
+#/nexus/RegisterRunAction DefaultRunAction
+/nexus/RegisterTrackingAction LightTableTrackingAction
+
+/nexus/RegisterSteppingAction AnalysisSteppingAction
+
+/nexus/RegisterMacro macros/NEXTHDDEMO_S1_table.config.mac

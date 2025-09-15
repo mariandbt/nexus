@@ -1,5 +1,5 @@
 ## ----------------------------------------------------------------------------
-## nexus | NEXT100fibers_S1_table.config.mac
+## nexus | NEXTHDDEMO_S1_table.config.mac
 ##
 ## Configuration macro to simulate primary scintillation light
 ## for look-up tables in the NEXT-100 detector.
@@ -18,24 +18,30 @@
 /nexus/random_seed -2
 
 # GEOMETRY
-/Geometry/Next100/pressure 15. bar
+/Geometry/NextHDDEMO/pressure 15. bar
 
 ## fibers______________________________________________________
-/Geometry/Next100/fiber_type Y11 ### (Y11, B2)
-/Geometry/Next100/coated true
+/Geometry/NextHDDEMO/fiber_type Y11 ### (Y11, B2)
+/Geometry/NextHDDEMO/coated true
 
 ## sensor______________________________________________________
-/Geometry/Next100/sensor_type SiPM_Hamamatsu ### (PERFECT, SiPM_FBK, SiPM_Hamamatsu, PMT)
+/Geometry/NextHDDEMO/sensor_type SiPM_Hamamatsu ### (PERFECT, SiPM_FBK, SiPM_Hamamatsu, PMT)
 
 # Visibilities
-/Geometry/Next100/field_cage_vis false
-/Geometry/Next100/sensor_visibility false
-/Geometry/Next100/cap_visibility false
-/Geometry/Next100/panels_visibility false
+#NextHDDEMO
+#/Geometry/NextHDDEMO/ics_vis false
+#/Geometry/NextHDDEMO/shielding_vis false
+#/Geometry/NextHDDEMO/vessel_vis false
+#NextHDDEMOOpticalGeometry
+/Geometry/NextHDDEMO/field_cage_vis false
+/Geometry/NextHDDEMO/sensor_visibility false
+/Geometry/NextHDDEMO/panels_visibility false
+/Geometry/NextHDDEMO/fibers_visibility false
 
 # GENERATION
 /Generator/ScintGenerator/region ACTIVE
-/Generator/ScintGenerator/nphotons 1000000
+#/Generator/ScintGenerator/nphotons 1000000
+/Generator/ScintGenerator/nphotons 100
 
 # PHYSICS
 /control/execute macros/physics/IonizationElectron.mac
