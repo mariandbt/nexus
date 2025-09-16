@@ -39,8 +39,6 @@
 #include <G4UnitsTable.hh>
 #include <G4TransportationManager.hh>
 
-// Marian's adenda
-//
 
 using namespace nexus;
 
@@ -48,13 +46,8 @@ using namespace nexus;
 NextHDDEMOFieldCage::NextHDDEMOFieldCage():
   GeometryBase(),
   // Dimensions
-  // active_diam_         (984. * mm), // distance between the centers of two opposite panels
   active_diam_         (356. * mm), // distance between the external corners of two opposite panels
 
-  // cathode_int_diam_    (960. * mm),
-  // cathode_ext_diam_    (1020.* mm),
-  // cathode_thickn_      (10.  * mm),
-  // cathode_int_diam_    (0),
   cathode_ext_diam_    (389.* mm),
   cathode_thickn_      (1.  * mm),
   cathode_hole_diam_   (5.  * mm),
@@ -62,32 +55,22 @@ NextHDDEMOFieldCage::NextHDDEMOFieldCage():
   // Caution: updating grid-thickn_ will require updating gate-tp and gate-sapphire-window distances
   grid_thickn_         (0.2  * mm),
 
-  // teflon_drift_length_ (1178.*mm), //distance from the gate to the beginning of the cathode volume.
-  // teflon_total_length_ (1431. * mm),
   teflon_drift_length_ (260.*mm), //distance from the gate to the beginning of the cathode volume.
   teflon_total_length_ (270. * mm),
   teflon_thickn_       (5. * mm),
-  // n_panels_            (18),
 
   el_gap_length_ (10. * mm),
 
   gate_teflon_dist_ (10.2 * mm - grid_thickn_), //distance from gate-grid to teflon
-  // gate_ext_diam_    (1042. * mm), //preliminary
-  // gate_int_diam_    (1009. * mm), //preliminary
   gate_ext_diam_    (389. * mm), //preliminary
   gate_int_diam_    (365. * mm), //preliminary
   gate_ring_thickn_ (9.9   * mm), // maximum possible value to avoid overlap with sipm board masks
 
   // external to teflon (hdpe + rings + holders)
-  // hdpe_tube_int_diam_ (1080. * mm),
-  // hdpe_tube_ext_diam_ (1105.4 * mm),
-  // hdpe_length_        (1192. * mm),
   hdpe_tube_int_diam_ (500. * mm), //NO HAY YET
   hdpe_tube_ext_diam_ (510 * mm),
   hdpe_length_        (300. * mm),
 
-  // ring_ext_diam_ (1038. * mm),
-  // ring_int_diam_ (1014. * mm),
   ring_ext_diam_ (376. * mm),
   ring_int_diam_ (370. * mm),
   ring_thickn_   (10. * mm),
@@ -333,9 +316,9 @@ void NextHDDEMOFieldCage::Construct()
   /// Build the different parts of the field cage
   BuildActive();
   BuildCathode();
-  // BuildBuffer();
+  // BuildBuffer(); # no buffer in HDDemo
   BuildELRegion();
-  // BuildLightTube();
+  // BuildLightTube(); # This is substitued by the fiber panels
   BuildFiberBarrel();
   BuildFieldCage();
 }
@@ -381,78 +364,36 @@ void NextHDDEMOFieldCage::DefineMaterials()
 
 void NextHDDEMOFieldCage::BuildActive()
 {
-  // G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z/2.);
-  // G4double new_active_zpos_ = z_fend - (active_length_/2. + fiber_end_z);
-  // G4double new_active_zpos_ = z_act - fiber_end_z;
-  G4double new_active_zpos_ = active_zpos_;
 
   /// Position of z planes
-  // G4double zplane[2] = {-active_length_/2. + gate_teflon_dist_ - overlap_,
-  // G4double zplane[2] = {- panel_length_/2 - overlap_,
   G4double zplane[2] = {- panel_length_/2 - overlap_,
-    // active_length_/2.-(cathode_thickn_-grid_thickn_)/2. - fiber_end_z};
-                        //  active_length_/2.-(cathode_thickn_-grid_thickn_)/2.};
-                        // panel_length_/2. - fiber_end_z};
                         panel_length_/2.};
-  // G4double zplane[2] = {-teflon_drift_length_/2.,
-  //                        teflon_drift_length_/2.};
+
   /// Inner radius
   G4double rinner[2] = {0., 0.};
   /// Outer radius
   G4double router[2] = {active_diam_/2., active_diam_/2.};
 
-  // G4double router[2] = {hh - fiber_diameter_/2.,
-  //                       hh - fiber_diameter_/2.};
-                        // G4double router[2] = {.2*hh - fiber_diameter_/2.,
-                        //                       .2*hh - fiber_diameter_/2.};
-
-  // G4double router[2] = {active_diam_/2. - (teflon_thickn_ + fiber_diameter_),
-  //                       active_diam_/2. - (teflon_thickn_ + fiber_diameter_)};
-
   G4Polyhedra* active_solid =
-  // new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
     new G4Polyhedra("ACTIVE_POLY", 0., twopi, n_panels, 2, zplane, rinner, router);
 
-  // G4Tubs* active_cathode_solid =
-  // new G4Tubs("ACT_CATHODE_RING", 0, cathode_int_diam_/2.,
-  //             ((cathode_thickn_ - grid_thickn_)/2. + overlap_)/2., 0, twopi);
-  //
-  // G4ThreeVector act_cathode_pos =
-  // // G4ThreeVector(0., 0., active_length_/2.-((cathode_thickn_ - grid_thickn_)/2.)/2. - overlap_/2.);
-  // G4ThreeVector(0., 0., z -((cathode_thickn_ - grid_thickn_)/2.)/2. - overlap_/2.);
-  //
-  // G4UnionSolid* union_active =
-  //   new G4UnionSolid ("ACTIVE", active_solid, active_cathode_solid, 0, act_cathode_pos);
-
-
-// THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
   //This volume is added as an extension of the active volume that reaches the gate grid.
   G4Tubs* active_gate_solid =
-  // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., gate_teflon_dist_/2. - 1*mm, 0, twopi);
-    // new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2. - 1 *mm, (gate_teflon_dist_ - 2.625 *mm)/2., 0, twopi);
     new G4Tubs("ACT_GATE_GAS", 0, gate_int_diam_/2., (gate_teflon_dist_)/2., 0, twopi);
 
   G4ThreeVector act_gate_pos =
   G4ThreeVector(0., 0., -active_length_/2. + gate_teflon_dist_/2.);
-  // G4ThreeVector(0., 0., -active_length_/2.+ gate_teflon_dist_/2. - 12.475*mm);
-  // G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_/2. - 1.*mm) + overlap_);
-  // G4ThreeVector(0., 0., - (panel_length_ - fiber_end_z)/2. - (gate_teflon_dist_ - 2.625 *mm)/2.);
 
-  // union_active =
-  // new G4UnionSolid ("ACTIVE", union_active, active_gate_solid, 0, act_gate_pos);
   G4UnionSolid* union_active =
     new G4UnionSolid ("ACTIVE", active_solid, active_gate_solid, 0, act_gate_pos);
 
-// THIS ADENDA TO THE VOLUME IS OVERLAPPING WITH THE EL-GAP*************************************************************
 
-  // G4LogicalVolume* active_logic =
-  //   new G4LogicalVolume(union_active, gas_, "ACTIVE");
   active_logic_ = new G4LogicalVolume(union_active, gas_, "ACTIVE");
 
 
   active_phys_ =
-    new G4PVPlacement(0, G4ThreeVector(0., 0., new_active_zpos_),
+    new G4PVPlacement(0, G4ThreeVector(0., 0., active_zpos_),
                       active_logic_, "ACTIVE", mother_logic_,
                       false, 0, false);
 
@@ -467,7 +408,7 @@ void NextHDDEMOFieldCage::BuildActive()
 
   /// Define a drift field for this volume
   UniformElectricDriftField* field = new UniformElectricDriftField();
-  G4double global_active_zpos = new_active_zpos_ - GetELzCoord();
+  G4double global_active_zpos = active_zpos_ - GetELzCoord();
   field->SetCathodePosition(global_active_zpos + active_length_/2.);
   field->SetAnodePosition(global_active_zpos - active_length_/2.);
   field->SetDriftVelocity(1. * mm/microsecond);
@@ -484,12 +425,12 @@ void NextHDDEMOFieldCage::BuildActive()
   // Cilynder generator
   active_gen_ = new CylinderPointSampler2020(0., hh - fiber_diameter_/2., active_length_/2.,
                                              0., twopi, nullptr,
-                                             G4ThreeVector(0., 0., new_active_zpos_));
+                                             G4ThreeVector(0., 0., active_zpos_));
 
   // Vertex z position
   G4double vertex_zpos;
   if (vertex_zpos_ == "ACTIVE_CENTER"){
-    vertex_zpos = new_active_zpos_;
+    vertex_zpos = active_zpos_;
   }
   else if (vertex_zpos_ == "ACTIVE_END"){
     vertex_zpos = GetELzCoord();
@@ -507,7 +448,7 @@ void NextHDDEMOFieldCage::BuildActive()
   // Sector volume generator
   active_vol_sector_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, active_length_/2.,
                                                         -dif_theta/2., dif_theta, nullptr,
-                                                        G4ThreeVector(0., 0., new_active_zpos_));
+                                                        G4ThreeVector(0., 0., active_zpos_));
 
   /// Visibilities
   active_logic_->SetVisAttributes(G4VisAttributes::GetInvisible());
@@ -515,9 +456,9 @@ void NextHDDEMOFieldCage::BuildActive()
 
   /// Verbosity
   if (verbosity_) {
-    G4cout << "Active starts in " << (new_active_zpos_ - active_length_/2.)/mm
+    G4cout << "Active starts in " << (active_zpos_ - active_length_/2.)/mm
            << " mm and ends in "
-           << (new_active_zpos_ + active_length_/2.)/mm << " mm" << G4endl;
+           << (active_zpos_ + active_length_/2.)/mm << " mm" << G4endl;
   }
 }
 
@@ -679,7 +620,7 @@ void NextHDDEMOFieldCage::BuildCathode()
 
 }
 
-
+// NOT USED! Here only for reference
 void NextHDDEMOFieldCage::BuildBuffer()
 {
   G4double buffer_zpos = active_zpos_ + active_length_/2. + grid_thickn_ + buffer_length_/2.;
@@ -748,7 +689,7 @@ void NextHDDEMOFieldCage::BuildBuffer()
   }
 }
 
-
+// Same as NEXT100 but with different dimensions
 void NextHDDEMOFieldCage::BuildELRegion()
 {
   /// GATE ring.
@@ -1034,8 +975,6 @@ void NextHDDEMOFieldCage::BuildFiberBarrel()
 
       // Setting the time binning
       G4double t_binning = .1 * ns;
-      // G4double t_binning = 100. * ns;
-      // G4double t_binning = 1. * ns;
 
       photo_sensor_ ->SetTimeBinning(t_binning); // Size of fiber sensors time binning
 
@@ -1044,8 +983,6 @@ void NextHDDEMOFieldCage::BuildFiberBarrel()
 
       // Set mother depth & naming order
       photo_sensor_ ->SetSensorDepth(1);
-      // photo_sensor_ ->SetMotherDepth(2);
-      // photo_sensor_ ->SetNamingOrder(1);
       photo_sensor_ ->SetMotherDepth(0);
       photo_sensor_ ->SetNamingOrder(0);
 
@@ -1096,11 +1033,11 @@ void NextHDDEMOFieldCage::BuildFiberBarrel()
 
    // PLACEMENT /////////////////////////////////////////////
    G4double rot_angle;
-   G4double theta0 =  (10.)*pi/180.;
-   G4int sens_count = 200;
+   G4double theta0 =  (10.)*pi/180.; // We don't start at 0
+   G4int sens_count = 200; // This will be the sensor's IDs
 
    for (G4int itheta=0; itheta < n_panels; itheta++) {
-  //  for (G4int itheta=0; itheta < 3; itheta++) {
+  //  for (G4int itheta=0; itheta < 3; itheta++) { // uncomment this to debug
 
      // panels
      G4double theta = theta0 + dif_theta * itheta;
@@ -1142,7 +1079,7 @@ void NextHDDEMOFieldCage::BuildFiberBarrel()
                           false, 0, false);
        }
      for (G4int jj=0; jj < n_sensors; jj++) {
-    // for (G4int jj=0; jj < 3; jj++) {
+    // for (G4int jj=0; jj < 3; jj++) { // for debugging
 
           G4double xx_s = x0_s - dl_sens*jj*std::cos(phi);
           G4double yy_s = y0_s - dl_sens*jj*std::sin(phi);
@@ -1151,12 +1088,10 @@ void NextHDDEMOFieldCage::BuildFiberBarrel()
 
           G4RotationMatrix* sensor_rot = new G4RotationMatrix();
           rot_angle = 0.;
-          // rot_angle = M_PI;
           sensor_rot->rotateY(rot_angle);
           sensor_rot->rotateZ(-phi);
           new G4PVPlacement(sensor_rot, G4ThreeVector(xx_s, yy_s, z_s),
                             photo_sensor_logic, photo_sensor_logic->GetName() + "_" + label + label3, active_logic_,
-                            // true, n_panels*(1 + n_fibers) + n_sensors*itheta  + jj, false);
                             true,  sens_count, false);
 
           sens_count++;
@@ -1167,6 +1102,7 @@ void NextHDDEMOFieldCage::BuildFiberBarrel()
 
 }
 
+// NOT USED! Only here for reference
 void NextHDDEMOFieldCage::BuildLightTube()
 {
   /// DRIFT PART ///
@@ -1283,6 +1219,7 @@ void NextHDDEMOFieldCage::BuildLightTube()
 }
 
 
+// Same as in NEXT100 but with different dimensions and without a buffer and without holders
 void NextHDDEMOFieldCage::BuildFieldCage()
 {
   // HDPE cylinder.

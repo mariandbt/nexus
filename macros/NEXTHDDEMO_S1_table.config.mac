@@ -39,7 +39,9 @@
 /Geometry/NextHDDEMO/fibers_visibility false
 
 # GENERATION
-/Generator/ScintGenerator/region ACTIVE
+/Geometry/NextHDDEMO/specific_vertex 0 3 150  mm
+
+/Generator/ScintGenerator/region AD_HOC
 #/Generator/ScintGenerator/nphotons 1000000
 /Generator/ScintGenerator/nphotons 100
 

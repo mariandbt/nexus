@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // nexus | NextHDDEMOInnerElements.h
 //
-// Inner elements of the NEXT-100 detector. They include the field cage,
+// Inner elements of the NEXT-HDDemo detector. They include the field cage,
 // the energy and the tracking plane.
 //
 // The NEXT Collaboration
@@ -23,7 +23,6 @@ class G4GenericMessenger;
 namespace nexus {
 
   class NextHDDEMOFieldCage;
-  // class NextHDDEMOEnergyPlane;
   class NextHDDEMOTrackingPlane;
 
   class NextHDDEMOInnerElements : public GeometryBase
@@ -67,7 +66,6 @@ namespace nexus {
 
     // Detector parts
     NextHDDEMOFieldCage*     field_cage_;
-    // NextHDDEMOEnergyPlane*   energy_plane_;
     NextHDDEMOTrackingPlane* tracking_plane_;
 
     // Messenger for the definition of control commands

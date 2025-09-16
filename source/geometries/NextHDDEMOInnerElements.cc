@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // nexus | NextHDDEMOInnerElements.cc
 //
-// Inner elements of the NEXT-100 detector. They include the field cage,
+// Inner elements of the NEXT-HDDemo detector. They include the field cage,
 // the energy and the tracking plane.
 //
 // The NEXT Collaboration
@@ -9,7 +9,6 @@
 
 #include "NextHDDEMOInnerElements.h"
 #include "NextHDDEMOFieldCage.h"
-// #include "NextHDDEMOEnergyPlane.h"
 #include "NextHDDEMOTrackingPlane.h"
 
 #include <G4GenericMessenger.hh>
@@ -31,7 +30,6 @@ namespace nexus {
     mother_phys_ (nullptr),
     gas_(nullptr),
     field_cage_    (new NextHDDEMOFieldCage()),
-    // energy_plane_  (new NextHDDEMOEnergyPlane()),
     tracking_plane_(new NextHDDEMOTrackingPlane()),
     msg_(nullptr)
   {
@@ -69,12 +67,6 @@ namespace nexus {
     field_cage_->SetELzCoord(gate_zpos);
     field_cage_->SetELtoSapphireWDWdistance(gate_sapphire_wdw_distance_);
     field_cage_->Construct();
-
-    // // Energy Plane
-    // energy_plane_->SetMotherLogicalVolume(mother_logic_);
-    // energy_plane_->SetELzCoord(gate_zpos);
-    // energy_plane_->SetELtoSapphireWDWdistance(gate_sapphire_wdw_distance_);
-    // energy_plane_->Construct();
 
     // Tracking plane
     tracking_plane_->SetMotherPhysicalVolume(mother_phys_);
@@ -114,15 +106,6 @@ namespace nexus {
         (region == "RING_HOLDER")) {
       vertex = field_cage_->GenerateVertex(region);
     }
-    // // Energy Plane regions
-    // else if ((region == "EP_COPPER_PLATE") ||
-    //          (region == "SAPPHIRE_WINDOW") ||
-    //          (region == "OPTICAL_PAD") ||
-    //          (region == "PMT") ||
-    //          (region == "PMT_BODY") ||
-    //          (region == "PMT_BASE")) {
-    //   vertex = energy_plane_->GenerateVertex(region);
-    // }
     // Tracking Plane regions
     else if ((region == "TP_COPPER_PLATE") ||
              (region == "SIPM_BOARD") ||

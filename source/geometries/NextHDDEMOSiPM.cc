@@ -2,7 +2,7 @@
 //  nexus | NextHDDEMOSiPM.cc
 //
 //  Geometry of the Hamamatsu MPPC S13372-1350TE, the model of
-//  silicon photomultiplier (SiPM) used in the NEXT-100 detector.
+//  silicon photomultiplier (SiPM) used in the NEXT-100 (and NEXT-HDDemo) detector.
 //
 //  The NEXT Collaboration
 // -----------------------------------------------------------------------------

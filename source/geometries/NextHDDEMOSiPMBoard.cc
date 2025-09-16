@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // nexus | NextHDDEMOSiPMBoard.cc
 //
-// Geometry of the NEXT-100 SiPM board, consisting of an 8x8 array of
+// Geometry of the NEXT-HDDemo SiPM board, consisting of an 8x8 array of
 // silicon photomultipliers (1.3x1.3 mm2 of active area) mounted on a Kapton
 // board covered with a TPB-coated teflon mask.
 //

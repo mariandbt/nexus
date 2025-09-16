@@ -15,11 +15,15 @@
 /process/em/verbose 0
 
 ##### GEOMETRY #####
-/Geometry/NextHDDEMO/specific_vertex 300 1 50 mm
+/Geometry/NextHDDEMO/specific_vertex 0 100 150  mm
 
 ##### GENERATOR #####
-/Generator/SingleParticle/particle geantino
-/Generator/SingleParticle/min_energy 100 keV
-/Generator/SingleParticle/max_energy 100 keV
-/Generator/SingleParticle/region AD_HOC
-/Generator/SingleParticle/momentum -1 0 0
+#/Generator/SingleParticle/particle scintillation
+#/Generator/SingleParticle/min_energy 100 keV
+#/Generator/SingleParticle/max_energy 100 keV
+#/Generator/SingleParticle/region AD_HOC
+#/Generator/SingleParticle/momentum 0 0 1
+
+
+/Generator/ScintGenerator/region AD_HOC
+/Generator/ScintGenerator/nphotons 10
