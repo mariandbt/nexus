@@ -1,7 +1,7 @@
 ## ----------------------------------------------------------------------------
 ## nexus | NEXTHDDEMO_debug.init.mac
 ##
-## Initialization macro to simulate geantinos crossing the NEXT-100 detector.
+## Initialization macro to simulate geantinos crossing the NEXT-20. detector.
 ## It is useful to debug the geometry.
 ##
 ## The NEXT Collaboration

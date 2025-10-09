@@ -1,7 +1,7 @@
 ## ----------------------------------------------------------------------------
 ## nexus | NEXTHDDEMO_full.config.mac
 ##
-## Configuration macro to simulate Kr-83 decays in the NEXT-100 geometry
+## Configuration macro to simulate Kr-83 decays in the NEXT-20. geometry
 ## with generation and transportation of optical photons.
 ##
 ## The NEXT Collaboration
@@ -17,7 +17,7 @@
 /process/em/verbose 0
 
 ##### GEOMETRY #####
-/Geometry/NextHDDEMO/pressure 10. bar
+/Geometry/NextHDDEMO/pressure 20. bar
 /Geometry/NextHDDEMO/max_step_size 1. mm
 /Geometry/NextHDDEMO/field_cage_vis 0
 

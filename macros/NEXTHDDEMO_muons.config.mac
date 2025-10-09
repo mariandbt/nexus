@@ -1,7 +1,7 @@
 ## ----------------------------------------------------------------------------
 ## nexus | NEXTHDDEMO_muons.config.mac
 ##
-## Configuration macro to simulate muons according in the NEXT-100 geometry.
+## Configuration macro to simulate muons according in the NEXT-20. geometry.
 ##
 ## The NEXT Collaboration
 ## ----------------------------------------------------------------------------
@@ -19,7 +19,7 @@
 /nexus/random_seed 17392
 
 ### GEOMETRY
-/Geometry/NextHDDEMO/pressure 15 bar
+/Geometry/NextHDDEMO/pressure 20.bar
 /Geometry/NextHDDEMO/gas enrichedXe
 /Geometry/NextHDDEMO/elfield false
 #/Geometry/NextHDDEMO/lab_walls true # Turn on when using HALLA_OUTER region
@@ -49,7 +49,7 @@
 /Generator/MuonGenerator/max_energy 5500 GeV
 
 # For coordinate system transformation, do not edit
-/Generator/MuonGenerator/azimuth_rotation 150 deg
+/Generator/MuonGenerator/azimuth_rotation 20. deg
 
 ### ACTIONS
 /Actions/DefaultEventAction/min_energy 0.01 MeV
