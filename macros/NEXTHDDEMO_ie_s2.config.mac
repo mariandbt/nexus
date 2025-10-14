@@ -41,15 +41,14 @@
 /Geometry/NextHDDEMO/sensor_visibility true
 
 ## teflon______________________________________________________
-/Geometry/NextHDDEMO/cap_visibility false
 /Geometry/NextHDDEMO/panels_visibility false
 
 
 /process/optical/processActivation Cerenkov false
 
 ##### GENERATOR #####
-#/Geometry/NextHDDEMO/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
-/Generator/SingleParticle/region ACTIVE
+/Geometry/NextHDDEMO/vertex_zpos ACTIVE_CENTER ### (ACTIVE_CENTER, ACTIVE_END)
+/Generator/SingleParticle/region SECTION_AREA
 
 # Single Particle____________________________________________
 /Generator/SingleParticle/particle ie-

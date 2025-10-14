@@ -436,6 +436,13 @@ void NextHDDEMOFieldCage::BuildActive()
     vertex_zpos = GetELzCoord();
   }
 
+
+  // Circular section area generator
+  active_area_section_gen_ = new CylinderPointSampler2020(0., h + teflon_thickn_, 0.,
+                                                        0., twopi, nullptr,
+                                                        G4ThreeVector(0., 0., vertex_zpos));
+
+
   // Segment generator
   active_end_gen_ = new SegmentPointSampler(G4ThreeVector(0., 0., vertex_zpos),
                                             G4ThreeVector(0., hh - fiber_diameter_/2., vertex_zpos));
@@ -1430,17 +1437,21 @@ void NextHDDEMOFieldCage::BuildFieldCage()
 
 NextHDDEMOFieldCage::~NextHDDEMOFieldCage()
 {
-  delete active_gen_;
-  delete buffer_gen_;
-  delete xenon_gen_;
-  delete teflon_gen_;
-  delete el_gap_gen_;
-  delete hdpe_gen_;
-  delete ring_gen_;
-  delete cathode_gen_;
-  delete gate_gen_;
-  delete anode_gen_;
-  delete holder_gen_;
+    delete active_end_gen_;
+    delete active_area_section_gen_;
+    delete active_area_sector_gen_;
+    delete active_vol_sector_gen_;
+    delete active_gen_;
+    delete buffer_gen_;
+    delete teflon_gen_;
+    delete xenon_gen_;
+    delete el_gap_gen_;
+    delete hdpe_gen_;
+    delete ring_gen_;
+    delete cathode_gen_;
+    delete gate_gen_;
+    delete anode_gen_;
+    delete holder_gen_;
 }
 
 
@@ -1450,6 +1461,10 @@ G4ThreeVector NextHDDEMOFieldCage::GenerateVertex(const G4String& region) const
 
   if (region == "CENTER") {
     vertex = G4ThreeVector(0., 0., active_zpos_);
+  }
+
+  else if (region == "SECTION_AREA") {
+    vertex = active_area_section_gen_->GenerateVertex("VOLUME");
   }
 
   else if (region == "SEGMENT") {
