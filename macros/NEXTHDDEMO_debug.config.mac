@@ -1,7 +1,7 @@
 ## ----------------------------------------------------------------------------
 ## nexus | NEXTHDDEMO_debug.config.mac
 ##
-## Initialization macro to simulate geantinos crossing the NEXT-20. detector.
+## Initialization macro to simulate geantinos crossing the NEXT-10. detector.
 ## It is useful to debug the geometry.
 ##
 ## The NEXT Collaboration
@@ -15,12 +15,12 @@
 /process/em/verbose 0
 
 ##### GEOMETRY #####
-/Geometry/NextHDDEMO/specific_vertex 0 20. 20.  mm
+/Geometry/NextHDDEMO/specific_vertex 0 10. 10.  mm
 
 ##### GENERATOR #####
 #/Generator/SingleParticle/particle scintillation
-#/Generator/SingleParticle/min_energy 20. keV
-#/Generator/SingleParticle/max_energy 20. keV
+#/Generator/SingleParticle/min_energy 10. keV
+#/Generator/SingleParticle/max_energy 10. keV
 #/Generator/SingleParticle/region AD_HOC
 #/Generator/SingleParticle/momentum 0 0 1
 

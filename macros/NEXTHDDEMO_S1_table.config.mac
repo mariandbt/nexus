@@ -2,7 +2,7 @@
 ## nexus | NEXTHDDEMO_S1_table.config.mac
 ##
 ## Configuration macro to simulate primary scintillation light
-## for look-up tables in the NEXT-20. detector.
+## for look-up tables in the NEXT-10. detector.
 ##
 ## The NEXT Collaboration
 ## ----------------------------------------------------------------------------
@@ -18,7 +18,7 @@
 /nexus/random_seed -2
 
 # GEOMETRY
-/Geometry/NextHDDEMO/pressure 20. bar
+/Geometry/NextHDDEMO/pressure 10. bar
 
 ## fibers______________________________________________________
 /Geometry/NextHDDEMO/fiber_type Y11 ### (Y11, B2)
@@ -39,7 +39,7 @@
 /Geometry/NextHDDEMO/fibers_visibility false
 
 # GENERATION
-#/Geometry/NextHDDEMO/specific_vertex 0 3 20.  mm
+#/Geometry/NextHDDEMO/specific_vertex 0 3 10.  mm
 
 /Generator/ScintGenerator/region ACTIVE
 #/Generator/ScintGenerator/nphotons 100000

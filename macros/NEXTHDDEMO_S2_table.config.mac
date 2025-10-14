@@ -2,7 +2,7 @@
 ## nexus | NEXTHDDEMO_S2_table.config.mac
 ##
 ## Configuration macro to simulate secondary scintillation light
-## for look-up tables in the NEXT-20. detector.
+## for look-up tables in the NEXT-10. detector.
 ##
 ## The NEXT Collaboration
 ## ----------------------------------------------------------------------------
@@ -18,7 +18,7 @@
 /nexus/random_seed -2
 
 ##### GEOMETRY #####
-/Geometry/NextHDDEMO/pressure 20. bar
+/Geometry/NextHDDEMO/pressure 10. bar
 /Geometry/NextHDDEMO/max_step_size 1. mm
 /Geometry/NextHDDEMO/specific_vertex 0. 0. 0. mm
 
