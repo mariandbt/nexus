@@ -561,8 +561,8 @@ void NextHDDEMOFieldCage::BuildCathode()
   G4LogicalVolume* coating_logic_vol = new G4LogicalVolume(coating_solid_vol, coating_mt, coating_name);
 
   G4OpticalSurface* coating_optSurf = new G4OpticalSurface(coating_name + "_OPSURF",
-                                                        unified, ground,
-                                                        dielectric_dielectric, .01);
+                                                            unified, ground,
+                                                            dielectric_dielectric, .01);
 
   new G4LogicalSkinSurface(coating_name + "_OPSURF", coating_logic_vol, coating_optSurf);
 

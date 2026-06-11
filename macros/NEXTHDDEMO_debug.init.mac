@@ -1,7 +1,7 @@
 ## ----------------------------------------------------------------------------
 ## nexus | NEXTHDDEMO_debug.init.mac
 ##
-## Initialization macro to simulate geantinos crossing the NEXT-10. detector.
+## Initialization macro to simulate geantinos crossing the NEXTHDDEMO detector.
 ## It is useful to debug the geometry.
 ##
 ## The NEXT Collaboration
@@ -17,7 +17,15 @@
 /nexus/RegisterGeometry NextHDDEMOOpticalGeometry
 #/nexus/RegisterGeometry NextHDDEMO
 
-#/nexus/RegisterGenerator SingleParticleGenerator
-/nexus/RegisterGenerator ScintillationGenerator
+/nexus/RegisterGenerator SingleParticleGenerator
+#/nexus/RegisterGenerator ScintillationGenerator
+
+### PERSISTENCY MANAGER
+/nexus/RegisterPersistencyManager PersistencyManager
+
+### ACTIONS
+/nexus/RegisterTrackingAction DefaultTrackingAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterRunAction DefaultRunAction
 
 /nexus/RegisterMacro macros/NEXTHDDEMO_debug.config.mac
